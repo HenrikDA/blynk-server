@@ -10,15 +10,15 @@ Header : Protocol command (1 byte), MessageId (2 bytes), Body message length (2 
 Body : string (could be up to 2^15 bytes).
 For instance, the value of the length field in this example is 3 bytes (0x0003) which represents the length of body "1 2".
 
-	             BEFORE DECODE (8 bytes)
-+------------------+------------+---------+------------------------+
-|       1 byte     |  2 bytes   | 2 bytes |    Variable length     |
-+------------------+------------+---------+------------------------+
-| Protocol Command |  MessageId |  Length |  Message body (String) |
-|       0x01       |   0x000A   |  0x0003 |         "1 2"          |
-+------------------+------------+---------+------------------------+
-                                          |        3 bytes         |
-                                          +------------------------+
+	            	BEFORE DECODE (8 bytes)
+	+------------------+------------+---------+------------------------+
+	|       1 byte     |  2 bytes   | 2 bytes |    Variable length     |
+	+------------------+------------+---------+------------------------+
+	| Protocol Command |  MessageId |  Length |  Message body (String) |
+	|       0x01       |   0x000A   |  0x0003 |         "1 2"          |
+	+------------------+------------+---------+------------------------+
+	                                          |        3 bytes         |
+    	                                      +------------------------+
 
 So message is always "1 byte + 2 bytes + 2 bytes + messageBody.length".
 
@@ -55,7 +55,7 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
 
 
 ## Response Codes
-Every response for any command will return message with command field 0x00. In case of loadProfile command it will be either requested info (user profile) either [response code](https://github.com/doom369/arduino-server/blob/master/server/src/main/java/com/ddumanskiy/arduino/common/enums/Response.java) message in case of error or in case of command that doesn't return anything (like saveProfile):
+Every response for any command will return message with command field 0x00. In case of loadProfile command it will be either requested info (user profile) either [response code](https://bitbucket.org/theblynk/blynk-server/src/a3861b0e9bcb9823bbb6dd2722500c55e197bbe6/common/src/main/java/cc/blynk/common/enums/Command.java?at=master) message in case of error or in case of command that doesn't return anything (like saveProfile):
 Response message structure:
 
 	    	       BEFORE DECODE
