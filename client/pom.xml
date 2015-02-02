@@ -10,14 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>client</artifactId>
-    <packaging>jar</packaging>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <finalName>client</finalName>
+                    <finalName>client-${project.version}</finalName>
                     <archive>
                         <manifest>
                             <mainClass>cc.blynk.client.Client</mainClass>
@@ -26,6 +25,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>
