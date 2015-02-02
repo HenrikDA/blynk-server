@@ -31,15 +31,14 @@ public class Server {
     public static void main(String[] args) throws Exception {
         // create Options object
         Options options = new Options();
-        options.addOption("port", false, "Server port.");
+        options.addOption("port", true, "Server port.");
         CommandLine cmd = new BasicParser().parse(options, args);
 
-        String host = cmd.getOptionValue("host", Config.DEFAULT_HOST);
         String portString = cmd.getOptionValue("port", String.valueOf(Config.DEFAULT_PORT));
 
         int port = ParseUtil.parsePortString(portString);
 
-        log.info("Using host : {}; port : {}", host, port);
+        log.info("Using port : {}", port);
 
         new Server(port).start();
     }

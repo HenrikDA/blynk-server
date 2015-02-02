@@ -43,8 +43,8 @@ public class Client {
     public static void main(String[] args) throws Exception {
         // create Options object
         Options options = new Options();
-        options.addOption("host", false, "Server host or ip.");
-        options.addOption("port", false, "Server port.");
+        options.addOption("host", true, "Server host or ip.");
+        options.addOption("port", true, "Server port.");
         CommandLine cmd = new BasicParser().parse(options, args);
 
         String host = cmd.getOptionValue("host", Config.DEFAULT_HOST);

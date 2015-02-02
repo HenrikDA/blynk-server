@@ -24,7 +24,7 @@ So message is always "1 byte + 2 bytes + 2 bytes + messageBody.length".
 
 ### Command field
 Unsigned byte.
-This is 1 byte field responsible for storing [command code](https://github.com/doom369/arduino-server/blob/master/common/src/main/java/com/ddumanskiy/arduino/common/enums/Command.java) from client, like login, ping, etc...
+This is 1 byte field responsible for storing [command code](https://bitbucket.org/theblynk/blynk-server/src/a3861b0e9bcb9823bbb6dd2722500c55e197bbe6/common/src/main/java/cc/blynk/common/enums/Command.java?at=master) from client, like login, ping, etc...
 
 ### Message Id field
 Unsigned short.
@@ -55,7 +55,7 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
 
 
 ## Response Codes
-Every response for any command will return message with command field 0x00. In case of loadProfile command it will be either requested info (user profile) either [response code](https://bitbucket.org/theblynk/blynk-server/src/a3861b0e9bcb9823bbb6dd2722500c55e197bbe6/common/src/main/java/cc/blynk/common/enums/Command.java?at=master) message in case of error or in case of command that doesn't return anything (like saveProfile):
+Every response for any command will return message with command field 0x00. In case of loadProfile command it will be either requested info (user profile) either [response code](https://bitbucket.org/theblynk/blynk-server/src/a3861b0e9bcb9823bbb6dd2722500c55e197bbe6/common/src/main/java/cc/blynk/common/enums/Response.java?at=master) message in case of error or in case of command that doesn't return anything (like saveProfile):
 Response message structure:
 
 	    	       BEFORE DECODE
