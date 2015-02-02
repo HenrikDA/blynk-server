@@ -1,0 +1,1 @@
+{"dashBoards":[{"id":6268235292044482245,"settings":{"boardType":"Uno"},"widgets":[{"y":0,"id":2948750487994149329,"type":"BUTTON","x":0,"label":"BUTTON"},{"y":6,"id":4396013099992412521,"type":"SLIDER","x":2,"label":"SLIDER"}]}]}

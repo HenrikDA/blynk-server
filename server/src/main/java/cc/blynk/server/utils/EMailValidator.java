@@ -1,4 +1,4 @@
-package cc.blynk.server.mail;
+package cc.blynk.server.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

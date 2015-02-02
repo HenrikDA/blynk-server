@@ -2,7 +2,7 @@ package cc.blynk.server.handlers;
 
 import cc.blynk.common.model.messages.protocol.RegisterMessage;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.mail.EMailValidator;
+import cc.blynk.server.utils.EMailValidator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
