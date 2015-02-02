@@ -4,6 +4,7 @@ import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.handlers.logging.LoggingHandler;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -18,11 +19,12 @@ import org.apache.logging.log4j.Logger;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class Server {
+public class Server implements Runnable {
 
     private static final Logger log = LogManager.getLogger(Server.class);
 
     private int port;
+    private ChannelFuture serverSocketFuture;
 
     public Server(int port) {
         this.port = port;
@@ -40,26 +42,32 @@ public class Server {
 
         log.info("Using port : {}", port);
 
-        new Server(port).start();
+        new Thread(new Server(port)).start();
     }
 
-
-    public void start() throws Exception {
+    @Override
+    public void run() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    //.handler(new LoggingHandler(LogLevel.INFO))
+                            //.handler(new LoggingHandler(LogLevel.INFO))
                     .handler(new LoggingHandler())
                     .childHandler(new ServerHandlersInitializer());
 
-            b.bind(port).sync().channel().closeFuture().sync();
+            serverSocketFuture = b.bind(port).sync();
+            serverSocketFuture.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            log.error(e);
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
     }
 
+    public void stop() {
+        serverSocketFuture.channel().close();
+    }
 }

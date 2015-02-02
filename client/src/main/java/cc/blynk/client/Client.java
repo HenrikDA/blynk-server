@@ -5,8 +5,10 @@ import cc.blynk.common.utils.ParseUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -54,21 +56,21 @@ public class Client {
 
         log.info("Using host : " + host + ", port : " + port);
 
-        new Client(host, port).start();
+        new Client(host, port).start(new ClientHandlersInitializer(), new BufferedReader(new InputStreamReader(System.in)));
     }
 
-    public void start() throws InterruptedException, IOException {
+    public void start(ChannelInitializer<SocketChannel> channelInitializer, BufferedReader commandInputStream) throws InterruptedException, IOException {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
             b.group(group)
                     .channel(NioSocketChannel.class)
-                    .handler(new ClientHandlersInitializer());
+                    .handler(channelInitializer);
 
             // Start the connection attempt.
             Channel clientChannel = b.connect(host, port).sync().channel();
 
-            readUserInput(clientChannel);
+            readUserInput(clientChannel, commandInputStream);
 
         } finally {
             // The connection is closed automatically on shutdown.
@@ -76,16 +78,16 @@ public class Client {
         }
     }
 
-    private void readUserInput(Channel clientChannel) throws IOException, InterruptedException {
+    private void readUserInput(Channel clientChannel, BufferedReader commandInputStream) throws IOException, InterruptedException {
         // Read commands from the stdin.
         ChannelFuture lastWriteFuture = null;
-        BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in));
 
         String line;
-        while ((line = consoleInput.readLine()) != null) {
+        while ((line = commandInputStream.readLine()) != null) {
             // If user typed the 'quit' command, wait until the server closes the connection.
             if ("quit".equals(line.toLowerCase())) {
-                clientChannel.closeFuture().sync();
+                log.info("Got 'quit' command. Shutting down.");
+                clientChannel.close();
                 break;
             }
 
