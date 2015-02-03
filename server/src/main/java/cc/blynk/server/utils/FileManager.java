@@ -77,19 +77,15 @@ public final class FileManager {
     }
 
     public boolean overrideUserFile(User user) {
-        log.info("1");
         Path file = generateFileName(user.getName());
         try (BufferedWriter writer = Files.newBufferedWriter(file, Config.DEFAULT_CHARSET)) {
-            log.info("2");
             String userString = user.toString();
 
-            log.info("3");
             writer.write(userString);
         } catch (IOException ioe) {
             log.error("Error writing file.", ioe);
             return false;
         }
-        log.info("4");
         return true;
     }
 

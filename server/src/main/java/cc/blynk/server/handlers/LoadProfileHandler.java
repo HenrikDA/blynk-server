@@ -27,7 +27,7 @@ public class LoadProfileHandler extends BaseSimpleChannelInboundHandler<LoadProf
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoadProfileMessage message) throws Exception {
-        User authUser = Session.findUserByChannel(ctx.channel());
+        User authUser = Session.findUserByChannel(ctx.channel(), message.id);
 
         String body = authUser.getUserProfile() == null ? "{}" : authUser.getUserProfile().toString();
         ctx.writeAndFlush(produce(message.id, message.command, body));

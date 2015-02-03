@@ -3,7 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.client.Client;
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
-import cc.blynk.common.model.messages.ResponseMessage;
+import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.Server;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelInitializer;
@@ -18,11 +18,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.OngoingStubbing;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Random;
 
+import static cc.blynk.common.enums.Command.GET_TOKEN;
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.mockito.Matchers.any;
@@ -46,6 +48,8 @@ public class ProtocolCommandsTest {
     @Mock
     private Random random;
 
+    private SimpleClientHandler responseMock;
+
     @BeforeClass
     public static void deleteDataFolder() throws IOException {
         FileManager fileManager = new FileManager();
@@ -67,60 +71,74 @@ public class ProtocolCommandsTest {
     }
 
     @Test
-    public void oneMethodOneCommandTestSuit() throws Exception {
-        SimpleClientHandler responseMock;
+    public void testAllCommandOneByOneTestSuit() throws Exception {
+        testQuitClient();
 
-        responseMock = Mockito.mock(SimpleClientHandler.class);
-        testQuitClient(responseMock);
+        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
 
-        responseMock = Mockito.mock(SimpleClientHandler.class);
-        testSendRegister(responseMock);
+        makeCommand(2, produce(2, OK), "login dmitriy@mail.ua 1", "quit");
 
-        responseMock = Mockito.mock(SimpleClientHandler.class);
-        testSendLogin(responseMock);
+        makeCommands(
+                new int[] {3,4},
+                new MessageBase[]{produce(3, OK), produce(4, GET_TOKEN, "12345678901234567890123456789012")}, //token is 32 length string
+                "login dmitriy@mail.ua 1", "getToken 1", "quit"
+        );
     }
 
-    private void testQuitClient(SimpleClientHandler responseMock) throws Exception {
+    private void testQuitClient() throws Exception {
+        responseMock = Mockito.mock(SimpleClientHandler.class);
         Client client = new Client("localhost", TEST_PORT, new Random());
         when(bufferedReader.readLine()).thenReturn("quit");
         client.start(new TestChannelInitializer(responseMock), bufferedReader);
         verify(responseMock, never()).channelRead(any(), any());
     }
 
-    private void testSendRegister(SimpleClientHandler responseMock) throws Exception {
+    /**
+     * Creates client socket, sends 1 command, sleeps for 100ms checks that sever response is OK.
+     */
+    private void makeCommand(int msgId, MessageBase responseMessage, String... commands) throws Exception {
+        responseMock = Mockito.mock(SimpleClientHandler.class);
         Client client = new Client("localhost", TEST_PORT, random);
 
-        int msgId = 10000;
         when(random.nextInt(Short.MAX_VALUE)).thenReturn(msgId);
 
-        when(bufferedReader.readLine()).thenReturn("register dmitriy@mail.ua 1").thenAnswer(invocation -> {
-            Thread.sleep(100);
-            return null;
-        });
+        OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
+        for (final String cmd : commands) {
+            ongoingStubbing = ongoingStubbing.thenAnswer(invocation -> {
+                Thread.sleep(100);
+                return cmd;
+            });
+        }
 
         client.start(new TestChannelInitializer(responseMock), bufferedReader);
 
-        ResponseMessage responseMessage = produce(msgId, OK);
-        verify(responseMock, times(1)).channelRead(any(), eq(responseMessage));
+        verify(responseMock).channelRead(any(), eq(responseMessage));
     }
 
-    private void testSendLogin(SimpleClientHandler responseMock) throws Exception {
+    private void makeCommands(int[] msgIds, MessageBase[] responseMessages, String... commands) throws Exception {
+        responseMock = Mockito.mock(SimpleClientHandler.class);
         Client client = new Client("localhost", TEST_PORT, random);
 
-        int msgId = 10000;
-        when(random.nextInt(Short.MAX_VALUE)).thenReturn(msgId);
+        OngoingStubbing<Integer> stubbingRandom = when(random.nextInt(Short.MAX_VALUE));
+        for (int messageId : msgIds) {
+            stubbingRandom = stubbingRandom.thenReturn(messageId);
+        }
 
-        when(bufferedReader.readLine()).thenReturn("login dmitriy@mail.ua 1").thenAnswer(invocation -> {
-            Thread.sleep(100);
-            return null;
-        });
+        OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
+        for (final String cmd : commands) {
+            ongoingStubbing = ongoingStubbing.thenAnswer(invocation -> {
+                Thread.sleep(100);
+                return cmd;
+            });
+        }
 
         client.start(new TestChannelInitializer(responseMock), bufferedReader);
 
-        ResponseMessage responseMessage = produce(msgId, OK);
-        verify(responseMock, times(1)).channelRead(any(), eq(responseMessage));
+        verify(responseMock, times(responseMessages.length)).channelRead(any(), any());
+        for (MessageBase messageBase : responseMessages) {
+            verify(responseMock).channelRead(any(), eq(messageBase));
+        }
     }
-
 
     private class TestChannelInitializer extends ChannelInitializer<SocketChannel> {
 

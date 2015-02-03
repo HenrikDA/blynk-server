@@ -3,13 +3,16 @@ package cc.blynk.server.handlers;
 import cc.blynk.common.model.messages.protocol.LoginMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
+import cc.blynk.server.exceptions.InvalidCommandFormatException;
+import cc.blynk.server.exceptions.InvalidTokenException;
+import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.group.Session;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static cc.blynk.common.enums.Response.*;
+import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
@@ -31,9 +34,7 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
         String[] messageParts = message.body.split(" ", 2);
 
         if (messageParts.length == 0) {
-            log.error("Wrong income message format.");
-            ctx.writeAndFlush(produce(message.id, INVALID_COMMAND_FORMAT));
-            return;
+            throw new InvalidCommandFormatException("Wrong income message format.", message.id);
         }
 
         if (messageParts.length == 1) {
@@ -51,8 +52,7 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
         User user = userRegistry.getByToken(token);
 
         if (user == null) {
-            ctx.writeAndFlush(produce(messageId, INVALID_TOKEN));
-            throw new IllegalArgumentException("Hardware token is invalid. Token '" + token + "', " + ctx.channel());
+            throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), messageId);
         }
 
         Session.addHardwareChannelToGroup(user, ctx.channel());
@@ -66,8 +66,7 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
 
         //todo fix pass validation
         if (user == null || !user.getPass().equals(pass)) {
-            ctx.writeAndFlush(produce(messageId, USER_NOT_AUTHENTICATED));
-            throw new IllegalArgumentException("User credentials are wrong. Username '" + userName + "', " + ctx.channel());
+            throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel()), messageId);
         }
 
         Session.addAppChannelToGroup(user, ctx.channel());

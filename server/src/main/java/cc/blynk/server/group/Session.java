@@ -1,6 +1,7 @@
 package cc.blynk.server.group;
 
 import cc.blynk.server.auth.User;
+import cc.blynk.server.exceptions.UserNotAuthenticated;
 import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +46,7 @@ public class Session {
         return group;
     }
 
-    public static User findUserByChannel(Channel channel) {
+    public static User findUserByChannel(Channel channel, int msgId) {
         for (Map.Entry<User, ChannelGroup> entry : bridgeGroup.entrySet()) {
             for (Channel groupChannel : entry.getValue().getAppChannels()) {
                 if (groupChannel == channel) {
@@ -53,7 +54,7 @@ public class Session {
                 }
             }
         }
-        return null;
+        throw new UserNotAuthenticated("User not logged.", msgId);
     }
 
 }

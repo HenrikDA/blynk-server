@@ -1,8 +1,14 @@
 package cc.blynk.server.handlers;
 
+import cc.blynk.common.enums.Command;
+import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.server.auth.UserRegistry;
+import cc.blynk.server.exceptions.BaseServerException;
 import cc.blynk.server.utils.FileManager;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -10,6 +16,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
  * Created on 2/3/2015.
  */
 public abstract class BaseSimpleChannelInboundHandler<I> extends SimpleChannelInboundHandler<I> {
+
+    private static final Logger log = LogManager.getLogger(BaseSimpleChannelInboundHandler.class);
 
     protected FileManager fileManager;
     protected UserRegistry userRegistry;
@@ -19,4 +27,18 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends SimpleChannelIn
         this.userRegistry = userRegistry;
     }
 
+    private static ResponseMessage produce(BaseServerException exception) {
+        return new ResponseMessage(exception.msgId, Command.RESPONSE, exception.errorCode);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        if (cause instanceof BaseServerException) {
+            BaseServerException baseServerException = (BaseServerException) cause;
+            log.error("{} MsgId : {}, Response code : {}", cause.getMessage(), baseServerException.msgId, baseServerException.errorCode);
+            ctx.writeAndFlush(produce(baseServerException));
+        } else {
+            log.error("Unexpected error!!!", cause);
+        }
+    }
 }

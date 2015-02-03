@@ -27,7 +27,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HardwareMessage message) throws Exception {
         //this means not authentificated attempt
-        User authUser = Session.findUserByChannel(ctx.channel());
+        User authUser = Session.findUserByChannel(ctx.channel(), message.id);
 
         ChannelGroup group = Session.getBridgeGroup().get(authUser);
 
