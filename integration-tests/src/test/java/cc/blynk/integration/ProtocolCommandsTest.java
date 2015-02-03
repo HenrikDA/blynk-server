@@ -1,18 +1,14 @@
 package cc.blynk.integration;
 
 import cc.blynk.client.Client;
-import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
-import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.Server;
+import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.FileManager;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.socket.SocketChannel;
+import cc.blynk.server.utils.JsonParser;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,10 +17,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.OngoingStubbing;
 
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
 import static cc.blynk.common.enums.Command.GET_TOKEN;
+import static cc.blynk.common.enums.Command.LOAD_PROFILE;
+import static cc.blynk.common.enums.Response.DEVICE_NOT_IN_NETWORK;
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.mockito.Matchers.any;
@@ -34,6 +32,10 @@ import static org.mockito.Mockito.*;
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/2/2015.
+ *
+ * Basic integration test. Allows to test base commands workflow. Thus netty is asynchronous
+ * test is little bit complex, but I don't know right now how to make it better and simpler.
+ *
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ProtocolCommandsTest {
@@ -50,14 +52,12 @@ public class ProtocolCommandsTest {
 
     private SimpleClientHandler responseMock;
 
-    @BeforeClass
-    public static void deleteDataFolder() throws IOException {
-        FileManager fileManager = new FileManager();
-        FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
-    }
 
     @Before
     public void init() throws Exception {
+        FileManager fileManager = new FileManager();
+        FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
+
         server = new Server(TEST_PORT);
         new Thread(server).start();
 
@@ -71,9 +71,13 @@ public class ProtocolCommandsTest {
     }
 
     @Test
-    public void testAllCommandOneByOneTestSuit() throws Exception {
+    public void testQuit() throws Exception {
         testQuitClient();
+    }
 
+    @Test
+    //all commands together cause all operations requires register and then login =(.
+    public void testAllCommandOneByOneTestSuit() throws Exception {
         makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
 
         makeCommand(2, produce(2, OK), "login dmitriy@mail.ua 1", "quit");
@@ -83,6 +87,53 @@ public class ProtocolCommandsTest {
                 new MessageBase[]{produce(3, OK), produce(4, GET_TOKEN, "12345678901234567890123456789012")}, //token is 32 length string
                 "login dmitriy@mail.ua 1", "getToken 1", "quit"
         );
+
+        makeCommands(
+                new int[] {5,6},
+                new MessageBase[]{produce(5, OK), produce(6, LOAD_PROFILE, "{}")}, //token is 32 length string
+                "login dmitriy@mail.ua 1", "loadProfile", "quit"
+        );
+
+        String userProfileString = readTestUserProfile();
+
+        makeCommands(
+                new int[] {7,8},
+                new MessageBase[]{produce(7, OK), produce(8, OK)}, //token is 32 length string
+                "login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "quit"
+        );
+
+        makeCommands(
+                new int[] {9,10, 11},
+                new MessageBase[]{produce(9, OK), produce(10, OK), produce(11, LOAD_PROFILE, userProfileString)}, //token is 32 length string
+                "login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "loadProfile", "quit"
+        );
+
+    }
+
+    @Test
+    public void testHardwareNotInNetwork() throws Exception {
+        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+
+        makeCommands(
+                new int[] {2, 3},
+                new MessageBase[]{produce(2, OK), produce(3, DEVICE_NOT_IN_NETWORK)},
+                "login dmitriy@mail.ua 1", "hardware 1 1", "quit"
+        );
+
+    }
+
+
+    @Test
+    //all commands together cause all operations requires register and then login =(.
+    public void testPingDeviceNotInNetwork() throws Exception {
+        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+
+        makeCommands(
+                new int[] {2, 3},
+                new MessageBase[]{produce(2, OK), produce(3, DEVICE_NOT_IN_NETWORK)},
+                "login dmitriy@mail.ua 1", "ping", "quit"
+        );
+
     }
 
     private void testQuitClient() throws Exception {
@@ -140,24 +191,10 @@ public class ProtocolCommandsTest {
         }
     }
 
-    private class TestChannelInitializer extends ChannelInitializer<SocketChannel> {
-
-        SimpleClientHandler responseMock;
-
-        public TestChannelInitializer(SimpleClientHandler responseMock) {
-            this.responseMock = responseMock;
-        }
-
-        @Override
-        protected void initChannel(SocketChannel ch) throws Exception {
-            ChannelPipeline pipeline = ch.pipeline();
-            //process input
-            pipeline.addLast(new ReplayingMessageDecoder());
-            //process output
-            pipeline.addLast(new DeviceMessageEncoder());
-
-            pipeline.addLast(responseMock);
-        }
+    private String readTestUserProfile() {
+        InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
+        UserProfile userProfile = JsonParser.parseProfile(is);
+        return userProfile.toString();
     }
 
 }

@@ -35,7 +35,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends SimpleChannelIn
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if (cause instanceof BaseServerException) {
             BaseServerException baseServerException = (BaseServerException) cause;
-            log.error("{} MsgId : {}, Response code : {}", cause.getMessage(), baseServerException.msgId, baseServerException.errorCode);
+            log.error(cause.getMessage(), cause);
             ctx.writeAndFlush(produce(baseServerException));
         } else {
             log.error("Unexpected error!!!", cause);

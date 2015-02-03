@@ -41,6 +41,7 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
         pipeline.addLast(new LoadProfileHandler(fileManager, userRegistry));
         pipeline.addLast(new SaveProfileHandler(fileManager, userRegistry));
         pipeline.addLast(new HardwareHandler(fileManager, userRegistry));
+        pipeline.addLast(new PingHandler(fileManager, userRegistry));
     }
 }
 

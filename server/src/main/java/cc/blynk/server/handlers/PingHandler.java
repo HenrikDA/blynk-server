@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers;
 
-import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.group.ChannelGroup;
 import cc.blynk.server.group.Session;
@@ -21,24 +21,28 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMessage> {
+public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
 
-    private static final Logger log = LogManager.getLogger(HardwareHandler.class);
+    private static final Logger log = LogManager.getLogger(PingHandler.class);
 
-    public HardwareHandler(FileManager fileManager, UserRegistry userRegistry) {
+    public PingHandler(FileManager fileManager, UserRegistry userRegistry) {
         super(fileManager, userRegistry);
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, HardwareMessage message) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, PingMessage message) throws Exception {
         ChannelGroup group = Session.getUserGroup(ctx.channel(), message.id);
-
-        //todo
-        //for hardware command do not wait for hardware response.
         List<ChannelFuture> futures = group.sendMessageToHardware(ctx, message);
-        ctx.channel().writeAndFlush(produce(message.id, OK));
 
+        int length = futures.size();
+        //todo works for now only for 1 hardware, not for many
+        for (ChannelFuture future : futures) {
+            future.addListener(future1 -> {
+                ctx.channel().writeAndFlush(produce(message.id, OK));
+            });
+        }
     }
+
 
 
 }

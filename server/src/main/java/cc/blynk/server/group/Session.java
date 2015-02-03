@@ -15,11 +15,7 @@ public class Session {
 
     private static Map<User, ChannelGroup> bridgeGroup = new ConcurrentHashMap<>();
 
-    private static Map<Channel, User> channelToken = new ConcurrentHashMap();
-
-    public static Map<User, ChannelGroup> getBridgeGroup() {
-        return bridgeGroup;
-    }
+    private static Map<Channel, User> channelToken = new ConcurrentHashMap<>();
 
     public static void addAppChannelToGroup(User user, Channel channel) {
         ChannelGroup group = getUserGroup(user);
@@ -33,17 +29,9 @@ public class Session {
         channelToken.put(channel, user);
     }
 
-    //todo synchronized?
-    private static ChannelGroup getUserGroup(User user) {
-        ChannelGroup group = Session.bridgeGroup.get(user);
-        //only one side came
-        if (group == null) {
-            log.info("Creating unique group for user: {}", user);
-            group = new ChannelGroup();
-            Session.bridgeGroup.put(user, group);
-        }
-
-        return group;
+    public static ChannelGroup getUserGroup(Channel channel, int messageId) {
+        User user = findUserByChannel(channel, messageId);
+        return bridgeGroup.get(user);
     }
 
     public static User findUserByChannel(Channel channel, int msgId) {
@@ -55,6 +43,19 @@ public class Session {
             }
         }
         throw new UserNotAuthenticated("User not logged.", msgId);
+    }
+
+    //todo synchronized?
+    private static ChannelGroup getUserGroup(User user) {
+        ChannelGroup group = Session.bridgeGroup.get(user);
+        //only one side came
+        if (group == null) {
+            log.info("Creating unique group for user: {}", user);
+            group = new ChannelGroup();
+            Session.bridgeGroup.put(user, group);
+        }
+
+        return group;
     }
 
 }

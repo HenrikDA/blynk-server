@@ -1,5 +1,8 @@
 package cc.blynk.common.model.messages;
 
+import cc.blynk.common.enums.Command;
+import cc.blynk.common.enums.Response;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -14,7 +17,7 @@ public class ResponseMessage extends MessageBase {
     @Override
     public String toString() {
         return "ResponseMessage{id=" + id +
-                ", command=" + command +
-                ", responseCode=" + length + "}";
+                ", command=" + Command.getNameByValue(command) +
+                ", responseCode=" + Response.getNameByValue(length) + "}";
     }
 }

@@ -1,5 +1,9 @@
 package cc.blynk.common.enums;
 
+import cc.blynk.common.utils.ReflectionUtil;
+
+import java.util.Map;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -18,4 +22,13 @@ public final class Response {
     public static final int INVALID_TOKEN = 9;
     public static final int SERVER_ERROR = 10;
 
+
+
+    //all this code just to make logging more user-friendly
+    private static Map<Integer, String> valuesName = ReflectionUtil.generateMapOfValueNameInteger(Response.class);
+
+    public static String getNameByValue(int val) {
+        return valuesName.get(val);
+    }
+    //--------------------------------------------------------
 }

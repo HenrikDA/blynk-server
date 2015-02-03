@@ -1,6 +1,7 @@
 package cc.blynk.server.group;
 
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,11 +9,9 @@ import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-
-import static cc.blynk.common.enums.Response.DEVICE_NOT_IN_NETWORK;
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
  * The Blynk Project.
@@ -42,19 +41,17 @@ public class ChannelGroup {
     }
 
     //todo for now - simplest possible implementation
-    public void sendMessageToHardware(final ChannelHandlerContext ctx, MessageBase message) {
+    //todo expect right n
+    public List<ChannelFuture> sendMessageToHardware(final ChannelHandlerContext ctx, MessageBase message) {
         if (hardwareSize() == 0) {
-            log.warn("No devices in session.");
-            ctx.writeAndFlush(produce(message.id, DEVICE_NOT_IN_NETWORK));
-            return;
+            throw new DeviceNotInNetworkException("No devices in session.", message.id);
         }
+        List<ChannelFuture> futureList = new ArrayList<>();
         for (Channel hardwareChannel : hardwareChannels) {
             log.debug("Sending {} to {}", message, hardwareChannel);
-            ChannelFuture future = hardwareChannel.writeAndFlush(message);
-            future.addListener(future1 -> {
-                ctx.channel().writeAndFlush(produce(message.id, OK));
-            });
+            futureList.add(hardwareChannel.writeAndFlush(message));
         }
+        return futureList;
     }
 
     public int hardwareSize() {

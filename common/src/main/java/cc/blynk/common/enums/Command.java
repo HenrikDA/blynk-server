@@ -1,5 +1,9 @@
 package cc.blynk.common.enums;
 
+import cc.blynk.common.utils.ReflectionUtil;
+
+import java.util.Map;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -24,5 +28,12 @@ public final class Command {
     public static final short HARDWARE_COMMAND = 20;
     //------------------------------------------
 
+    //all this code just to make logging more user-friendly
+    private static Map<Short, String> valuesName = ReflectionUtil.generateMapOfValueNameShort(Command.class);
+
+    public static String getNameByValue(short val) {
+        return valuesName.get(val);
+    }
+    //--------------------------------------------------------
 
 }

@@ -29,7 +29,8 @@ public class MessageFactory {
             case REGISTER :
                 return new RegisterMessage(messageId, body);
 
-            default: throw new RuntimeException("Wrong message.");
+            //todo app specific exception?
+            default: throw new RuntimeException(String.format("Command with code %d not supported message.", command));
         }
     }
 

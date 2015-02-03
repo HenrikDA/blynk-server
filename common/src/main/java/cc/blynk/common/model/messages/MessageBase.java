@@ -1,5 +1,7 @@
 package cc.blynk.common.model.messages;
 
+import cc.blynk.common.enums.Command;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -29,7 +31,7 @@ public abstract class MessageBase {
     @Override
     public String toString() {
         return "id=" + id +
-                ", command=" + command +
+                ", command=" + Command.getNameByValue(command) +
                 ", length=" + length;
     }
 
