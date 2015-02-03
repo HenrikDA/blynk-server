@@ -2,6 +2,7 @@ package cc.blynk.server;
 
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
+import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.handlers.logging.LoggingHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -28,6 +29,7 @@ public class Server implements Runnable {
 
     public Server(int port) {
         this.port = port;
+        init();
     }
 
     public static void main(String[] args) throws Exception {
@@ -43,6 +45,13 @@ public class Server implements Runnable {
         log.info("Using port : {}", port);
 
         new Thread(new Server(port)).start();
+    }
+
+    private void init() {
+        log.debug("Reading user DB.");
+        //reading DB to RAM.
+        UserRegistry.init();
+        log.debug("Reading user DB finished.");
     }
 
     @Override

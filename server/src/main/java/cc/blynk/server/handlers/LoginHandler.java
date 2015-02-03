@@ -58,7 +58,6 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass) {
         String userName = username.toLowerCase();
-
         User user = UserRegistry.getByName(userName);
 
         //todo fix pass validation

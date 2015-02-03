@@ -1,9 +1,9 @@
 package cc.blynk.integration;
 
 import cc.blynk.client.Client;
-import cc.blynk.client.SimpleClientHandler;
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
+import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.server.Server;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -13,10 +13,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
+import java.util.Random;
 
+import static cc.blynk.common.enums.Response.OK;
+import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -36,7 +40,10 @@ public class ProtocolCommandsTest {
     private BufferedReader bufferedReader;
 
     @Mock
-    private SimpleClientHandler responseMock;
+    private Random random;
+
+    @Spy
+    private BlockingSimpleClientHandler responseMock = new BlockingSimpleClientHandler();
 
     @Before
     public void init() throws Exception {
@@ -54,8 +61,7 @@ public class ProtocolCommandsTest {
 
     @Test
     public void testQuitClient() throws Exception {
-        Client client = new Client("localhost", TEST_PORT);
-
+        Client client = new Client("localhost", TEST_PORT, new Random());
         when(bufferedReader.readLine()).thenReturn("quit");
         client.start(new TestChannelInitializer(), bufferedReader);
         verify(responseMock, never()).acceptInboundMessage(any());
@@ -63,11 +69,20 @@ public class ProtocolCommandsTest {
 
     @Test
     public void testSendLogin() throws Exception {
-        Client client = new Client("localhost", TEST_PORT);
+        Client client = new Client("localhost", TEST_PORT, random);
 
-        when(bufferedReader.readLine()).thenReturn("login dima@mail.ru 1").thenReturn(null);
+        int msgId = 10000;
+        when(random.nextInt(Short.MAX_VALUE)).thenReturn(msgId);
+
+        when(bufferedReader.readLine()).thenReturn("login dima@mail.ru 1").thenAnswer(invocation -> {
+            Thread.sleep(100);
+            return null;
+        });
+
         client.start(new TestChannelInitializer(), bufferedReader);
-        verify(responseMock, times(1)).channelRead0(any(), any());
+
+        ResponseMessage responseMessage = produce(msgId, OK);
+        verify(responseMock, times(1)).channelRead0(any(), eq(responseMessage));
     }
 
 
