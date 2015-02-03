@@ -9,18 +9,18 @@ import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Random;
 
 import static cc.blynk.common.enums.Response.OK;
@@ -46,13 +46,10 @@ public class ProtocolCommandsTest {
     @Mock
     private Random random;
 
-    @Spy
-    private BlockingSimpleClientHandler responseMock = new BlockingSimpleClientHandler();
-
     @BeforeClass
     public static void deleteDataFolder() throws IOException {
         FileManager fileManager = new FileManager();
-        Files.delete(fileManager.getDataDir());
+        FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
     }
 
     @Before
@@ -70,33 +67,69 @@ public class ProtocolCommandsTest {
     }
 
     @Test
-    public void testQuitClient() throws Exception {
-        Client client = new Client("localhost", TEST_PORT, new Random());
-        when(bufferedReader.readLine()).thenReturn("quit");
-        client.start(new TestChannelInitializer(), bufferedReader);
-        verify(responseMock, never()).acceptInboundMessage(any());
+    public void oneMethodOneCommandTestSuit() throws Exception {
+        SimpleClientHandler responseMock;
+
+        responseMock = Mockito.mock(SimpleClientHandler.class);
+        testQuitClient(responseMock);
+
+        responseMock = Mockito.mock(SimpleClientHandler.class);
+        testSendRegister(responseMock);
+
+        responseMock = Mockito.mock(SimpleClientHandler.class);
+        testSendLogin(responseMock);
     }
 
-    @Test
-    public void testSendLogin() throws Exception {
+    private void testQuitClient(SimpleClientHandler responseMock) throws Exception {
+        Client client = new Client("localhost", TEST_PORT, new Random());
+        when(bufferedReader.readLine()).thenReturn("quit");
+        client.start(new TestChannelInitializer(responseMock), bufferedReader);
+        verify(responseMock, never()).channelRead(any(), any());
+    }
+
+    private void testSendRegister(SimpleClientHandler responseMock) throws Exception {
         Client client = new Client("localhost", TEST_PORT, random);
 
         int msgId = 10000;
         when(random.nextInt(Short.MAX_VALUE)).thenReturn(msgId);
 
-        when(bufferedReader.readLine()).thenReturn("login dima@mail.ru 1").thenAnswer(invocation -> {
+        when(bufferedReader.readLine()).thenReturn("register dmitriy@mail.ua 1").thenAnswer(invocation -> {
             Thread.sleep(100);
             return null;
         });
 
-        client.start(new TestChannelInitializer(), bufferedReader);
+        client.start(new TestChannelInitializer(responseMock), bufferedReader);
 
         ResponseMessage responseMessage = produce(msgId, OK);
-        verify(responseMock, times(1)).channelRead0(any(), eq(responseMessage));
+        verify(responseMock, times(1)).channelRead(any(), eq(responseMessage));
+    }
+
+    private void testSendLogin(SimpleClientHandler responseMock) throws Exception {
+        Client client = new Client("localhost", TEST_PORT, random);
+
+        int msgId = 10000;
+        when(random.nextInt(Short.MAX_VALUE)).thenReturn(msgId);
+
+        when(bufferedReader.readLine()).thenReturn("login dmitriy@mail.ua 1").thenAnswer(invocation -> {
+            Thread.sleep(100);
+            return null;
+        });
+
+        client.start(new TestChannelInitializer(responseMock), bufferedReader);
+
+        ResponseMessage responseMessage = produce(msgId, OK);
+        verify(responseMock, times(1)).channelRead(any(), eq(responseMessage));
     }
 
 
     private class TestChannelInitializer extends ChannelInitializer<SocketChannel> {
+
+        SimpleClientHandler responseMock;
+
+        public TestChannelInitializer(SimpleClientHandler responseMock) {
+            this.responseMock = responseMock;
+        }
+
         @Override
         protected void initChannel(SocketChannel ch) throws Exception {
             ChannelPipeline pipeline = ch.pipeline();

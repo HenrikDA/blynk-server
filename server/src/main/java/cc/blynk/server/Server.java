@@ -5,6 +5,7 @@ import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.handlers.logging.LoggingHandler;
 import cc.blynk.server.utils.FileManager;
+import cc.blynk.server.utils.JsonParser;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
@@ -37,6 +38,8 @@ public class Server implements Runnable {
         log.debug("Reading user DB.");
         this.userRegistry = new UserRegistry(fileManager);
         log.debug("Reading user DB finished.");
+
+        JsonParser.init();
     }
 
     public static void main(String[] args) throws Exception {

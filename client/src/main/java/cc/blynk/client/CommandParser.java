@@ -6,6 +6,8 @@ import static cc.blynk.common.enums.Command.*;
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
+ *
+ * Convertor between user-friendly command and protocol command code
  */
 public class CommandParser {
 

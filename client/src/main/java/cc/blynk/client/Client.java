@@ -59,7 +59,7 @@ public class Client {
         new Client(host, port, new Random()).start(new ClientHandlersInitializer(), new BufferedReader(new InputStreamReader(System.in)));
     }
 
-    public void start(ChannelInitializer<SocketChannel> channelInitializer, BufferedReader commandInputStream) throws InterruptedException, IOException {
+    public void start(ChannelInitializer<SocketChannel> channelInitializer, BufferedReader commandInputStream) {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -70,16 +70,21 @@ public class Client {
             // Start the connection attempt.
             Channel clientChannel = b.connect(host, port).sync().channel();
 
-            readUserInput(clientChannel, commandInputStream);
+            ChannelFuture lastWriteFuture = readUserInput(clientChannel, commandInputStream);
+            //wait last send command to finish.
+            if (lastWriteFuture != null) {
+                lastWriteFuture.sync();
+            }
 
+        } catch (IOException | InterruptedException e) {
+            log.error("Error running client. Shutting down.", e);
         } finally {
             // The connection is closed automatically on shutdown.
             group.shutdownGracefully();
         }
     }
 
-    private void readUserInput(Channel clientChannel, BufferedReader commandInputStream) throws IOException, InterruptedException {
-        // Read commands from the stdin.
+    private ChannelFuture readUserInput(Channel clientChannel, BufferedReader commandInputStream) throws IOException {
         ChannelFuture lastWriteFuture = null;
 
         String line;
@@ -107,10 +112,7 @@ public class Client {
             lastWriteFuture = clientChannel.writeAndFlush(produce((short) random.nextInt(Short.MAX_VALUE), command, body));
         }
 
-        // Wait until all messages are flushed before closing the channel.
-        if (lastWriteFuture != null) {
-            lastWriteFuture.sync();
-        }
+        return lastWriteFuture;
     }
 
 }

@@ -20,12 +20,16 @@ public final class JsonParser {
     private static final Logger log = LogManager.getLogger(JsonParser.class);
 
     //it is threadsafe
-    private static ObjectMapper mapper = new ObjectMapper()
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+    private static ObjectMapper mapper;
 
     private JsonParser() {
 
+    }
+
+    public static void init() {
+        mapper = new ObjectMapper()
+                .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     }
 
     public static String toJson(Object object) {

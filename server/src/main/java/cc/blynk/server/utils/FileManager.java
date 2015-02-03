@@ -9,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -74,31 +73,23 @@ public final class FileManager {
      * @return true in case of success
      */
     public boolean saveNewUserToFile(User user) {
-        createFile(user.getName());
-
         return overrideUserFile(user);
     }
 
-    private void createFile(String userName) {
-        try {
-            Path file = generateFileName(userName);
-            Files.createFile(file);
-        } catch (FileAlreadyExistsException fae) {
-            log.error("File already exists. Should never happen. User : {}", userName);
-        } catch (IOException ioe) {
-            log.error("Error creating temp file.", ioe);
-        }
-    }
-
     public boolean overrideUserFile(User user) {
+        log.info("1");
         Path file = generateFileName(user.getName());
         try (BufferedWriter writer = Files.newBufferedWriter(file, Config.DEFAULT_CHARSET)) {
-            writer.write(user.toString());
+            log.info("2");
+            String userString = user.toString();
+
+            log.info("3");
+            writer.write(userString);
         } catch (IOException ioe) {
             log.error("Error writing file.", ioe);
             return false;
         }
-
+        log.info("4");
         return true;
     }
 
