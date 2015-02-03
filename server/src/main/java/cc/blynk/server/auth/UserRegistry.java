@@ -15,33 +15,37 @@ import java.util.concurrent.ConcurrentHashMap;
  * Date: 8/11/13
  * Time: 4:02 PM
  */
-public final class UserRegistry {
+public class UserRegistry {
 
     private static final Logger log = LogManager.getLogger(UserRegistry.class);
-    private static final ConcurrentHashMap<String, User> users;
+    private ConcurrentHashMap<String, User> users;
+    private FileManager fileManager;
     //init user DB if possible
-    static {
-        users = FileManager.deserialize();
+
+    public UserRegistry(FileManager fileManager) {
+        this.fileManager = fileManager;
+        //reading DB to RAM.
+        users = fileManager.deserialize();
     }
 
-    private UserRegistry() {
-
+    private static String generateNewToken() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
-    public static boolean isUserExists(String name) {
+    public boolean isUserExists(String name) {
         return users.get(name) != null;
     }
 
-    public static User getByName(String name) {
+    public User getByName(String name) {
         return users.get(name);
     }
 
-    public static ConcurrentHashMap<String, User> getUsers() {
+    public ConcurrentHashMap<String, User> getUsers() {
         return users;
     }
 
     //todo optimize
-    public static User getByToken(String token) {
+    public User getByToken(String token) {
         for (User user : users.values()) {
             for (String userToken : user.getDashTokens().values()) {
                 if (userToken.equals(token)) {
@@ -52,7 +56,7 @@ public final class UserRegistry {
         return null;
     }
 
-    public static String getToken(User user, Long dashboardId) {
+    public String getToken(User user, Long dashboardId) {
         Map<Long, String> dashTokens = user.getDashTokens();
         String token = dashTokens.get(dashboardId);
 
@@ -62,7 +66,7 @@ public final class UserRegistry {
             token = generateNewToken();
             log.info("Generated token for user {} and dashId {} is {}.", user.getName(), dashboardId, token);
             user.getDashTokens().put(dashboardId, token);
-            FileManager.overrideUserFile(user);
+            fileManager.overrideUserFile(user);
         } else {
             log.info("Token for user {} and dashId {} generated already. Token {}", user.getName(), dashboardId, token);
         }
@@ -70,18 +74,14 @@ public final class UserRegistry {
         return token;
     }
 
-    private static String generateNewToken() {
-        return UUID.randomUUID().toString().replace("-", "");
-    }
-
-    public static User createNewUser(String userName, String pass) {
+    public User createNewUser(String userName, String pass) {
         User newUser = new User(userName, pass);
 
         users.put(userName, newUser);
 
         //todo, yes this not optimal solution, but who cares?
         //todo this may be moved to separate thread
-        FileManager.saveNewUserToFile(newUser);
+        fileManager.saveNewUserToFile(newUser);
         return newUser;
     }
 

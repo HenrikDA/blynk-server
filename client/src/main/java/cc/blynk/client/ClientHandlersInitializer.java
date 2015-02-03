@@ -37,7 +37,5 @@ public class ClientHandlersInitializer extends ChannelInitializer<SocketChannel>
 
         //process output
         pipeline.addLast(new DeviceMessageEncoder());
-
-        pipeline.addLast(new SimpleClientHandler());
     }
 }

@@ -4,8 +4,8 @@ import cc.blynk.common.model.messages.protocol.GetTokenMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.group.Session;
+import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,9 +18,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-public class GetTokenHandler extends SimpleChannelInboundHandler<GetTokenMessage> {
+public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMessage> {
 
     private static final Logger log = LogManager.getLogger(GetTokenHandler.class);
+
+    public GetTokenHandler(FileManager fileManager, UserRegistry userRegistry) {
+        super(fileManager, userRegistry);
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, GetTokenMessage message) throws Exception {
@@ -36,7 +40,7 @@ public class GetTokenHandler extends SimpleChannelInboundHandler<GetTokenMessage
         }
 
         User user = Session.findUserByChannel(ctx.channel());
-        String token = UserRegistry.getToken(user, dashBoardId);
+        String token = userRegistry.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
     }

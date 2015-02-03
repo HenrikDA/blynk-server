@@ -8,10 +8,12 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,13 +25,47 @@ public final class FileManager {
 
     private static final Logger log = LogManager.getLogger(FileManager.class);
 
-    private static final Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"));
+    private final Path dataDir;
 
-    private FileManager() {
+    public FileManager() {
+        Properties properties = new Properties();
+        try (InputStream is = FileManager.class.getResourceAsStream("/server.properties")) {
+            properties.load(is);
+        } catch (IOException ioe) {
+            log.error("Cannot read server.properties file.");
+        }
+
+        String dataFolder = properties.getProperty("data.folder") == null ?
+                System.getProperty("java.io.tmpdir") :
+                properties.getProperty("data.folder");
+
+        dataDir = Paths.get(dataFolder);
+        try {
+            Files.createDirectories(dataDir);
+        } catch (IOException ioe) {
+            log.error("Error creating data folders '{}'", dataFolder);
+            throw new RuntimeException("Error creating data folders.");
+        }
+        log.info("Data dir {}", dataFolder);
     }
 
-    public static Path generateFileName(String userName) {
-        return Paths.get(System.getProperty("java.io.tmpdir"), "u_" + userName + ".user");
+    private static User readUserFromFile(Path path) {
+        try (BufferedReader reader = Files.newBufferedReader(path, Config.DEFAULT_CHARSET)) {
+            String userString = reader.readLine();
+            return JsonParser.parseUser(userString);
+        } catch (IOException ioe) {
+            log.error("Error reading temp file.", ioe);
+        }
+
+        return null;
+    }
+
+    public Path getDataDir() {
+        return dataDir;
+    }
+
+    public Path generateFileName(String userName) {
+        return Paths.get(dataDir.toString(), "u_" + userName + ".user");
     }
 
     /**
@@ -37,13 +73,13 @@ public final class FileManager {
      * @param user - user to save
      * @return true in case of success
      */
-    public static boolean saveNewUserToFile(User user) {
+    public boolean saveNewUserToFile(User user) {
         createFile(user.getName());
 
         return overrideUserFile(user);
     }
 
-    private static void createFile(String userName) {
+    private void createFile(String userName) {
         try {
             Path file = generateFileName(userName);
             Files.createFile(file);
@@ -54,7 +90,7 @@ public final class FileManager {
         }
     }
 
-    public static boolean overrideUserFile(User user) {
+    public boolean overrideUserFile(User user) {
         Path file = generateFileName(user.getName());
         try (BufferedWriter writer = Files.newBufferedWriter(file, Config.DEFAULT_CHARSET)) {
             writer.write(user.toString());
@@ -66,12 +102,12 @@ public final class FileManager {
         return true;
     }
 
-    public static ConcurrentHashMap<String, User> deserialize() {
+    public ConcurrentHashMap<String, User> deserialize() {
         Finder finder = new Finder("u_*.user");
 
 
         try {
-            Files.walkFileTree(tempDir, finder);
+            Files.walkFileTree(dataDir, finder);
         } catch (IOException e) {
             log.error("Error reading tmp files.", e);
         }
@@ -85,17 +121,6 @@ public final class FileManager {
         }
 
         return users;
-    }
-
-    private static User readUserFromFile(Path path) {
-        try (BufferedReader reader = Files.newBufferedReader(path, Config.DEFAULT_CHARSET)) {
-            String userString = reader.readLine();
-            return JsonParser.parseUser(userString);
-        } catch (IOException ioe) {
-            log.error("Error reading temp file.", ioe);
-        }
-
-        return null;
     }
 
 }

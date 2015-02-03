@@ -2,12 +2,12 @@ package cc.blynk.server.handlers;
 
 import cc.blynk.common.model.messages.protocol.SaveProfileMessage;
 import cc.blynk.server.auth.User;
+import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.group.Session;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.FileManager;
 import cc.blynk.server.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,9 +20,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-public class SaveProfileHandler extends SimpleChannelInboundHandler<SaveProfileMessage> {
+public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProfileMessage> {
 
     private static final Logger log = LogManager.getLogger(SaveProfileHandler.class);
+
+    public SaveProfileHandler(FileManager fileManager, UserRegistry userRegistry) {
+        super(fileManager, userRegistry);
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, SaveProfileMessage message) throws Exception {
@@ -48,7 +52,7 @@ public class SaveProfileHandler extends SimpleChannelInboundHandler<SaveProfileM
         User authUser = Session.findUserByChannel(ctx.channel());
 
         authUser.setUserProfile(userProfile);
-        boolean profileSaved = FileManager.overrideUserFile(authUser);
+        boolean profileSaved = fileManager.overrideUserFile(authUser);
 
         if (profileSaved) {
             ctx.writeAndFlush(produce(message.id, OK));

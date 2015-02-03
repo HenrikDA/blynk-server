@@ -32,4 +32,26 @@ public abstract class MessageBase {
                 ", command=" + command +
                 ", length=" + length;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MessageBase that = (MessageBase) o;
+
+        if (command != that.command) return false;
+        if (id != that.id) return false;
+        if (length != that.length) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) command;
+        result = 31 * result + id;
+        result = 31 * result + length;
+        return result;
+    }
 }

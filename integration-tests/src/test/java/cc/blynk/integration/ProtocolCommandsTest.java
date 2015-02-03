@@ -5,11 +5,13 @@ import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.server.Server;
+import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -17,6 +19,8 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Random;
 
 import static cc.blynk.common.enums.Response.OK;
@@ -44,6 +48,12 @@ public class ProtocolCommandsTest {
 
     @Spy
     private BlockingSimpleClientHandler responseMock = new BlockingSimpleClientHandler();
+
+    @BeforeClass
+    public static void deleteDataFolder() throws IOException {
+        FileManager fileManager = new FileManager();
+        Files.delete(fileManager.getDataDir());
+    }
 
     @Before
     public void init() throws Exception {

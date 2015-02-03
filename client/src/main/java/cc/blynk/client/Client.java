@@ -32,14 +32,14 @@ public class Client {
 
     private static final Logger log = LogManager.getLogger(Client.class);
 
-    private final Random random = new Random();
-
     private final String host;
     private final int port;
+    private final Random random;
 
-    public Client(String host, int port) {
+    public Client(String host, int port, Random messageIdGenerator) {
         this.host = host;
         this.port = port;
+        this.random = messageIdGenerator;
     }
 
     public static void main(String[] args) throws Exception {
@@ -56,7 +56,7 @@ public class Client {
 
         log.info("Using host : " + host + ", port : " + port);
 
-        new Client(host, port).start(new ClientHandlersInitializer(), new BufferedReader(new InputStreamReader(System.in)));
+        new Client(host, port, new Random()).start(new ClientHandlersInitializer(), new BufferedReader(new InputStreamReader(System.in)));
     }
 
     public void start(ChannelInitializer<SocketChannel> channelInitializer, BufferedReader commandInputStream) throws InterruptedException, IOException {

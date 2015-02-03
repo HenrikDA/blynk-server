@@ -4,8 +4,8 @@ import cc.blynk.common.model.messages.protocol.LoginMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.group.Session;
+import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,9 +18,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
+public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> {
 
     private static final Logger log = LogManager.getLogger(LoginHandler.class);
+
+    public LoginHandler(FileManager fileManager, UserRegistry userRegistry) {
+        super(fileManager, userRegistry);
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
@@ -44,7 +48,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     ///todo optimize/simplify
     private void hardwareLogin(ChannelHandlerContext ctx, int messageId, String token) {
-        User user = UserRegistry.getByToken(token);
+        User user = userRegistry.getByToken(token);
 
         if (user == null) {
             ctx.writeAndFlush(produce(messageId, INVALID_TOKEN));
@@ -58,7 +62,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass) {
         String userName = username.toLowerCase();
-        User user = UserRegistry.getByName(userName);
+        User user = userRegistry.getByName(userName);
 
         //todo fix pass validation
         if (user == null || !user.getPass().equals(pass)) {

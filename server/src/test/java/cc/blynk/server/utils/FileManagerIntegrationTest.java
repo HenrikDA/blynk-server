@@ -21,35 +21,37 @@ public class FileManagerIntegrationTest {
     private User user1 = new User("name1", "pass1");
     private User user2 = new User("name2", "pass2");
 
+    private FileManager fileManager = new FileManager();
+
     @Before
     public void cleanup() throws IOException {
         Path file;
-        file = FileManager.generateFileName(user1.getName());
+        file = fileManager.generateFileName(user1.getName());
         Files.deleteIfExists(file);
 
-        file = FileManager.generateFileName(user2.getName());
+        file = fileManager.generateFileName(user2.getName());
         Files.deleteIfExists(file);
     }
 
     @Test
     public void testGenerateFileName() {
-        Path file = FileManager.generateFileName(user1.getName());
+        Path file = fileManager.generateFileName(user1.getName());
         assertEquals("u_name1.user", file.getFileName().toString());
     }
 
     @Test
     public void testCreationTempFile() throws IOException {
-        assertTrue(FileManager.saveNewUserToFile(user1));
+        assertTrue(fileManager.saveNewUserToFile(user1));
         //file existence ignored
-        assertTrue(FileManager.saveNewUserToFile(user1));
+        assertTrue(fileManager.saveNewUserToFile(user1));
     }
 
     @Test
     public void testReadListOfFiles() {
-        assertTrue(FileManager.saveNewUserToFile(user1));
-        assertTrue(FileManager.saveNewUserToFile(user2));
+        assertTrue(fileManager.saveNewUserToFile(user1));
+        assertTrue(fileManager.saveNewUserToFile(user2));
 
-        ConcurrentHashMap<String, User> users = FileManager.deserialize();
+        ConcurrentHashMap<String, User> users = fileManager.deserialize();
         assertNotNull(users);
         assertNotNull(users.get(user1.getName()));
         assertNotNull(users.get(user2.getName()));
@@ -57,10 +59,10 @@ public class FileManagerIntegrationTest {
 
     @Test
     public void testOverrideFiles() {
-        assertTrue(FileManager.overrideUserFile(user1));
-        assertTrue(FileManager.overrideUserFile(user1));
+        assertTrue(fileManager.overrideUserFile(user1));
+        assertTrue(fileManager.overrideUserFile(user1));
 
-        ConcurrentHashMap<String, User> users = FileManager.deserialize();
+        ConcurrentHashMap<String, User> users = fileManager.deserialize();
         assertNotNull(users);
         assertNotNull(users.get(user1.getName()));
     }

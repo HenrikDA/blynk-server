@@ -4,6 +4,7 @@ import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.handlers.logging.LoggingHandler;
+import cc.blynk.server.utils.FileManager;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
@@ -26,10 +27,16 @@ public class Server implements Runnable {
 
     private int port;
     private ChannelFuture serverSocketFuture;
+    private UserRegistry userRegistry;
+    private FileManager fileManager;
 
     public Server(int port) {
         this.port = port;
-        init();
+        this.fileManager = new FileManager();
+
+        log.debug("Reading user DB.");
+        this.userRegistry = new UserRegistry(fileManager);
+        log.debug("Reading user DB finished.");
     }
 
     public static void main(String[] args) throws Exception {
@@ -47,13 +54,6 @@ public class Server implements Runnable {
         new Thread(new Server(port)).start();
     }
 
-    private void init() {
-        log.debug("Reading user DB.");
-        //reading DB to RAM.
-        UserRegistry.init();
-        log.debug("Reading user DB finished.");
-    }
-
     @Override
     public void run() {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
@@ -64,7 +64,7 @@ public class Server implements Runnable {
                     .channel(NioServerSocketChannel.class)
                             //.handler(new LoggingHandler(LogLevel.INFO))
                     .handler(new LoggingHandler())
-                    .childHandler(new ServerHandlersInitializer());
+                    .childHandler(new ServerHandlersInitializer(fileManager, userRegistry));
 
             serverSocketFuture = b.bind(port).sync();
             serverSocketFuture.channel().closeFuture().sync();

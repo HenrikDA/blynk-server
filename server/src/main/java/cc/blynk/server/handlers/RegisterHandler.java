@@ -3,8 +3,8 @@ package cc.blynk.server.handlers;
 import cc.blynk.common.model.messages.protocol.RegisterMessage;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.utils.EMailValidator;
+import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,9 +23,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  * For instance, incoming register message may be : "user@mail.ua my_password"
  */
-public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> {
+public class RegisterHandler extends BaseSimpleChannelInboundHandler<RegisterMessage> {
 
     private static final Logger log = LogManager.getLogger(RegisterHandler.class);
+
+    public RegisterHandler(FileManager fileManager, UserRegistry userRegistry) {
+        super(fileManager, userRegistry);
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterMessage message) throws Exception {
@@ -49,13 +53,13 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
             return;
         }
 
-        if (UserRegistry.isUserExists(userName)) {
+        if (userRegistry.isUserExists(userName)) {
             log.warn("User with name {} already exists.", userName);
             ctx.writeAndFlush(produce(message.id, USER_ALREADY_REGISTERED));
             return;
         }
 
-        UserRegistry.createNewUser(userName, pass);
+        userRegistry.createNewUser(userName, pass);
 
         log.info("Registered {}.", userName);
 
