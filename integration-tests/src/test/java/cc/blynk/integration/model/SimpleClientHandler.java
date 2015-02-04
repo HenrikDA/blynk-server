@@ -1,4 +1,4 @@
-package cc.blynk.integration;
+package cc.blynk.integration.model;
 
 import cc.blynk.common.model.messages.MessageBase;
 import io.netty.channel.ChannelHandlerContext;

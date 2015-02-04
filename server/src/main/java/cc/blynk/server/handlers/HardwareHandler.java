@@ -2,8 +2,8 @@ package cc.blynk.server.handlers;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.group.ChannelGroup;
 import cc.blynk.server.group.Session;
+import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,13 +25,13 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
     private static final Logger log = LogManager.getLogger(HardwareHandler.class);
 
-    public HardwareHandler(FileManager fileManager, UserRegistry userRegistry) {
-        super(fileManager, userRegistry);
+    public HardwareHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(fileManager, userRegistry, sessionsHolder);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HardwareMessage message) throws Exception {
-        ChannelGroup group = Session.getUserGroup(ctx.channel(), message.id);
+        Session group = sessionsHolder.getUserGroup(ctx.channel(), message.id);
 
         //todo
         //for hardware command do not wait for hardware response.

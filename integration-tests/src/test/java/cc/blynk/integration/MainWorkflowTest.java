@@ -1,6 +1,9 @@
 package cc.blynk.integration;
 
 import cc.blynk.common.model.messages.Message;
+import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.integration.model.TestChannelInitializer;
+import cc.blynk.integration.model.TestClient;
 import cc.blynk.server.Server;
 import cc.blynk.server.utils.FileManager;
 import org.apache.commons.io.FileUtils;
@@ -77,9 +80,9 @@ public class MainWorkflowTest extends IntegrationBase {
         TestClient appClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(appResponseMock));
         TestClient hardClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(hardResponseMock));
 
-        appClient.sendWithSleep("register dima@mail.ua 1")
-                .sendWithSleep("login dima@mail.ua 1")
-                .sendWithSleep("getToken 1");
+        appClient.send("register dima@mail.ua 1")
+                .send("login dima@mail.ua 1")
+                .send("getToken 1");
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
         verify(appResponseMock, times(3)).channelRead(any(), objectArgumentCaptor.capture());
@@ -89,7 +92,7 @@ public class MainWorkflowTest extends IntegrationBase {
         String token = getTokenMessage.body;
 
 
-        hardClient.sendWithSleep("login " + token);
+        hardClient.send("login " + token);
         verify(hardResponseMock).channelRead(any(), eq(produce(1, OK)));
 
         reset(hardResponseMock);
@@ -99,7 +102,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         long start = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
-            appClient.send("hardware 1 1");
+            appClient.sendNoSleep("hardware 1 1");
         }
         System.out.println("Time : " + (System.currentTimeMillis() - start));
 

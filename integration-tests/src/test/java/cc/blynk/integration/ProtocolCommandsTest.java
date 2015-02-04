@@ -2,6 +2,8 @@ package cc.blynk.integration;
 
 import cc.blynk.client.Client;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.integration.model.TestChannelInitializer;
 import cc.blynk.server.Server;
 import cc.blynk.server.utils.FileManager;
 import org.apache.commons.io.FileUtils;

@@ -3,7 +3,7 @@ package cc.blynk.server.handlers;
 import cc.blynk.common.model.messages.protocol.LoadProfileMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.group.Session;
+import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -21,13 +21,13 @@ public class LoadProfileHandler extends BaseSimpleChannelInboundHandler<LoadProf
 
     private static final Logger log = LogManager.getLogger(LoadProfileHandler.class);
 
-    public LoadProfileHandler(FileManager fileManager, UserRegistry userRegistry) {
-        super(fileManager, userRegistry);
+    public LoadProfileHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(fileManager, userRegistry, sessionsHolder);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoadProfileMessage message) throws Exception {
-        User authUser = Session.findUserByChannel(ctx.channel(), message.id);
+        User authUser = sessionsHolder.findUserByChannel(ctx.channel(), message.id);
 
         String body = authUser.getUserProfile() == null ? "{}" : authUser.getUserProfile().toString();
         ctx.writeAndFlush(produce(message.id, message.command, body));

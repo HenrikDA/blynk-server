@@ -2,8 +2,8 @@ package cc.blynk.server.handlers;
 
 import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.group.ChannelGroup;
 import cc.blynk.server.group.Session;
+import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -25,13 +25,13 @@ public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
 
     private static final Logger log = LogManager.getLogger(PingHandler.class);
 
-    public PingHandler(FileManager fileManager, UserRegistry userRegistry) {
-        super(fileManager, userRegistry);
+    public PingHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(fileManager, userRegistry, sessionsHolder);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, PingMessage message) throws Exception {
-        ChannelGroup group = Session.getUserGroup(ctx.channel(), message.id);
+        Session group = sessionsHolder.getUserGroup(ctx.channel(), message.id);
         List<ChannelFuture> futures = group.sendMessageToHardware(ctx, message);
 
         int length = futures.size();

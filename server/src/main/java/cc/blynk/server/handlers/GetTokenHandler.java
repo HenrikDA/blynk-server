@@ -4,7 +4,7 @@ import cc.blynk.common.model.messages.protocol.GetTokenMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.exceptions.InvalidCommandFormatException;
-import cc.blynk.server.group.Session;
+import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -22,8 +22,8 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
 
     private static final Logger log = LogManager.getLogger(GetTokenHandler.class);
 
-    public GetTokenHandler(FileManager fileManager, UserRegistry userRegistry) {
-        super(fileManager, userRegistry);
+    public GetTokenHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(fileManager, userRegistry, sessionsHolder);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
             throw new InvalidCommandFormatException(String.format("Dash board id %s not valid.", dashBoardIdString), message.id);
         }
 
-        User user = Session.findUserByChannel(ctx.channel(), message.id);
+        User user = sessionsHolder.findUserByChannel(ctx.channel(), message.id);
         String token = userRegistry.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));

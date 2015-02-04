@@ -6,7 +6,7 @@ import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.exceptions.InvalidCommandFormatException;
 import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
-import cc.blynk.server.group.Session;
+import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;
@@ -25,8 +25,8 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
 
     private static final Logger log = LogManager.getLogger(LoginHandler.class);
 
-    public LoginHandler(FileManager fileManager, UserRegistry userRegistry) {
-        super(fileManager, userRegistry);
+    public LoginHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(fileManager, userRegistry, sessionsHolder);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
             throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), messageId);
         }
 
-        Session.addHardwareChannelToGroup(user, ctx.channel());
+        sessionsHolder.addHardwareChannelToGroup(user, ctx.channel());
 
         log.info("Adding hardware channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }
@@ -69,7 +69,7 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel()), messageId);
         }
 
-        Session.addAppChannelToGroup(user, ctx.channel());
+        sessionsHolder.addAppChannelToGroup(user, ctx.channel());
 
         log.info("Adding app channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }

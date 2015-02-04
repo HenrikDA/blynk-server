@@ -1,6 +1,7 @@
-package cc.blynk.integration;
+package cc.blynk.integration.model;
 
 import cc.blynk.client.Client;
+import cc.blynk.integration.IntegrationBase;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
@@ -29,19 +30,16 @@ public class TestClient {
         this.clientChannel = b.connect(host, port).sync().channel();
     }
 
-    public TestClient sendWithSleep(String line) {
+    public TestClient send(String line) {
         clientChannel.writeAndFlush(Client.produceMessageBaseOnUserInput(line, ++msgId));
 
         //sleep after every send in order to retrieve response back from server.
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-        }
+        IntegrationBase.sleep(100);
 
         return this;
     }
 
-    public TestClient send(String line) {
+    public TestClient sendNoSleep(String line) {
         clientChannel.writeAndFlush(Client.produceMessageBaseOnUserInput(line, ++msgId));
         return this;
     }

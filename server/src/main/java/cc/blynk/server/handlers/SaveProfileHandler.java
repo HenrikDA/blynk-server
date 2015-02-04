@@ -4,7 +4,7 @@ import cc.blynk.common.model.messages.protocol.SaveProfileMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.exceptions.InvalidCommandFormatException;
-import cc.blynk.server.group.Session;
+import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.FileManager;
 import cc.blynk.server.utils.JsonParser;
@@ -26,8 +26,8 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
 
     private static final Logger log = LogManager.getLogger(SaveProfileHandler.class);
 
-    public SaveProfileHandler(FileManager fileManager, UserRegistry userRegistry) {
-        super(fileManager, userRegistry);
+    public SaveProfileHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(fileManager, userRegistry, sessionsHolder);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
 
         log.info("Trying save user profile.");
 
-        User authUser = Session.findUserByChannel(ctx.channel(), message.id);
+        User authUser = sessionsHolder.findUserByChannel(ctx.channel(), message.id);
 
         authUser.setUserProfile(userProfile);
         boolean profileSaved = fileManager.overrideUserFile(authUser);

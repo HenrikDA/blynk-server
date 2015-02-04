@@ -2,6 +2,7 @@ package cc.blynk.server.handlers;
 
 import cc.blynk.common.model.messages.protocol.RegisterMessage;
 import cc.blynk.server.auth.UserRegistry;
+import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.utils.EMailValidator;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,8 +28,8 @@ public class RegisterHandler extends BaseSimpleChannelInboundHandler<RegisterMes
 
     private static final Logger log = LogManager.getLogger(RegisterHandler.class);
 
-    public RegisterHandler(FileManager fileManager, UserRegistry userRegistry) {
-        super(fileManager, userRegistry);
+    public RegisterHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(fileManager, userRegistry, sessionsHolder);
     }
 
     @Override

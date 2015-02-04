@@ -3,6 +3,7 @@ package cc.blynk.server;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.auth.UserRegistry;
+import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.handlers.logging.LoggingHandler;
 import cc.blynk.server.utils.FileManager;
 import cc.blynk.server.utils.JsonParser;
@@ -27,13 +28,16 @@ public class Server implements Runnable {
     private static final Logger log = LogManager.getLogger(Server.class);
 
     private int port;
-    private ChannelFuture serverSocketFuture;
     private UserRegistry userRegistry;
     private FileManager fileManager;
+    private SessionsHolder sessionsHolder;
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workerGroup;
 
     public Server(int port) {
         this.port = port;
         this.fileManager = new FileManager();
+        this.sessionsHolder = new SessionsHolder();
 
         log.debug("Reading user DB.");
         this.userRegistry = new UserRegistry(fileManager);
@@ -59,27 +63,29 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        this.bossGroup = new NioEventLoopGroup(1);
+        this.workerGroup = new NioEventLoopGroup();
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                             //.handler(new LoggingHandler(LogLevel.INFO))
                     .handler(new LoggingHandler())
-                    .childHandler(new ServerHandlersInitializer(fileManager, userRegistry));
+                    .childHandler(new ServerHandlersInitializer(fileManager, userRegistry, sessionsHolder));
 
-            serverSocketFuture = b.bind(port).sync();
-            serverSocketFuture.channel().closeFuture().sync();
+            ChannelFuture channelFuture = b.bind(port).sync();
+            channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             log.error(e);
         } finally {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
+            stop();
         }
     }
 
     public void stop() {
-        serverSocketFuture.channel().close();
+        log.info("Shutting down...");
+        bossGroup.shutdownGracefully();
+        workerGroup.shutdownGracefully();
+        log.info("Done!");
     }
 }

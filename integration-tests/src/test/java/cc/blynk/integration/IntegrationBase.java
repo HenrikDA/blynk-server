@@ -2,6 +2,8 @@ package cc.blynk.integration;
 
 import cc.blynk.client.Client;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.integration.model.TestChannelInitializer;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.JsonParser;
 import org.mockito.Mock;
@@ -22,7 +24,7 @@ import static org.mockito.Mockito.when;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/4/2015.
  */
-public class IntegrationBase {
+public abstract class IntegrationBase {
 
     public static final int TEST_PORT = 9090;
 
@@ -39,6 +41,15 @@ public class IntegrationBase {
 
     @Mock
     public BufferedReader bufferedReader2;
+
+    public static void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+
+        }
+
+    }
 
     /**
      * Creates client socket, sends 1 command, sleeps for 100ms checks that sever response is OK.
@@ -66,15 +77,6 @@ public class IntegrationBase {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
         UserProfile userProfile = JsonParser.parseProfile(is);
         return userProfile.toString();
-    }
-
-    public void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-
-        }
-
     }
 
 

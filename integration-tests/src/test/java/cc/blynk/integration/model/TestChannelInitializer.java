@@ -1,4 +1,4 @@
-package cc.blynk.integration;
+package cc.blynk.integration.model;
 
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
