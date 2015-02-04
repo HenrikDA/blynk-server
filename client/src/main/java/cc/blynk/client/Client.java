@@ -1,5 +1,6 @@
 package cc.blynk.client;
 
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import io.netty.bootstrap.Bootstrap;
@@ -59,6 +60,23 @@ public class Client {
         new Client(host, port, new Random()).start(new ClientHandlersInitializer(), new BufferedReader(new InputStreamReader(System.in)));
     }
 
+    public static Message produceMessageBaseOnUserInput(String line, int msgId) {
+        String[] input = line.split(" ");
+
+        short command;
+
+        try {
+            command = CommandParser.parseCommand(input[0]);
+        } catch (IllegalArgumentException e) {
+            log.error("Command not supported {}", input[0]);
+            return null;
+        }
+
+        input = line.split(" ", 2);
+        String body = input.length == 1 ? "" : input[1];
+        return produce(msgId, command, body);
+    }
+
     public void start(ChannelInitializer<SocketChannel> channelInitializer, BufferedReader commandInputStream) {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -96,20 +114,11 @@ public class Client {
                 break;
             }
 
-            String[] input = line.split(" ");
-
-            short command;
-
-            try {
-                command = CommandParser.parseCommand(input[0]);
-            } catch (IllegalArgumentException e) {
-                log.error("Command not supported {}", input[0]);
+            Message msg = produceMessageBaseOnUserInput(line, (short) random.nextInt(Short.MAX_VALUE));
+            if (msg == null) {
                 continue;
             }
-
-            input = line.split(" ", 2);
-            String body = input.length == 1 ? "" : input[1];
-            lastWriteFuture = clientChannel.writeAndFlush(produce((short) random.nextInt(Short.MAX_VALUE), command, body));
+            lastWriteFuture = clientChannel.writeAndFlush(msg);
         }
 
         return lastWriteFuture;
