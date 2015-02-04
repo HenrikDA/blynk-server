@@ -74,20 +74,10 @@ public class UserRegistry {
         return token;
     }
 
-    public void isValid() {
-        for (User user : users.values()) {
-            if (user.getDashTokens().values().size() == 0) {
-                log.info("HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-            }
-        }
-
-    }
-
     public User createNewUser(String userName, String pass) {
         User newUser = new User(userName, pass);
 
         users.put(userName, newUser);
-        isValid();
 
         //todo, yes this not optimal solution, but who cares?
         //todo this may be moved to separate thread
