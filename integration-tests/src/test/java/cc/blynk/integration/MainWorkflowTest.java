@@ -1,6 +1,6 @@
 package cc.blynk.integration;
 
-import cc.blynk.client.Client;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.server.Server;
 import cc.blynk.server.utils.FileManager;
 import org.apache.commons.io.FileUtils;
@@ -8,13 +8,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.OngoingStubbing;
+
+import java.util.List;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -45,36 +47,68 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void testHardwareInNetwork() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+    public void testConnectAppAndHardware() throws Exception {
+        SimpleClientHandler appResponseMock = Mockito.mock(SimpleClientHandler.class);
+        SimpleClientHandler hardResponseMock = Mockito.mock(SimpleClientHandler.class);
+
+        TestClient appClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(appResponseMock));
+        TestClient hardClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(hardResponseMock));
+
+        appClient.send("register dima@mail.ua 1")
+                 .send("login dima@mail.ua 1")
+                 .send("getToken 1");
+
+        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        verify(appResponseMock, times(3)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<Object> arguments = objectArgumentCaptor.getAllValues();
+        Message getTokenMessage = (Message) arguments.get(2);
+        String token = getTokenMessage.body;
+
+        hardClient.send("login " + token);
+        verify(hardResponseMock).channelRead(any(), eq(produce(1, OK)));
+    }
+
+    @Test
+    public void testConnectAppAndHardwareAndSendCommands() throws Exception {
+        SimpleClientHandler appResponseMock = Mockito.mock(SimpleClientHandler.class);
+        SimpleClientHandler hardResponseMock = Mockito.mock(SimpleClientHandler.class);
+
+        TestClient appClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(appResponseMock));
+        TestClient hardClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(hardResponseMock));
+
+        appClient.sendWithSleep("register dima@mail.ua 1")
+                .sendWithSleep("login dima@mail.ua 1")
+                .sendWithSleep("getToken 1");
+
+        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        verify(appResponseMock, times(3)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<Object> arguments = objectArgumentCaptor.getAllValues();
+        Message getTokenMessage = (Message) arguments.get(2);
+        String token = getTokenMessage.body;
 
 
-        int[] msgIds = new int[] {1, 2};
-        String[] commands = new String[] {"login dmitriy@mail.ua 1", "hardware 1 1", "quit"};
+        hardClient.sendWithSleep("login " + token);
+        verify(hardResponseMock).channelRead(any(), eq(produce(1, OK)));
 
-        responseMock = Mockito.mock(SimpleClientHandler.class);
-        Client client = new Client("localhost", TEST_PORT, random);
+        reset(hardResponseMock);
+        reset(appResponseMock);
+        appClient.reset();
+        hardClient.reset();
 
-        OngoingStubbing<Integer> stubbingRandom = when(random.nextInt(Short.MAX_VALUE));
-        for (int messageId : msgIds) {
-            stubbingRandom = stubbingRandom.thenReturn(messageId);
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < 100; i++) {
+            appClient.send("hardware 1 1");
         }
+        System.out.println("Time : " + (System.currentTimeMillis() - start));
 
-        OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
-        for (final String cmd : commands) {
-            ongoingStubbing = ongoingStubbing.thenAnswer(invocation -> {
-                Thread.sleep(100);
-                return cmd;
-            });
+        sleep(500);
+
+        for (int i = 1; i <= 100; i++) {
+            verify(appResponseMock).channelRead(any(), eq(produce(i, OK)));
         }
-
-        client.start(new TestChannelInitializer(responseMock), bufferedReader);
-
-        //verify(responseMock, times(responseMessages.length)).channelRead(any(), any());
-        //for (MessageBase messageBase : responseMessages) {
-        //    verify(responseMock).channelRead(any(), eq(messageBase));
-        //}
-
+        verify(hardResponseMock, times(100)).channelRead(any(), any());
     }
 
 }

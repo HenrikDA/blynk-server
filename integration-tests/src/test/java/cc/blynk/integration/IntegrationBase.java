@@ -32,7 +32,13 @@ public class IntegrationBase {
     public Random random;
 
     @Mock
+    public Random random2;
+
+    @Mock
     public BufferedReader bufferedReader;
+
+    @Mock
+    public BufferedReader bufferedReader2;
 
     /**
      * Creates client socket, sends 1 command, sleeps for 100ms checks that sever response is OK.
@@ -60,6 +66,15 @@ public class IntegrationBase {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
         UserProfile userProfile = JsonParser.parseProfile(is);
         return userProfile.toString();
+    }
+
+    public void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+
+        }
+
     }
 
 
