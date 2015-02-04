@@ -40,7 +40,7 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
 
 #### Protocol command codes
 
-		0 - response command. After every message client sends to server it retrieves response message back.
+		0 - response; After every message client sends to server it retrieves response message back (exception is for LoadProfile, GetToken, Ping commands).
         1 - register; Must have 2 space-separated params as content field (username and pass) : "a@a.ua a"
         2 - login:
             a) For mobile client must have 2 space-separated params as content field (username and pass) : "a@a.ua a"
@@ -48,14 +48,19 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
         3 - save profile; Must have 1 param as content string : "{...}"
         4 - load profile; Don't have any params
         5 - getToken; Must have 1 int param, dash board id : "1"
+        6 - ping; Sends request from client ot server, than from server to hardware, than back to server and back to client.
+        20 - hardware; Command for hardware. Every widget should form it's own body message for hardware command.
 
 
-#### Hardware client command codes
+#### Hardware command body forming rules
 //todo
 
 
 ## Response Codes
-Every response for any command will return message with command field 0x00. In case of loadProfile command it will be either requested info (user profile) either [response code](https://bitbucket.org/theblynk/blynk-server/src/a3861b0e9bcb9823bbb6dd2722500c55e197bbe6/common/src/main/java/cc/blynk/common/enums/Response.java?at=master) message in case of error or in case of command that doesn't return anything (like saveProfile):
+For every command client sends to server it will receive response back.
+For commands (register, login, saveProfile, hardware) that doesn't request any data back - 'response' (command field 0x00) message will be returned.
+For commands (loadProfile, getToken, ping) that request some data back - message will be returned with same command code. In case you sent 'loadProfile' you will receive 'loadProfile' command back with filled body.
+[Here class with all codes](https://bitbucket.org/theblynk/blynk-server/src/a3861b0e9bcb9823bbb6dd2722500c55e197bbe6/common/src/main/java/cc/blynk/common/enums/Response.java?at=master)
 Response message structure:
 
 	    	       BEFORE DECODE
@@ -104,14 +109,17 @@ Response message structure:
 	Digit Display		: {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"DIGITAL", "pin":10} - sends READ pin to server
 	Graph				: {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"GRAPH",          "pinType":"DIGITAL", "pin":10, "readingFrequency":1000} - sends READ pin to server. Frequency in microseconds
 
+## Commands order processing
+Server guarantees that commands will be processed in same order in which they were send.
+
 ## GETTING STARTED
 
 + Run the server
 
-        java -jar server.jar 8080
+        java -jar server.jar -port 8080
 + Run the client (simulates smartphone client)
 
-        java -jar client.jar localhost 8080
+        java -jar client.jar -host localhost -port 8080
 
 + In this client: register new user and/or login with the same credentials
 
@@ -125,12 +133,12 @@ Response message structure:
    	You will get server response similar to this one:
 
     	00:05:18.086 INFO  - Sending : Message{messageId=30825, command=5, body='1'}
-    	00:05:18.100 INFO  - Getting : Message{messageId=30825, command=5,body='33bcbe756b994a6768494d55d1543c74'}
+    	00:05:18.100 INFO  - Getting : Message{messageId=30825, command=5, body='33bcbe756b994a6768494d55d1543c74'}
 Where `33bcbe756b994a6768494d55d1543c74` is your token.
 
 + Start another client (simulates Arduino) and use received token to login
 
-    	java -jar client.jar localhost 8080
+    	java -jar client.jar -host localhost -port 8080
     	login 33bcbe756b994a6768494d55d1543c74
    
 
