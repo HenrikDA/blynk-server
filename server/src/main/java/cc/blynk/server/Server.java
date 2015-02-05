@@ -35,6 +35,7 @@ public class Server implements Runnable {
     private EventLoopGroup workerGroup;
 
     public Server(int port) {
+        JsonParser.init();
         this.port = port;
         this.fileManager = new FileManager();
         this.sessionsHolder = new SessionsHolder();
@@ -42,8 +43,6 @@ public class Server implements Runnable {
         log.debug("Reading user DB.");
         this.userRegistry = new UserRegistry(fileManager);
         log.debug("Reading user DB finished.");
-
-        JsonParser.init();
     }
 
     public static void main(String[] args) throws Exception {
