@@ -58,14 +58,18 @@ public abstract class IntegrationBase {
     }
 
     public static ClientPair initAppAndHardPair(String host, int port) throws Exception {
+        return initAppAndHardPair(host, port, "dima@mail.ua 1");
+    }
+
+    public static ClientPair initAppAndHardPair(String host, int port, String user) throws Exception {
         SimpleClientHandler appResponseMock = Mockito.mock(SimpleClientHandler.class);
         SimpleClientHandler hardResponseMock = Mockito.mock(SimpleClientHandler.class);
 
-        TestClient appClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(appResponseMock));
-        TestClient hardClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(hardResponseMock));
+        TestClient appClient = new TestClient(host, port, new TestChannelInitializer(appResponseMock));
+        TestClient hardClient = new TestClient(host, port, new TestChannelInitializer(hardResponseMock));
 
-        appClient.send("register dima@mail.ua 1")
-                .send("login dima@mail.ua 1")
+        appClient.send("register " + user)
+                .send("login " + user)
                 .send("getToken 1");
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
