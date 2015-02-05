@@ -29,20 +29,17 @@ public class SessionsHolder {
         channelToken.put(channel, user);
     }
 
-    public Session getUserGroup(Channel channel, int messageId) {
+    public Session getUserSession(Channel channel, int messageId) {
         User user = findUserByChannel(channel, messageId);
         return userSession.get(user);
     }
 
     public User findUserByChannel(Channel inChannel, int msgId) {
-        for (Map.Entry<User, Session> entry : userSession.entrySet()) {
-            for (Channel appChannel : entry.getValue().getAppChannels()) {
-                if (appChannel == inChannel) {
-                    return entry.getKey();
-                }
-            }
+        User user = channelToken.get(inChannel);
+        if (user == null) {
+            throw new UserNotAuthenticated("User not logged.", msgId);
         }
-        throw new UserNotAuthenticated("User not logged.", msgId);
+        return user;
     }
 
     //todo synchronized?

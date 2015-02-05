@@ -31,7 +31,7 @@ public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, PingMessage message) throws Exception {
-        Session group = sessionsHolder.getUserGroup(ctx.channel(), message.id);
+        Session group = sessionsHolder.getUserSession(ctx.channel(), message.id);
         List<ChannelFuture> futures = group.sendMessageToHardware(ctx, message);
 
         int length = futures.size();

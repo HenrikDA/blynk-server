@@ -31,7 +31,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HardwareMessage message) throws Exception {
-        Session group = sessionsHolder.getUserGroup(ctx.channel(), message.id);
+        Session group = sessionsHolder.getUserSession(ctx.channel(), message.id);
 
         //todo
         //for hardware command do not wait for hardware response.
