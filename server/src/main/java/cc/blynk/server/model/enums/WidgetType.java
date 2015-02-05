@@ -10,6 +10,7 @@ public enum WidgetType {
     BUTTON,
     TOGGLE_BUTTON,
     SLIDER,
+    SLIDER_LARGE,
     TIMER,
     LED,
     DIGIT4_DISPLAY,
