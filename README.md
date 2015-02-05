@@ -47,7 +47,7 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
             b) For hardware client must have 1 param, user token : "6a7a3151cb044cd893a92033dd65f655"
         3 - save profile; Must have 1 param as content string : "{...}"
         4 - load profile; Don't have any params
-        5 - getToken; Must have 1 int param, dash board id : "1"
+        5 - getToken; Must have 1 int param, dash board id : "1". ACCEPTED DASH_ID RANGE IS [1..100];
         6 - ping; Sends request from client ot server, than from server to hardware, than back to server and back to client.
         20 - hardware; Command for hardware. Every widget should form it's own body message for hardware command.
 
@@ -83,6 +83,8 @@ Response message structure:
     7 - arduino board not in network
     8 - command not supported
     9 - token not valid
+    10 - server error
+    11 - user already logged in. Happens in case same user tries to login more than one time.
     500 - server error. something went wrong on server
 
 ## User Profile JSON structure
