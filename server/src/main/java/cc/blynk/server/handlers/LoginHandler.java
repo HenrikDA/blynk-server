@@ -6,6 +6,7 @@ import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.exceptions.InvalidCommandFormatException;
 import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
+import cc.blynk.server.exceptions.UserNotRegistered;
 import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
@@ -64,8 +65,12 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
         String userName = username.toLowerCase();
         User user = userRegistry.getByName(userName);
 
+        if (user == null) {
+            throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", userName, ctx.channel()), messageId);
+        }
+
         //todo fix pass validation
-        if (user == null || !user.getPass().equals(pass)) {
+        if (!user.getPass().equals(pass)) {
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel()), messageId);
         }
 
