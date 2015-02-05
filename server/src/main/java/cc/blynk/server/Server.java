@@ -35,7 +35,8 @@ public class Server implements Runnable {
     private EventLoopGroup workerGroup;
 
     public Server(int port) {
-        JsonParser.init();
+        //just to init mapper on server start and not first access
+        JsonParser.check();
         this.port = port;
         this.fileManager = new FileManager();
         this.sessionsHolder = new SessionsHolder();

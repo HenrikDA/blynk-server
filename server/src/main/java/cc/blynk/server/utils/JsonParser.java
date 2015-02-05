@@ -22,14 +22,14 @@ public final class JsonParser {
     private static final Logger log = LogManager.getLogger(JsonParser.class);
 
     //it is threadsafe
-    private static ObjectMapper mapper;
+    private static ObjectMapper mapper = init();
 
-    private JsonParser() {
+    public static void check() {
 
     }
 
-    public static void init() {
-        mapper = new ObjectMapper()
+    private static ObjectMapper init() {
+        return new ObjectMapper()
                 .setSerializationInclusion(JsonInclude.Include.NON_NULL)
                 .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
                 .setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.NONE)
