@@ -3,7 +3,7 @@ package cc.blynk.server.handlers;
 import cc.blynk.common.model.messages.protocol.GetTokenMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.exceptions.InvalidCommandFormatException;
+import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,11 +30,15 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
     protected void channelRead0(ChannelHandlerContext ctx, GetTokenMessage message) throws Exception {
         String dashBoardIdString = message.body;
 
-        Long dashBoardId;
+        long dashBoardId;
         try {
             dashBoardId = Long.parseLong(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new InvalidCommandFormatException(String.format("Dash board id %s not valid.", dashBoardIdString), message.id);
+            throw new IllegalCommandException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
+        }
+
+        if (dashBoardId < 0 || dashBoardId > 100) {
+            throw new IllegalCommandException(String.format("Token '%s' should ne in range [0..100].", dashBoardIdString), message.id);
         }
 
         User user = sessionsHolder.findUserByChannel(ctx.channel(), message.id);

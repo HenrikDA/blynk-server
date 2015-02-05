@@ -12,7 +12,7 @@ import java.util.Map;
 public final class Response {
 
     public static final int OK = 200;
-    public static final int INVALID_COMMAND_FORMAT = 2;
+    public static final int ILLEGAL_COMMAND = 2;
     public static final int USER_NOT_REGISTERED = 3;
     public static final int USER_ALREADY_REGISTERED = 4;
     public static final int USER_NOT_AUTHENTICATED = 5;

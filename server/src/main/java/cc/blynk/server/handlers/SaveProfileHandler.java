@@ -3,7 +3,7 @@ package cc.blynk.server.handlers;
 import cc.blynk.common.model.messages.protocol.SaveProfileMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.exceptions.InvalidCommandFormatException;
+import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.FileManager;
@@ -36,13 +36,13 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
 
         //expecting message with 2 parts
         if (userProfileString == null || userProfileString.equals("")) {
-            throw new InvalidCommandFormatException("Save Profile Handler. Income profile message is empty.", message.id);
+            throw new IllegalCommandException("Save Profile Handler. Income profile message is empty.", message.id);
         }
 
         log.info("Trying to parseProfile user profile : {}", userProfileString);
         UserProfile userProfile = JsonParser.parseProfile(userProfileString);
         if (userProfile == null) {
-            throw new InvalidCommandFormatException("Register Handler. Wrong user profile message format.", message.id);
+            throw new IllegalCommandException("Register Handler. Wrong user profile message format.", message.id);
         }
 
         log.info("Trying save user profile.");

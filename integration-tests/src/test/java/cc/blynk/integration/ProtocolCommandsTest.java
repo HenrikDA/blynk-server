@@ -127,6 +127,17 @@ public class ProtocolCommandsTest extends IntegrationBase {
                 new MessageBase[]{produce(2, OK), produce(3, USER_ALREADY_LOGGED_IN)},
                 "login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1", "quit"
         );
+    }
+
+    @Test
+    public void testGetTokenNotInRange() throws Exception {
+        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+
+        makeCommands(
+                new int[] {2, 3},
+                new MessageBase[]{produce(2, OK), produce(3, ILLEGAL_COMMAND)},
+                "login dmitriy@mail.ua 1", "getToken 101", "quit"
+        );
 
     }
 

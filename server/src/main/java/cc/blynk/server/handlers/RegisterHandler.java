@@ -39,7 +39,7 @@ public class RegisterHandler extends BaseSimpleChannelInboundHandler<RegisterMes
         //expecting message with 2 parts, described above in comment.
         if (messageParts.length != 2) {
             log.error("Register Handler. Wrong income message format. {}", message);
-            ctx.writeAndFlush(produce(message.id, INVALID_COMMAND_FORMAT));
+            ctx.writeAndFlush(produce(message.id, ILLEGAL_COMMAND));
             return;
         }
 
@@ -50,7 +50,7 @@ public class RegisterHandler extends BaseSimpleChannelInboundHandler<RegisterMes
 
         if (!EMailValidator.isValid(userName)) {
             log.error("Register Handler. Wrong email: {}", userName);
-            ctx.writeAndFlush(produce(message.id, INVALID_COMMAND_FORMAT));
+            ctx.writeAndFlush(produce(message.id, ILLEGAL_COMMAND));
             return;
         }
 

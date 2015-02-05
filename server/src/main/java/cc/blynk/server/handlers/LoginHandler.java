@@ -3,7 +3,7 @@ package cc.blynk.server.handlers;
 import cc.blynk.common.model.messages.protocol.LoginMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.exceptions.InvalidCommandFormatException;
+import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
@@ -35,7 +35,7 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
         String[] messageParts = message.body.split(" ", 2);
 
         if (messageParts.length == 0) {
-            throw new InvalidCommandFormatException("Wrong income message format.", message.id);
+            throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
         if (messageParts.length == 1) {
