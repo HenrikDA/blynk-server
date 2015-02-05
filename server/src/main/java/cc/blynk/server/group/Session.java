@@ -2,6 +2,7 @@ package cc.blynk.server.group;
 
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
+import cc.blynk.server.exceptions.UserAlreadyLoggedIn;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,12 +29,22 @@ public class Session {
     private final Set<Channel> appChannels = new ConcurrentSet<>();
     private final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
-    protected void addAppChannel(Channel appChannel) {
-        appChannels.add(appChannel);
+    //todo not sure, but netty processes same channel in same thread, so no sync
+    protected void addAppChannel(Channel channel, int msgId) {
+        //if login from same channel again - do not allow.
+        if (appChannels.contains(channel)) {
+            throw new UserAlreadyLoggedIn("User already logged. Client problem. CHECK!", msgId);
+        }
+        appChannels.add(channel);
     }
 
-    protected void addHardwareChannel(Channel hardwareChannel) {
-        hardwareChannels.add(hardwareChannel);
+    //todo not sure, but netty processes same channel in same thread, so no sync
+    protected void addHardwareChannel(Channel channel, int msgId) {
+        //if login from same channel again - do not allow.
+        if (hardwareChannels.contains(channel)) {
+            throw new UserAlreadyLoggedIn("User already logged. Client problem. CHECK!", msgId);
+        }
+        hardwareChannels.add(channel);
     }
 
     public Set<Channel> getAppChannels() {

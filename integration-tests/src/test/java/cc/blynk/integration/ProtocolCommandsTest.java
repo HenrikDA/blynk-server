@@ -103,7 +103,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
     public void testAppNotRegistered() throws Exception {
         makeCommands(
                 new int[] {2},
-                new MessageBase[]{produce(2, USER_NOT_AUTHENTICATED)},
+                new MessageBase[]{produce(2, USER_NOT_REGISTERED)},
                 "login dmitriy@mail.ua 1", "quit"
         );
     }
@@ -116,6 +116,30 @@ public class ProtocolCommandsTest extends IntegrationBase {
                 new MessageBase[]{produce(2, INVALID_TOKEN)},
                 "login dasdsadasdasdasdasdas", "quit"
         );
+    }
+
+    @Test
+    public void testLogin2Times() throws Exception {
+        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+
+        makeCommands(
+                new int[] {2, 3},
+                new MessageBase[]{produce(2, OK), produce(3, USER_ALREADY_LOGGED_IN)},
+                "login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1", "quit"
+        );
+
+    }
+
+    @Test
+    public void testPassNotValid() throws Exception {
+        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+
+        makeCommands(
+                new int[] {2},
+                new MessageBase[]{produce(2, USER_NOT_AUTHENTICATED)},
+                "login dmitriy@mail.ua 2", "quit"
+        );
+
     }
 
     @Test

@@ -56,7 +56,7 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
             throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), messageId);
         }
 
-        sessionsHolder.addHardwareChannelToGroup(user, ctx.channel());
+        sessionsHolder.addHardwareChannelToGroup(user, ctx.channel(), messageId);
 
         log.info("Adding hardware channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }
@@ -74,7 +74,7 @@ public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> 
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel()), messageId);
         }
 
-        sessionsHolder.addAppChannelToGroup(user, ctx.channel());
+        sessionsHolder.addAppChannelToGroup(user, ctx.channel(), messageId);
 
         log.info("Adding app channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }

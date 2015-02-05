@@ -17,15 +17,15 @@ public class SessionsHolder {
 
     private Map<Channel, User> channelToken = new ConcurrentHashMap<>();
 
-    public void addAppChannelToGroup(User user, Channel channel) {
+    public void addAppChannelToGroup(User user, Channel channel, int msgId) {
         Session group = getUserGroup(user);
-        group.addAppChannel(channel);
+        group.addAppChannel(channel, msgId);
         channelToken.put(channel, user);
     }
 
-    public void addHardwareChannelToGroup(User user, Channel channel) {
+    public void addHardwareChannelToGroup(User user, Channel channel, int msgId) {
         Session group = getUserGroup(user);
-        group.addHardwareChannel(channel);
+        group.addHardwareChannel(channel, msgId);
         channelToken.put(channel, user);
     }
 

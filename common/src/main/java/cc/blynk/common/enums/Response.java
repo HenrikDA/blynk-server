@@ -21,6 +21,7 @@ public final class Response {
     public static final int NOT_SUPPORTED_COMMAND = 8;
     public static final int INVALID_TOKEN = 9;
     public static final int SERVER_ERROR = 10;
+    public static final int USER_ALREADY_LOGGED_IN = 11;
 
 
 
