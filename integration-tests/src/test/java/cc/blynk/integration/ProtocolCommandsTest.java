@@ -19,8 +19,7 @@ import java.util.Random;
 
 import static cc.blynk.common.enums.Command.GET_TOKEN;
 import static cc.blynk.common.enums.Command.LOAD_PROFILE;
-import static cc.blynk.common.enums.Response.DEVICE_NOT_IN_NETWORK;
-import static cc.blynk.common.enums.Response.OK;
+import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -101,6 +100,25 @@ public class ProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
+    public void testAppNotRegistered() throws Exception {
+        makeCommands(
+                new int[] {2},
+                new MessageBase[]{produce(2, USER_NOT_AUTHENTICATED)},
+                "login dmitriy@mail.ua 1", "quit"
+        );
+    }
+
+
+    @Test
+    public void testInvalidToken() throws Exception {
+        makeCommands(
+                new int[] {2},
+                new MessageBase[]{produce(2, INVALID_TOKEN)},
+                "login dasdsadasdasdasdasdas", "quit"
+        );
+    }
+
+    @Test
     public void testHardwareNotInNetwork() throws Exception {
         makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
 
@@ -108,6 +126,18 @@ public class ProtocolCommandsTest extends IntegrationBase {
                 new int[] {2, 3},
                 new MessageBase[]{produce(2, OK), produce(3, DEVICE_NOT_IN_NETWORK)},
                 "login dmitriy@mail.ua 1", "hardware 1 1", "quit"
+        );
+
+    }
+
+    @Test
+    public void testTryHardLoginWithoutToken() throws Exception {
+        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+
+        makeCommands(
+                new int[] {2},
+                new MessageBase[]{produce(2, INVALID_TOKEN)},
+                "login adsadasdasdasdas", "quit"
         );
 
     }

@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.server.Server;
 import cc.blynk.server.utils.FileManager;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -47,6 +48,7 @@ public class SimplePerformanceTest extends IntegrationBase {
     }
 
     @Test
+    @Ignore
     public void testConnectAppAndHardware() throws Exception {
         int clientNumber = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(2);
