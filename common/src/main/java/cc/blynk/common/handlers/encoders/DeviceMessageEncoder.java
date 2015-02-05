@@ -7,8 +7,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
-import java.nio.ByteBuffer;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -18,18 +16,12 @@ public class DeviceMessageEncoder extends MessageToByteEncoder<MessageBase> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, MessageBase messageBase, ByteBuf out) throws Exception {
-        ByteBuffer byteBuffer = ByteBuffer.allocate(messageBase.getByteLength());
-        byteBuffer.put((byte) messageBase.command);
-        byteBuffer.putShort((short) messageBase.id);
-        byteBuffer.putShort((short) messageBase.length);
+        out.writeByte(messageBase.command);
+        out.writeShort(messageBase.id);
+        out.writeShort(messageBase.length);
 
-        if (messageBase instanceof Message) {
-            Message message = (Message) messageBase;
-            if (message.length > 0) {
-                byteBuffer.put(message.body.getBytes(Config.DEFAULT_CHARSET));
-            }
+        if (messageBase.length > 0 && messageBase instanceof Message) {
+            out.writeBytes(((Message) messageBase).body.getBytes(Config.DEFAULT_CHARSET));
         }
-
-        out.writeBytes(byteBuffer.array());
     }
 }
