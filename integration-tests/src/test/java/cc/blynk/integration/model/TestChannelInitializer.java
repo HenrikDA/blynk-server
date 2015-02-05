@@ -13,7 +13,7 @@ import io.netty.channel.socket.SocketChannel;
 */
 public class TestChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-    private SimpleClientHandler responseMock;
+    public SimpleClientHandler responseMock;
 
     public TestChannelInitializer(SimpleClientHandler responseMock) {
         this.responseMock = responseMock;

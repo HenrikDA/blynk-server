@@ -4,7 +4,6 @@ import cc.blynk.client.Client;
 import cc.blynk.integration.IntegrationBase;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -16,12 +15,14 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  */
 public class TestClient {
 
+    public SimpleClientHandler responseMock;
     private Channel clientChannel;
     private EventLoopGroup group;
     private int msgId = 0;
 
-    public TestClient(String host, int port, ChannelHandler channelHandler) throws Exception {
+    public TestClient(String host, int port, TestChannelInitializer channelHandler) throws Exception {
         this.group = new NioEventLoopGroup();
+        this.responseMock = channelHandler.responseMock;
 
         Bootstrap b = new Bootstrap();
         b.group(group).channel(NioSocketChannel.class).handler(channelHandler);

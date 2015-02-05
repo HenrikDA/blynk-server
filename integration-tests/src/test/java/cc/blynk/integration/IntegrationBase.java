@@ -1,23 +1,29 @@
 package cc.blynk.integration;
 
 import cc.blynk.client.Client;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
+import cc.blynk.integration.model.TestClient;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.JsonParser;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.OngoingStubbing;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Random;
 
+import static cc.blynk.common.enums.Response.OK;
+import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -49,6 +55,35 @@ public abstract class IntegrationBase {
 
         }
 
+    }
+
+    public static ClientPair initAppAndHardPair(String host, int port) throws Exception {
+        SimpleClientHandler appResponseMock = Mockito.mock(SimpleClientHandler.class);
+        SimpleClientHandler hardResponseMock = Mockito.mock(SimpleClientHandler.class);
+
+        TestClient appClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(appResponseMock));
+        TestClient hardClient = new TestClient("localhost", TEST_PORT, new TestChannelInitializer(hardResponseMock));
+
+        appClient.send("register dima@mail.ua 1")
+                .send("login dima@mail.ua 1")
+                .send("getToken 1");
+
+        ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
+        verify(appResponseMock, times(3)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<Object> arguments = objectArgumentCaptor.getAllValues();
+        Message getTokenMessage = (Message) arguments.get(2);
+        String token = getTokenMessage.body;
+
+        hardClient.send("login " + token);
+        verify(hardResponseMock).channelRead(any(), eq(produce(1, OK)));
+
+        reset(hardResponseMock);
+        reset(appResponseMock);
+        appClient.reset();
+        hardClient.reset();
+
+        return new ClientPair(appClient, hardClient);
     }
 
     /**
