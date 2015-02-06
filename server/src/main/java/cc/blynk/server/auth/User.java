@@ -22,7 +22,7 @@ public class User implements Serializable {
 
     private String id;
 
-    private UserProfile userProfile;
+    private UserProfile userProfile = new UserProfile();
 
     private Map<Long, String> dashTokens = new HashMap<>();
 

@@ -3,6 +3,8 @@ package cc.blynk.server.model;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: ddumanskiy
@@ -21,7 +23,15 @@ public class UserProfile {
         this.dashBoards = dashBoards;
     }
 
-    public DashBoard getActiveDashboard() {
+    public Set<Widget> getActiveDashboardTimerWidgets() {
+        DashBoard dashBoard = getActiveDashboard();
+        if (dashBoard == null) {
+            return new HashSet<>();
+        }
+        return dashBoard.getTimerWidgets();
+    }
+
+    private DashBoard getActiveDashboard() {
         if (dashBoards == null || dashBoards.length == 0) {
             return null;
         }

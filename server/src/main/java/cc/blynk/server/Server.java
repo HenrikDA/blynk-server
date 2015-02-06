@@ -5,6 +5,7 @@ import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.handlers.logging.LoggingHandler;
+import cc.blynk.server.timer.TimerRunner;
 import cc.blynk.server.utils.FileManager;
 import cc.blynk.server.utils.JsonParser;
 import io.netty.bootstrap.ServerBootstrap;
@@ -28,9 +29,11 @@ public class Server implements Runnable {
     private static final Logger log = LogManager.getLogger(Server.class);
 
     private int port;
+
     private UserRegistry userRegistry;
     private FileManager fileManager;
     private SessionsHolder sessionsHolder;
+
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
@@ -41,9 +44,12 @@ public class Server implements Runnable {
         this.fileManager = new FileManager();
         this.sessionsHolder = new SessionsHolder();
 
+
         log.debug("Reading user DB.");
         this.userRegistry = new UserRegistry(fileManager);
         log.debug("Reading user DB finished.");
+
+        new TimerRunner(userRegistry).start();
     }
 
     public static void main(String[] args) throws Exception {
