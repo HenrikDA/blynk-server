@@ -167,4 +167,4 @@ on your router. This is required in order all request that come to router were f
 Im my router it look like this: {image here}
 
 ## Licensing
-[MIT license] (https://bitbucket.org/theblynk/blynk-server/src/c1b06bca3183aba9ea9ed1fad37b856d25cd8a10/license.txt?at=master)
+[MIT license](https://bitbucket.org/theblynk/blynk-server/src/c1b06bca3183aba9ea9ed1fad37b856d25cd8a10/license.txt?at=master)
