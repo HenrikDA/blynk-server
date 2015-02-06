@@ -4,19 +4,24 @@ import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.group.Session;
 import cc.blynk.server.group.SessionsHolder;
+import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.Widget;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -32,7 +37,8 @@ public class TimerRunnerTest {
     @Mock
     private SessionsHolder sessionsHolder;
 
-    @Mock
+    @Spy
+    @InjectMocks
     private TimerRunner timerRunner;
 
     @Mock
@@ -46,18 +52,27 @@ public class TimerRunnerTest {
     private ConcurrentHashMap<User, Session> userSession = new ConcurrentHashMap<>();
 
     private Set<Widget> timers = new HashSet<>();
+    private Widget w = new Widget();
 
     @Before
     public void init() {
-        Widget w = new Widget();
-        w.setStartTime(100000L);
-        w.setValue("AAAA");
         timers.add(w);
     }
 
     @Test
     public void testTimer() {
-        int userCount = 10_000;
+        //wait for start of a second
+        long startDelay = 1001 - (System.currentTimeMillis() % 1000);
+        try {
+            Thread.sleep(startDelay);
+        } catch (InterruptedException e) {
+        }
+
+        LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("UTC"));
+        long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
+        w.setStartTime(curTime);
+
+        int userCount = 1000;
         for (int i = 0; i < userCount; i++) {
             users.put(String.valueOf(i), user);
         }
@@ -65,13 +80,12 @@ public class TimerRunnerTest {
         when(userRegistry.getUsers()).thenReturn(users);
         when(sessionsHolder.getUserSession()).thenReturn(userSession);
         when(user.getUserProfile()).thenReturn(userProfile);
+        when(userProfile.getDashBoards()).thenReturn(new DashBoard[] {});
         when(userProfile.getDashboardTimerWidgets()).thenReturn(timers);
-
-        timerRunner = new TimerRunner(userRegistry, sessionsHolder);
-        //when(timerRunner.timerTick(any(), 10000L)).thenReturn(false);
 
         timerRunner.run();
 
+        verify(timerRunner, times(1000)).timerTick(eq(curTime), eq(curTime));
     }
 
 }

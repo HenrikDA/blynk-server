@@ -3,6 +3,7 @@ package cc.blynk.server.timer;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
+import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.group.Session;
 import cc.blynk.server.group.SessionsHolder;
 import cc.blynk.server.model.Widget;
@@ -22,15 +23,18 @@ import java.util.concurrent.TimeUnit;
  *
  * Simplest possible timer implementation.
  *
- * //todo optimize if needed
+ * //todo optimize!!!
  */
 public class TimerRunner implements Runnable {
 
     private static final Logger log = LogManager.getLogger(TimerRunner.class);
 
-    private final UserRegistry userRegistry;
-    private final SessionsHolder sessionsHolder;
+    private UserRegistry userRegistry;
+    private SessionsHolder sessionsHolder;
     private ZoneId UTC = ZoneId.of("UTC");
+
+    protected TimerRunner() {
+    }
 
     public TimerRunner(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.userRegistry = userRegistry;
@@ -59,7 +63,11 @@ public class TimerRunner implements Runnable {
                     if (timerTick(curTime, timer.getStartTime())) {
                         Session session = sessionsHolder.getUserSession().get(user);
                         if (session != null) {
-                            session.sendMessageToHardware(new HardwareMessage(0, timer.getValue()));
+                            try {
+                                session.sendMessageToHardware(new HardwareMessage(0, timer.getValue()));
+                            } catch (DeviceNotInNetworkException e) {
+                                log.warn("Timer send for user {} failed. No Device in Network.", user.getName());
+                            }
                         }
                     }
                 }
