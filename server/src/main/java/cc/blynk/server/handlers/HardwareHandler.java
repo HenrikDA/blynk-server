@@ -35,7 +35,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
         //todo
         //for hardware command do not wait for hardware response.
-        List<ChannelFuture> futures = group.sendMessageToHardware(ctx, message);
+        List<ChannelFuture> futures = group.sendMessageToHardware(message);
         ctx.channel().writeAndFlush(produce(message.id, OK));
 
     }

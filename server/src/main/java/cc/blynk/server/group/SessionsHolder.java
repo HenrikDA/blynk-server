@@ -18,13 +18,13 @@ public class SessionsHolder {
     private Map<Channel, User> channelToken = new ConcurrentHashMap<>();
 
     public void addAppChannelToGroup(User user, Channel channel, int msgId) {
-        Session group = getUserGroup(user);
+        Session group = getSessionByUser(user);
         group.addAppChannel(channel, msgId);
         channelToken.put(channel, user);
     }
 
     public void addHardwareChannelToGroup(User user, Channel channel, int msgId) {
-        Session group = getUserGroup(user);
+        Session group = getSessionByUser(user);
         group.addHardwareChannel(channel, msgId);
         channelToken.put(channel, user);
     }
@@ -42,8 +42,12 @@ public class SessionsHolder {
         return user;
     }
 
+    public Map<User, Session> getUserSession() {
+        return userSession;
+    }
+
     //todo synchronized?
-    private Session getUserGroup(User user) {
+    private Session getSessionByUser(User user) {
         Session group = userSession.get(user);
         //only one side came
         if (group == null) {

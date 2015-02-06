@@ -3,6 +3,7 @@ package cc.blynk.server.model;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,27 +24,20 @@ public class UserProfile {
         this.dashBoards = dashBoards;
     }
 
-    public Set<Widget> getActiveDashboardTimerWidgets() {
-        DashBoard dashBoard = getActiveDashboard();
-        if (dashBoard == null) {
-            return new HashSet<>();
-        }
-        return dashBoard.getTimerWidgets();
-    }
-
-    private DashBoard getActiveDashboard() {
+    public Set<Widget> getDashboardTimerWidgets() {
         if (dashBoards == null || dashBoards.length == 0) {
-            return null;
+            return Collections.emptySet();
         }
 
+        Set<Widget> timers = new HashSet<>();
         for (DashBoard dashBoard : dashBoards) {
-            if (dashBoard.getIsActive()) {
-                return dashBoard;
-            }
+            timers.addAll(dashBoard.getTimerWidgets());
         }
 
-        return null;
+        return timers;
     }
+
+
 
     @Override
     public String toString() {

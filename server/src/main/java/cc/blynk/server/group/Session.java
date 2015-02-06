@@ -5,7 +5,6 @@ import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.exceptions.UserAlreadyLoggedIn;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.internal.ConcurrentSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,7 +52,7 @@ public class Session {
 
     //todo for now - simplest possible implementation
     //todo expect right n
-    public List<ChannelFuture> sendMessageToHardware(final ChannelHandlerContext ctx, MessageBase message) {
+    public List<ChannelFuture> sendMessageToHardware(MessageBase message) {
         if (hardwareSize() == 0) {
             throw new DeviceNotInNetworkException("No devices in session.", message.id);
         }

@@ -32,7 +32,7 @@ public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, PingMessage message) throws Exception {
         Session group = sessionsHolder.getUserSession(ctx.channel(), message.id);
-        List<ChannelFuture> futures = group.sendMessageToHardware(ctx, message);
+        List<ChannelFuture> futures = group.sendMessageToHardware(message);
 
         int length = futures.size();
         //todo works for now only for 1 hardware, not for many

@@ -2,10 +2,7 @@ package cc.blynk.server.model;
 
 import cc.blynk.server.model.enums.WidgetType;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: ddumanskiy
@@ -27,11 +24,11 @@ public class DashBoard {
     private Map<String, String> settings;
 
     public Set<Widget> getTimerWidgets() {
-        Set<Widget> timerWidgets = new HashSet<>();
         if (widgets == null || widgets.length == 0) {
-            return timerWidgets;
+            return Collections.emptySet();
         }
 
+        Set<Widget> timerWidgets = new HashSet<>();
         for (Widget widget : widgets) {
             if (widget.getType() == WidgetType.TIMER) {
                 timerWidgets.add(widget);

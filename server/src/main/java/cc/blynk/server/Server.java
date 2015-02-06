@@ -49,7 +49,7 @@ public class Server implements Runnable {
         this.userRegistry = new UserRegistry(fileManager);
         log.debug("Reading user DB finished.");
 
-        new TimerRunner(userRegistry).start();
+        new TimerRunner(userRegistry, sessionsHolder).start();
     }
 
     public static void main(String[] args) throws Exception {
