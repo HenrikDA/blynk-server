@@ -3,7 +3,7 @@ package cc.blynk.server;
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.group.SessionsHolder;
+import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.handlers.*;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelInitializer;

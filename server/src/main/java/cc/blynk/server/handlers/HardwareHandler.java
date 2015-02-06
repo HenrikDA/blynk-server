@@ -2,8 +2,8 @@ package cc.blynk.server.handlers;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.group.Session;
-import cc.blynk.server.group.SessionsHolder;
+import cc.blynk.server.auth.session.Session;
+import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;

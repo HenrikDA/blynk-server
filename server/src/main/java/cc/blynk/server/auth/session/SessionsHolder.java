@@ -1,4 +1,4 @@
-package cc.blynk.server.group;
+package cc.blynk.server.auth.session;
 
 import cc.blynk.server.auth.User;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
@@ -51,7 +51,7 @@ public class SessionsHolder {
         Session group = userSession.get(user);
         //only one side came
         if (group == null) {
-            log.info("Creating unique group for user: {}", user);
+            log.debug("Creating unique session for user: {}", user);
             group = new Session();
             userSession.put(user, group);
         }

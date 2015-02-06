@@ -3,7 +3,7 @@ package cc.blynk.server;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.group.SessionsHolder;
+import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.handlers.logging.LoggingHandler;
 import cc.blynk.server.timer.TimerRunner;
 import cc.blynk.server.utils.FileManager;

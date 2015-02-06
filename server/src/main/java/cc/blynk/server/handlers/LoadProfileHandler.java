@@ -3,7 +3,7 @@ package cc.blynk.server.handlers;
 import cc.blynk.common.model.messages.protocol.LoadProfileMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.group.SessionsHolder;
+import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.logging.log4j.LogManager;

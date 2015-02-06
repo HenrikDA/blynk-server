@@ -2,7 +2,7 @@ package cc.blynk.server.handlers;
 
 import cc.blynk.common.model.messages.protocol.RegisterMessage;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.group.SessionsHolder;
+import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.utils.EMailValidator;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;

@@ -2,8 +2,8 @@ package cc.blynk.server.timer;
 
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.group.Session;
-import cc.blynk.server.group.SessionsHolder;
+import cc.blynk.server.auth.session.Session;
+import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.Widget;

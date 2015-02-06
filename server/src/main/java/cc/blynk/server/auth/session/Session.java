@@ -1,4 +1,4 @@
-package cc.blynk.server.group;
+package cc.blynk.server.auth.session;
 
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
