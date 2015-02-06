@@ -165,3 +165,6 @@ Registered users are stored locally in TMP dir of your system in file "user.db".
 In case you start Blynk server behind wifi-router and want it to be accessible from internet you have to add port-forwarding rule
 on your router. This is required in order all request that come to router were forwarded to Blynk server within local network of your router.
 Im my router it look like this: {image here}
+
+## Licensing
+[MIT license] (https://bitbucket.org/theblynk/blynk-server/src/c1b06bca3183aba9ea9ed1fad37b856d25cd8a10/license.txt?at=master)
