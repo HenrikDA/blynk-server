@@ -28,6 +28,8 @@ public class MessageFactory {
                 return new LoginMessage(messageId, body);
             case REGISTER :
                 return new RegisterMessage(messageId, body);
+            case TWEET :
+                return new TweetMessage(messageId, body);
 
             //todo app specific exception?
             default: throw new RuntimeException(String.format("Command with code %d not supported message.", command));

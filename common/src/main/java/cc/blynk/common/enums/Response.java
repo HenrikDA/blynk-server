@@ -22,6 +22,9 @@ public final class Response {
     public static final int INVALID_TOKEN = 9;
     public static final int SERVER_ERROR = 10;
     public static final int USER_ALREADY_LOGGED_IN = 11;
+    public static final int TWEET_EXCEPTION = 12;
+    public static final int TWEET_BODY_INVALID_EXCEPTION = 13;
+    public static final int TWEET_NOT_AUTHORIZED_EXCEPTION = 14;
 
 
 

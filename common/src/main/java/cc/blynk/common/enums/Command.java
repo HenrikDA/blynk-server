@@ -22,6 +22,7 @@ public final class Command {
     public static final short PING = 6;
     public static final short GRAPH_GET = 7;
     public static final short GRAPH_LOAD = 8;
+    public static final short TWEET = 12;
     //------------------------------------------
 
     //HARDWARE commands

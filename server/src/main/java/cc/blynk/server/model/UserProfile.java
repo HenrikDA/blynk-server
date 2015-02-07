@@ -1,5 +1,6 @@
 package cc.blynk.server.model;
 
+import cc.blynk.server.auth.TwitterAccessToken;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.Arrays;
@@ -15,6 +16,8 @@ import java.util.Set;
 public class UserProfile {
 
     private DashBoard[] dashBoards;
+
+    private TwitterAccessToken twitterAccessToken;
 
     public DashBoard[] getDashBoards() {
         return dashBoards;
@@ -37,7 +40,13 @@ public class UserProfile {
         return timers;
     }
 
+    public TwitterAccessToken getTwitterAccessToken() {
+        return twitterAccessToken;
+    }
 
+    public void setTwitterAccessToken(TwitterAccessToken twitterAccessToken) {
+        this.twitterAccessToken = twitterAccessToken;
+    }
 
     @Override
     public String toString() {

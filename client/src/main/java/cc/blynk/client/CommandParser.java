@@ -27,6 +27,8 @@ public class CommandParser {
                 return LOGIN;
             case "register" :
                 return REGISTER;
+            case "tweet" :
+                return TWEET;
 
             default:
                 throw new IllegalArgumentException("Unsupported command");

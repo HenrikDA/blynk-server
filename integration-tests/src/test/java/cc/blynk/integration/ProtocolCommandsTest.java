@@ -138,7 +138,15 @@ public class ProtocolCommandsTest extends IntegrationBase {
                 new MessageBase[]{produce(2, OK), produce(3, ILLEGAL_COMMAND)},
                 "login dmitriy@mail.ua 1", "getToken 101", "quit"
         );
+    }
 
+    @Test
+    public void testInvalidTweetBody() throws Exception {
+        makeCommands(
+                new int[] {2},
+                new MessageBase[]{produce(2, TWEET_BODY_INVALID_EXCEPTION)},
+                "tweet", "quit"
+        );
     }
 
     @Test

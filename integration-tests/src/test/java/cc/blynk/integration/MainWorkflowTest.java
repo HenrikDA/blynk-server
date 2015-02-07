@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static cc.blynk.common.enums.Response.OK;
+import static cc.blynk.common.enums.Response.TWEET_EXCEPTION;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.mockito.Mockito.*;
 
@@ -46,6 +47,20 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testConnectAppAndHardware() throws Exception {
         initAppAndHardPair("localhost", TEST_PORT);
     }
+
+    @Test
+    public void testTweetException() throws Exception {
+        ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
+        String userProfile = readTestUserProfile();
+        clientPair.appClient.send("saveProfile " + userProfile);
+        clientPair.hardwareClient.send("tweet 123");
+
+        //waiting request to be send to twitter
+        sleep(2000);
+
+        verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, TWEET_EXCEPTION)));
+    }
+
 
     @Test
     public void testConnectAppAndHardwareAndSendCommands() throws Exception {

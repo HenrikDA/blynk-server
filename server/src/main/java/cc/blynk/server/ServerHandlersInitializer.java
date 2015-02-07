@@ -5,6 +5,7 @@ import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.handlers.*;
+import cc.blynk.server.twitter.TwitterWrapper;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -45,6 +46,7 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
         pipeline.addLast(new SaveProfileHandler(fileManager, userRegistry, sessionsHolder));
         pipeline.addLast(new HardwareHandler(fileManager, userRegistry, sessionsHolder));
         pipeline.addLast(new PingHandler(fileManager, userRegistry, sessionsHolder));
+        pipeline.addLast(new TweetHandler(fileManager, userRegistry, sessionsHolder, new TwitterWrapper()));
     }
 }
 

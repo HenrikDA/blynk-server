@@ -17,5 +17,9 @@
              ],
              "settings" : {"boardType":"UNO", "someParam":"someValue"}
             }
-        ]
+        ],
+    "twitterAccessToken" : {
+        "token" : "123",
+        "tokenSecret" : "123"
+    }
 }
