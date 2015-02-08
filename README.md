@@ -9,7 +9,10 @@ Java 8 required. (OpenJDK, Oracle)
 
 Every message consists of 2 parts.
 
-+ Header : Protocol command (1 byte), MessageId (2 bytes), Body message length (2 bytes);
++ Header :
+    + Protocol command (1 byte);
+    + MessageId (2 bytes);
+    + Body message length (2 bytes);
 
 + Body : string (could be up to 2^15 bytes).
 
