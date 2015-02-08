@@ -1,7 +1,7 @@
 package cc.blynk.server.twitter;
 
 import cc.blynk.server.exceptions.TweetException;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**

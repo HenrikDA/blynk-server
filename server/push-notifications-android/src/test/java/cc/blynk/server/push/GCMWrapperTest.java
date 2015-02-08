@@ -1,5 +1,6 @@
 package cc.blynk.server.push;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Map;
 public class GCMWrapperTest {
 
     @Test
+    @Ignore
     public void testSendMessage() throws Exception {
         Map<String, String> payload = new HashMap<>();
         payload.put("Hello", "World");
