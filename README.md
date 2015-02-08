@@ -13,6 +13,7 @@ Every message consists of 2 parts.
 
 + Body : string (could be up to 2^15 bytes).
 
+Scheme:
 
 	            	BEFORE DECODE (8 bytes)
 	+------------------+------------+---------+------------------------+
