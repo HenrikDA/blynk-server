@@ -1,4 +1,4 @@
-package cc.blynk.server.exceptions;
+package cc.blynk.common.exceptions;
 
 /**
  * The Blynk Project.

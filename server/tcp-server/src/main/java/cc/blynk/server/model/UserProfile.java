@@ -1,6 +1,5 @@
 package cc.blynk.server.model;
 
-import cc.blynk.server.auth.TwitterAccessToken;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.Arrays;

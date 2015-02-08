@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="DEBUG">
+    <appenders>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level - %msg%n"/>
+        </Console>
+
+        <RollingFile name="LogFile" fileName="./blynk.log"
+                     filePattern="./blynk.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+
+        <Console name="timerLog" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level - %msg%n"/>
+        </Console>
+
+    </appenders>
+    <loggers>
+
+        <Logger name="cc.blynk.server.timer.TimerRunner" level="debug" additivity="false">
+            <appender-ref ref="timerLog"/>
+        </Logger>
+
+        <root level="DEBUG">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="LogFile"/>
+        </root>
+    </loggers>
+</configuration>

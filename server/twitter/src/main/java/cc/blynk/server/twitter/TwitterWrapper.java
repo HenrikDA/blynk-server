@@ -1,8 +1,8 @@
 package cc.blynk.server.twitter;
 
-import cc.blynk.server.auth.TwitterAccessToken;
 import cc.blynk.server.exceptions.TweetException;
 import cc.blynk.server.exceptions.TweetNotAuthorizedException;
+import cc.blynk.server.model.TwitterAccessToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import twitter4j.Twitter;

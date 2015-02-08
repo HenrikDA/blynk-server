@@ -1,10 +1,10 @@
 package cc.blynk.server.handlers;
 
 import cc.blynk.common.enums.Command;
+import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.auth.session.SessionsHolder;
-import cc.blynk.server.exceptions.BaseServerException;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

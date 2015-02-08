@@ -1,0 +1,32 @@
+{
+   "dashBoards":[
+      {
+         "id":8444297307919927311,
+         "settings":{
+            "boardType":"Uno"
+         },
+         "widgets":[
+            {
+               "x":0,
+               "type":"SLIDER",
+               "y":4,
+               "id":9013884621491657959,
+               "label":"SLIDER",
+               "width":8,
+               "height":1,
+               "pin":-1
+            },
+            {
+               "x":0,
+               "type":"BUTTON",
+               "y":0,
+               "id":8101118353106571483,
+               "label":"BUTTON",
+               "width":2,
+               "height":2,
+               "pin":-1
+            }
+         ]
+      }
+   ]
+}
