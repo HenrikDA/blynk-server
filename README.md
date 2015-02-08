@@ -8,9 +8,11 @@ Java 8 required. (OpenJDK, Oracle)
 # Protocol messages
 
 Every message consists of 2 parts.
-Header : Protocol command (1 byte), MessageId (2 bytes), Body message length (2 bytes);
-Body : string (could be up to 2^15 bytes).
-For instance, the value of the length field in this example is 3 bytes (0x0003) which represents the length of body "1 2".
+
++ Header : Protocol command (1 byte), MessageId (2 bytes), Body message length (2 bytes);
+
++ Body : string (could be up to 2^15 bytes).
+
 
 	            	BEFORE DECODE (8 bytes)
 	+------------------+------------+---------+------------------------+
@@ -51,6 +53,7 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
         4 - load profile; Don't have any params
         5 - getToken; Must have 1 int param, dash board id : "1". ACCEPTED DASH_ID RANGE IS [1..100];
         6 - ping; Sends request from client ot server, than from server to hardware, than back to server and back to client.
+        12 - tweet; Sends tweet request from hardware to server. With body no more than 140 chars max.
         20 - hardware; Command for hardware. Every widget should form it's own body message for hardware command.
 
 
@@ -87,6 +90,9 @@ Response message structure:
     9 - token not valid
     10 - server error
     11 - user already logged in. Happens in case same user tries to login more than one time.
+    12 - tweet exception, exception occurred during posting request to tweeter could be in case message is same in a row;
+    13 - tweet body invalid exception; boyd is empty or larger than 140 chars;
+    14 - user has no access token.
     500 - server error. something went wrong on server
 
 ## User Profile JSON structure
@@ -97,7 +103,11 @@ Response message structure:
 			 "widgets"  : [...], 
 			 "settings" : {"boardType":"UNO", ..., "someParam":"someValue"}
 			}
-		]
+		],
+		"twitterAccessToken" : {
+		    "token" : "USER_TOKEN",
+		    "tokenSecret" : "USER_SECRET"
+		}
 	}
 
 ## Widgets JSON structure
@@ -121,6 +131,7 @@ Server guarantees that commands will be processed in same order in which they we
 + Run the server
 
         java -jar server.jar -port 8080
+
 + Run the client (simulates smartphone client)
 
         java -jar client.jar -host localhost -port 8080
