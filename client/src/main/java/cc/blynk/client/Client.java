@@ -1,5 +1,6 @@
 package cc.blynk.client;
 
+import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
@@ -74,6 +75,9 @@ public class Client {
 
         input = line.split(" ", 2);
         String body = input.length == 1 ? "" : input[1];
+        if (command == Command.HARDWARE_COMMAND) {
+            body = body.replaceAll(" ", "\0");
+        }
         return produce(msgId, command, body);
     }
 
