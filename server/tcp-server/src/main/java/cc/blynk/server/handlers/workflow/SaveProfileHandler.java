@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.SaveProfileMessage;
 import cc.blynk.server.auth.User;
@@ -31,7 +31,7 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, SaveProfileMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, SaveProfileMessage message) throws Exception {
         String userProfileString = message.body;
 
         //expecting message with 2 parts
@@ -47,10 +47,8 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
 
         log.info("Trying save user profile.");
 
-        User authUser = sessionsHolder.findUserByChannel(ctx.channel(), message.id);
-
-        authUser.setUserProfile(userProfile);
-        boolean profileSaved = fileManager.overrideUserFile(authUser);
+        user.setUserProfile(userProfile);
+        boolean profileSaved = fileManager.overrideUserFile(user);
 
         if (profileSaved) {
             ctx.writeAndFlush(produce(message.id, OK));

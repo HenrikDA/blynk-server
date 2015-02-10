@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.handlers.auth;
 
 import cc.blynk.common.model.messages.protocol.RegisterMessage;
 import cc.blynk.server.auth.UserRegistry;
@@ -6,6 +6,7 @@ import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.utils.EMailValidator;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,12 +25,18 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  * For instance, incoming register message may be : "user@mail.ua my_password"
  */
-public class RegisterHandler extends BaseSimpleChannelInboundHandler<RegisterMessage> {
+public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> {
 
     private static final Logger log = LogManager.getLogger(RegisterHandler.class);
 
+    protected final FileManager fileManager;
+    protected final UserRegistry userRegistry;
+    protected final SessionsHolder sessionsHolder;
+
     public RegisterHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(fileManager, userRegistry, sessionsHolder);
+        this.fileManager = fileManager;
+        this.userRegistry = userRegistry;
+        this.sessionsHolder = sessionsHolder;
     }
 
     @Override

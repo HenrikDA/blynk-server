@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.LoadProfileMessage;
 import cc.blynk.server.auth.User;
@@ -26,10 +26,8 @@ public class LoadProfileHandler extends BaseSimpleChannelInboundHandler<LoadProf
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, LoadProfileMessage message) throws Exception {
-        User authUser = sessionsHolder.findUserByChannel(ctx.channel(), message.id);
-
-        String body = authUser.getUserProfile() == null ? "{}" : authUser.getUserProfile().toString();
+    protected void messageReceived(ChannelHandlerContext ctx, User user, LoadProfileMessage message) throws Exception {
+        String body = user.getUserProfile() == null ? "{}" : user.getUserProfile().toString();
         ctx.writeAndFlush(produce(message.id, message.command, body));
     }
 

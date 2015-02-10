@@ -1,8 +1,10 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.exceptions.BaseServerException;
+import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.model.messages.ResponseMessage;
+import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
@@ -19,7 +21,7 @@ import org.apache.logging.log4j.Logger;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/3/2015.
  */
-public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundHandlerAdapter {
+public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter {
 
     private static final Logger log = LogManager.getLogger(BaseSimpleChannelInboundHandler.class);
     protected final FileManager fileManager;
@@ -43,7 +45,9 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (acceptInboundMessage(msg)) {
             try {
-                channelRead0(ctx, (I) msg);
+                I imsg = (I) msg;
+                User user = sessionsHolder.findUserByChannel(ctx.channel(), imsg.id);
+                messageReceived(ctx, user, imsg);
             } finally {
                 ReferenceCountUtil.release(msg);
             }
@@ -63,7 +67,7 @@ public abstract class BaseSimpleChannelInboundHandler<I> extends ChannelInboundH
      * @param msg           the message to handle
      * @throws Exception    is thrown if an error occurred
      */
-    protected abstract void channelRead0(ChannelHandlerContext ctx, I msg) throws Exception;
+    protected abstract void messageReceived(ChannelHandlerContext ctx, User user, I msg) throws Exception;
 
     /**
      * Returns {@code true} if the given message should be handled. If {@code false} it will be passed to the next

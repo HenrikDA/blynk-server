@@ -142,10 +142,12 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testInvalidTweetBody() throws Exception {
+        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+
         makeCommands(
-                new int[] {2},
-                new MessageBase[]{produce(2, TWEET_BODY_INVALID_EXCEPTION)},
-                "tweet", "quit"
+                new int[] {2,3},
+                new MessageBase[]{produce(2, OK), produce(3, TWEET_BODY_INVALID_EXCEPTION)},
+                "login dmitriy@mail.ua 1", "tweet", "quit"
         );
     }
 

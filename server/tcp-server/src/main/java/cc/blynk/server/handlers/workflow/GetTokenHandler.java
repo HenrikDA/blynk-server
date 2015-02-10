@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.GetTokenMessage;
 import cc.blynk.server.auth.User;
@@ -27,7 +27,7 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, GetTokenMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, GetTokenMessage message) throws Exception {
         String dashBoardIdString = message.body;
 
         long dashBoardId;
@@ -41,7 +41,6 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
             throw new IllegalCommandException(String.format("Token '%s' should ne in range [0..100].", dashBoardIdString), message.id);
         }
 
-        User user = sessionsHolder.findUserByChannel(ctx.channel(), message.id);
         String token = userRegistry.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));

@@ -1,6 +1,7 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.PingMessage;
+import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.auth.session.Session;
 import cc.blynk.server.auth.session.SessionsHolder;
@@ -30,8 +31,8 @@ public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, PingMessage message) throws Exception {
-        Session group = sessionsHolder.getUserSession(ctx.channel(), message.id);
+    protected void messageReceived(ChannelHandlerContext ctx, User user, PingMessage message) throws Exception {
+        Session group = sessionsHolder.getUserSession().get(user);
         List<ChannelFuture> futures = group.sendMessageToHardware(message);
 
         int length = futures.size();

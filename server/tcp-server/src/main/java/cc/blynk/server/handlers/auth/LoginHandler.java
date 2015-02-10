@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.handlers.auth;
 
 import cc.blynk.common.model.messages.protocol.LoginMessage;
 import cc.blynk.server.auth.User;
@@ -10,6 +10,7 @@ import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,12 +23,18 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-public class LoginHandler extends BaseSimpleChannelInboundHandler<LoginMessage> {
+public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
 
     private static final Logger log = LogManager.getLogger(LoginHandler.class);
 
+    protected final FileManager fileManager;
+    protected final UserRegistry userRegistry;
+    protected final SessionsHolder sessionsHolder;
+
     public LoginHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(fileManager, userRegistry, sessionsHolder);
+        this.fileManager = fileManager;
+        this.userRegistry = userRegistry;
+        this.sessionsHolder = sessionsHolder;
     }
 
     @Override

@@ -1,6 +1,7 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.auth.session.Session;
 import cc.blynk.server.auth.session.SessionsHolder;
@@ -30,8 +31,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, HardwareMessage message) throws Exception {
-        Session group = sessionsHolder.getUserSession(ctx.channel(), message.id);
+    protected void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) throws Exception {
+        Session group = sessionsHolder.getUserSession().get(user);
 
         //todo
         //for hardware command do not wait for hardware response.

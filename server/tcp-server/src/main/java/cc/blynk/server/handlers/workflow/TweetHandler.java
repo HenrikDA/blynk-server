@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers;
+package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.TweetMessage;
 import cc.blynk.server.auth.User;
@@ -32,11 +32,10 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, TweetMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, TweetMessage message) throws Exception {
         if (message.body == null || message.body.equals("") || message.body.length() > 140) {
             throw new TweetBodyInvalidException("Tweet message is empty or larger 140 chars", message.id);
         }
-        User user = sessionsHolder.findUserByChannel(ctx.channel(), message.id);
         twitterWrapper.tweet(user.getUserProfile().getTwitterAccessToken(), message.body, message.id);
         log.debug("Tweet for user {}, with message : '{}', successfully was sent.", user.getName(), message.body);
 
