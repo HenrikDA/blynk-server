@@ -1,6 +1,7 @@
 package cc.blynk.common.model.messages;
 
 import cc.blynk.common.enums.Command;
+import cc.blynk.common.exceptions.UnsupportedCommandException;
 import cc.blynk.common.model.messages.protocol.*;
 
 import static cc.blynk.common.enums.Command.*;
@@ -32,7 +33,7 @@ public class MessageFactory {
                 return new TweetMessage(messageId, body);
 
             //todo app specific exception?
-            default: throw new RuntimeException(String.format("Command with code %d not supported message.", command));
+            default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }
     }
 

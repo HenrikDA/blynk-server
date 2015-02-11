@@ -43,9 +43,4 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> {
         out.add(message);
     }
 
-    //todo finish?
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
-    }
 }
