@@ -1,4 +1,4 @@
-package cc.blynk.server.auth.session;
+package cc.blynk.server.model.auth;
 
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
@@ -29,7 +29,7 @@ public class Session {
     private final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
     //todo not sure, but netty processes same channel in same thread, so no sync
-    protected void addAppChannel(Channel channel, int msgId) {
+    public void addAppChannel(Channel channel, int msgId) {
         //if login from same channel again - do not allow.
         if (appChannels.contains(channel)) {
             throw new UserAlreadyLoggedIn("User already logged. Client problem. CHECK!", msgId);
@@ -38,7 +38,7 @@ public class Session {
     }
 
     //todo not sure, but netty processes same channel in same thread, so no sync
-    protected void addHardwareChannel(Channel channel, int msgId) {
+    public void addHardwareChannel(Channel channel, int msgId) {
         //if login from same channel again - do not allow.
         if (hardwareChannels.contains(channel)) {
             throw new UserAlreadyLoggedIn("User already logged. Client problem. CHECK!", msgId);

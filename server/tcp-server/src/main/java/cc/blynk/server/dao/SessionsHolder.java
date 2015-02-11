@@ -1,7 +1,8 @@
-package cc.blynk.server.auth.session;
+package cc.blynk.server.dao;
 
-import cc.blynk.server.auth.User;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
+import cc.blynk.server.model.auth.Session;
+import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,14 +19,14 @@ public class SessionsHolder {
     private Map<Channel, User> channelToken = new ConcurrentHashMap<>();
 
     public void addAppChannelToGroup(User user, Channel channel, int msgId) {
-        Session group = getSessionByUser(user);
-        group.addAppChannel(channel, msgId);
+        Session session = getSessionByUser(user);
+        session.addAppChannel(channel, msgId);
         channelToken.put(channel, user);
     }
 
     public void addHardwareChannelToGroup(User user, Channel channel, int msgId) {
-        Session group = getSessionByUser(user);
-        group.addHardwareChannel(channel, msgId);
+        Session session = getSessionByUser(user);
+        session.addHardwareChannel(channel, msgId);
         channelToken.put(channel, user);
     }
 

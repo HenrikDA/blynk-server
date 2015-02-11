@@ -1,6 +1,6 @@
 package cc.blynk.server.utils;
 
-import cc.blynk.server.auth.User;
+import cc.blynk.server.model.auth.User;
 import org.junit.Before;
 import org.junit.Test;
 

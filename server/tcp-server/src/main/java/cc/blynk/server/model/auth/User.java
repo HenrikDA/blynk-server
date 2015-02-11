@@ -1,4 +1,4 @@
-package cc.blynk.server.auth;
+package cc.blynk.server.model.auth;
 
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.JsonParser;

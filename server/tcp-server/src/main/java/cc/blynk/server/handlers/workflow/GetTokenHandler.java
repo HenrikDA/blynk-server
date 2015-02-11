@@ -1,10 +1,10 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.GetTokenMessage;
-import cc.blynk.server.auth.User;
-import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.auth.session.SessionsHolder;
+import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 

@@ -1,7 +1,7 @@
 package cc.blynk.server.utils;
 
-import cc.blynk.server.auth.User;
 import cc.blynk.server.model.UserProfile;
+import cc.blynk.server.model.auth.User;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;

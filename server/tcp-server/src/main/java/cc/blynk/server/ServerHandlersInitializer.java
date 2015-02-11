@@ -2,8 +2,8 @@ package cc.blynk.server;
 
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
-import cc.blynk.server.auth.UserRegistry;
-import cc.blynk.server.auth.session.SessionsHolder;
+import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.auth.LoginHandler;
 import cc.blynk.server.handlers.auth.RegisterHandler;
 import cc.blynk.server.handlers.workflow.*;

@@ -1,7 +1,7 @@
 package cc.blynk.server.utils;
 
 import cc.blynk.common.utils.Config;
-import cc.blynk.server.auth.User;
+import cc.blynk.server.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
