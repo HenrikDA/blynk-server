@@ -20,7 +20,7 @@ public class Finder extends SimpleFileVisitor<Path> {
     private final PathMatcher matcher;
     private final List<Path> foundFiles = new ArrayList<>();
 
-    Finder(String pattern) {
+    public Finder(String pattern) {
         matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
     }
 

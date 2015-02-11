@@ -1,11 +1,11 @@
 package cc.blynk.server.handlers.auth;
 
 import cc.blynk.common.model.messages.protocol.RegisterMessage;
+import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.DefaultExceptionHandler;
 import cc.blynk.server.utils.EMailValidator;
-import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 

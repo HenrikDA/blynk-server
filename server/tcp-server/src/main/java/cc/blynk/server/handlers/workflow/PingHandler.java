@@ -1,11 +1,11 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.PingMessage;
+import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.auth.session.Session;
-import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 

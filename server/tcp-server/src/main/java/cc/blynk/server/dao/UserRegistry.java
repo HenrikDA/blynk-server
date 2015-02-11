@@ -1,7 +1,6 @@
 package cc.blynk.server.dao;
 
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.utils.FileManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

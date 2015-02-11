@@ -2,13 +2,13 @@ package cc.blynk.server;
 
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
+import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.auth.LoginHandler;
 import cc.blynk.server.handlers.auth.RegisterHandler;
 import cc.blynk.server.handlers.workflow.*;
 import cc.blynk.server.twitter.TwitterWrapper;
-import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
