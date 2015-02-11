@@ -6,8 +6,6 @@ import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
@@ -18,8 +16,6 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 public class LoadProfileHandler extends BaseSimpleChannelInboundHandler<LoadProfileMessage> {
-
-    private static final Logger log = LogManager.getLogger(LoadProfileHandler.class);
 
     public LoadProfileHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(fileManager, userRegistry, sessionsHolder);

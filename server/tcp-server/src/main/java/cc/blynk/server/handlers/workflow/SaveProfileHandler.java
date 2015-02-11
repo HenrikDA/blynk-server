@@ -9,8 +9,6 @@ import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.FileManager;
 import cc.blynk.server.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.enums.Response.SERVER_ERROR;
@@ -23,8 +21,6 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProfileMessage> {
-
-    private static final Logger log = LogManager.getLogger(SaveProfileHandler.class);
 
     public SaveProfileHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(fileManager, userRegistry, sessionsHolder);

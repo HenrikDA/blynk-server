@@ -8,8 +8,6 @@ import cc.blynk.server.auth.session.SessionsHolder;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -23,8 +21,6 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
-
-    private static final Logger log = LogManager.getLogger(PingHandler.class);
 
     public PingHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(fileManager, userRegistry, sessionsHolder);

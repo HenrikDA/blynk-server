@@ -3,12 +3,11 @@ package cc.blynk.server.handlers.auth;
 import cc.blynk.common.model.messages.protocol.RegisterMessage;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.auth.session.SessionsHolder;
+import cc.blynk.server.handlers.DefaultExceptionHandler;
 import cc.blynk.server.utils.EMailValidator;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -25,9 +24,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  * For instance, incoming register message may be : "user@mail.ua my_password"
  */
-public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> {
-
-    private static final Logger log = LogManager.getLogger(RegisterHandler.class);
+public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> implements DefaultExceptionHandler {
 
     protected final FileManager fileManager;
     protected final UserRegistry userRegistry;
@@ -72,6 +69,11 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         log.info("Registered {}.", userName);
 
         ctx.writeAndFlush(produce(message.id, OK));
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleException(ctx, cause);
     }
 
 }

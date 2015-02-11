@@ -8,8 +8,6 @@ import cc.blynk.server.exceptions.TweetBodyInvalidException;
 import cc.blynk.server.twitter.TwitterWrapper;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -21,8 +19,6 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> {
-
-    private static final Logger log = LogManager.getLogger(TweetHandler.class);
 
     private final TwitterWrapper twitterWrapper;
 

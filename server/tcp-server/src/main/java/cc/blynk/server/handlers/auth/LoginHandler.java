@@ -8,11 +8,10 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
+import cc.blynk.server.handlers.DefaultExceptionHandler;
 import cc.blynk.server.utils.FileManager;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -23,9 +22,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
-public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
-
-    private static final Logger log = LogManager.getLogger(LoginHandler.class);
+public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
 
     protected final FileManager fileManager;
     protected final UserRegistry userRegistry;
@@ -86,4 +83,8 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> {
         log.info("Adding app channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+       handleException(ctx, cause);
+    }
 }
