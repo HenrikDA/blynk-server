@@ -1,9 +1,7 @@
 package cc.blynk.server.handlers.workflow;
 
-import cc.blynk.common.enums.Command;
 import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.model.messages.MessageBase;
-import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.server.auth.User;
 import cc.blynk.server.auth.UserRegistry;
 import cc.blynk.server.auth.session.SessionsHolder;
@@ -16,6 +14,8 @@ import io.netty.util.internal.TypeParameterMatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
+
+import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
  * The Blynk Project.
@@ -35,10 +35,6 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
-    }
-
-    private static ResponseMessage produce(BaseServerException exception) {
-        return new ResponseMessage(exception.msgId, Command.RESPONSE, exception.errorCode);
     }
 
     @Override
