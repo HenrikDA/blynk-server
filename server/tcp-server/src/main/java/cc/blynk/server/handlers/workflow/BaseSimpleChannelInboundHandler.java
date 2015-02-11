@@ -15,6 +15,7 @@ import io.netty.util.ReferenceCountUtil;
 import io.netty.util.internal.TypeParameterMatcher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 /**
  * The Blynk Project.
@@ -47,8 +48,13 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             try {
                 I imsg = (I) msg;
                 User user = sessionsHolder.findUserByChannel(ctx.channel(), imsg.id);
+                //setting logging context
+                //todo how to handle exceptions??
+                ThreadContext.put("user", user.getName());
                 messageReceived(ctx, user, imsg);
             } finally {
+                //cleanup logging context.
+                ThreadContext.clearMap();
                 ReferenceCountUtil.release(msg);
             }
         } else {

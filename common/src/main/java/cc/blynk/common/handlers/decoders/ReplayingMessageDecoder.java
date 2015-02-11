@@ -38,7 +38,7 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> {
             message = produce(messageId, command, messageBody);
         }
 
-        log.debug("Incomming {}", message);
+        log.trace("Incomming {}", message);
 
         out.add(message);
     }

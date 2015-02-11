@@ -6,16 +6,6 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level - %msg%n"/>
         </Console>
 
-        <RollingFile name="LogFile" fileName="./blynk.log"
-                     filePattern="./blynk.log.%d{yyyy-MM-dd}">
-            <PatternLayout>
-                <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
-            </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy/>
-            </Policies>
-        </RollingFile>
-
         <RollingFile name="timerLog" fileName="./timer.log"
                      filePattern="./timer.log.%d{yyyy-MM-dd}">
             <PatternLayout>
@@ -26,6 +16,38 @@
             </Policies>
         </RollingFile>
 
+        <Routing name="Routing">
+            <Routes pattern="$${ctx:user}">
+
+                <!-- This route is chosen if ThreadContext has no value for key "user". -->
+                <Route key="$${ctx:user}">
+                    <RollingFile name="default" fileName="./blynk.log"
+                                 filePattern="./blynk.log.%d{yyyy-MM-dd}">
+                        <PatternLayout>
+                            <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+                        </PatternLayout>
+                        <Policies>
+                            <TimeBasedTriggeringPolicy/>
+                        </Policies>
+                    </RollingFile>
+                </Route>
+
+                <!-- This route is chosen if ThreadContext has a value for "user"
+                The value dynamically determines the name of the log file. -->
+                <Route>
+                    <RollingFile name="${ctx:user}" fileName="./${ctx:user}.log"
+                                 filePattern="./${ctx:user}.log.%d{yyyy-MM-dd}">
+                        <PatternLayout>
+                            <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+                        </PatternLayout>
+                        <Policies>
+                            <TimeBasedTriggeringPolicy/>
+                        </Policies>
+                    </RollingFile>
+                </Route>
+            </Routes>
+        </Routing>
+
     </appenders>
     <loggers>
 
@@ -35,7 +57,7 @@
 
         <root level="DEBUG">
             <appender-ref ref="Console"/>
-            <appender-ref ref="LogFile"/>
+            <appender-ref ref="Routing"/>
         </root>
     </loggers>
 </configuration>
