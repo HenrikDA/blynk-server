@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -28,7 +30,7 @@ public class PropertiesUtil {
         }
         Properties props = new Properties();
         try (InputStream classPath = PropertiesUtil.class.getResourceAsStream(filePropertiesName);
-             InputStream curFolder = PropertiesUtil.class.getResourceAsStream("." + filePropertiesName)) {
+             InputStream curFolder = Files.newInputStream(Paths.get(System.getProperty("user.dir"), filePropertiesName))) {
 
             if (classPath != null) {
                 props.load(classPath);
