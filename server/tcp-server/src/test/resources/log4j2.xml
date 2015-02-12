@@ -23,7 +23,7 @@
     </appenders>
     <loggers>
 
-        <Logger name="cc.blynk.server.timer.TimerRunner" level="debug" additivity="false">
+        <Logger name="cc.blynk.server.workers.timer.TimerRunner" level="debug" additivity="false">
             <appender-ref ref="timerLog"/>
         </Logger>
 

@@ -85,6 +85,6 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> impl
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-       handleException(ctx, cause);
+       handleGeneralException(ctx, cause);
     }
 }

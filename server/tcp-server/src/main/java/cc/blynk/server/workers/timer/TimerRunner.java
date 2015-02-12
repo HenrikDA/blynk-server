@@ -1,4 +1,4 @@
-package cc.blynk.server.timer;
+package cc.blynk.server.workers.timer;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.dao.SessionsHolder;

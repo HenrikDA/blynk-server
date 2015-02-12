@@ -1,10 +1,12 @@
 package cc.blynk.server.handlers.workflow;
 
+import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.DefaultExceptionHandler;
+import cc.blynk.server.model.auth.Stats;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -36,16 +38,24 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (matcher.match(msg)) {
+            Stats stats = null;
             try {
                 I imsg = (I) msg;
                 User user = sessionsHolder.findUserByChannel(ctx.channel(), imsg.id);
-                //setting logging context
-                //todo how to handle exceptions??
+                stats = user.getStats();
+                stats.incr(imsg.command);
+
                 ThreadContext.put("user", user.getName());
                 messageReceived(ctx, user, imsg);
-            } finally {
-                //cleanup logging context.
                 ThreadContext.clearMap();
+            } catch (BaseServerException cause) {
+                if (stats != null) {
+                    stats.incrException(cause.errorCode);
+                }
+                handleAppException(ctx, cause);
+            } catch (Throwable t) {
+                handleGeneralException(ctx, t);
+            } finally {
                 ReferenceCountUtil.release(msg);
             }
         } else {
@@ -66,8 +76,4 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      */
     protected abstract void messageReceived(ChannelHandlerContext ctx, User user, I msg) throws Exception;
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleException(ctx, cause);
-    }
 }

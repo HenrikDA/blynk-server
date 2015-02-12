@@ -26,12 +26,15 @@ public class User implements Serializable {
 
     private Map<Long, String> dashTokens = new HashMap<>();
 
+    private Stats stats;
+
     public User() {
     }
 
     public User(String name, String pass) {
         this.name = name;
         this.pass = pass;
+        this.stats = new Stats();
     }
 
     public String getName() {
@@ -72,6 +75,10 @@ public class User implements Serializable {
 
     public void setDashTokens(Map<Long, String> dashTokens) {
         this.dashTokens = dashTokens;
+    }
+
+    public Stats getStats() {
+        return stats;
     }
 
     @Override

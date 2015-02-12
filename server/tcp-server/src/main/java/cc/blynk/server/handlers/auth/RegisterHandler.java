@@ -73,7 +73,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleException(ctx, cause);
+        handleGeneralException(ctx, cause);
     }
 
 }
