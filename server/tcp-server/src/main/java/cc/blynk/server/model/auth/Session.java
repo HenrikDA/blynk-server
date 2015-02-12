@@ -58,7 +58,7 @@ public class Session {
         }
         List<ChannelFuture> futureList = new ArrayList<>();
         for (Channel hardwareChannel : hardwareChannels) {
-            log.debug("Sending {} to {}", message, hardwareChannel);
+            log.trace("Sending {} to {}", message, hardwareChannel);
             futureList.add(hardwareChannel.writeAndFlush(message));
         }
         return futureList;
