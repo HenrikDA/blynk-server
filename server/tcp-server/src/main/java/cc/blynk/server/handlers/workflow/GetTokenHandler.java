@@ -34,7 +34,7 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
         }
 
         if (dashBoardId < 0 || dashBoardId > 100) {
-            throw new IllegalCommandException(String.format("Token '%s' should ne in range [0..100].", dashBoardIdString), message.id);
+            throw new IllegalCommandException(String.format("Token '%s' should be in range [0..100].", dashBoardIdString), message.id);
         }
 
         String token = userRegistry.getToken(user, dashBoardId);
