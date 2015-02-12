@@ -6,8 +6,8 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level - %msg%n"/>
         </Console>
 
-        <RollingFile name="timerLog" fileName="./timer.log"
-                     filePattern="./timer.log.%d{yyyy-MM-dd}">
+        <RollingFile name="workersLog" fileName="./worker.log"
+                     filePattern="./worker.log.%d{yyyy-MM-dd}">
             <PatternLayout>
                 <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
             </PatternLayout>
@@ -51,8 +51,11 @@
     </appenders>
     <loggers>
 
+        <Logger name="cc.blynk.server.workers.ProfileSaverRunner" level="debug" additivity="false">
+            <appender-ref ref="workersLog"/>
+        </Logger>
         <Logger name="cc.blynk.server.workers.timer.TimerRunner" level="debug" additivity="false">
-            <appender-ref ref="timerLog"/>
+            <appender-ref ref="workersLog"/>
         </Logger>
 
         <root level="DEBUG">

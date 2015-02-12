@@ -10,7 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * User: ddumanskiy
@@ -42,15 +43,15 @@ public class FileManagerIntegrationTest {
 
     @Test
     public void testCreationTempFile() throws IOException {
-        assertTrue(fileManager.saveNewUserToFile(user1));
+        fileManager.overrideUserFile(user1);
         //file existence ignored
-        assertTrue(fileManager.saveNewUserToFile(user1));
+        fileManager.overrideUserFile(user1);
     }
 
     @Test
-    public void testReadListOfFiles() {
-        assertTrue(fileManager.saveNewUserToFile(user1));
-        assertTrue(fileManager.saveNewUserToFile(user2));
+    public void testReadListOfFiles() throws IOException {
+        fileManager.overrideUserFile(user1);
+        fileManager.overrideUserFile(user2);
 
         ConcurrentHashMap<String, User> users = fileManager.deserialize();
         assertNotNull(users);
@@ -59,9 +60,9 @@ public class FileManagerIntegrationTest {
     }
 
     @Test
-    public void testOverrideFiles() {
-        assertTrue(fileManager.overrideUserFile(user1));
-        assertTrue(fileManager.overrideUserFile(user1));
+    public void testOverrideFiles() throws IOException {
+        fileManager.overrideUserFile(user1);
+        fileManager.overrideUserFile(user1);
 
         ConcurrentHashMap<String, User> users = fileManager.deserialize();
         assertNotNull(users);

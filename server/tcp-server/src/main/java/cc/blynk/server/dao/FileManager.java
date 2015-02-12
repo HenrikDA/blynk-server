@@ -69,26 +69,13 @@ public final class FileManager {
         return Paths.get(dataDir.toString(), "u_" + userName + ".user");
     }
 
-    /**
-     * Returns true if user was successfully saved to file.
-     * @param user - user to save
-     * @return true in case of success
-     */
-    public boolean saveNewUserToFile(User user) {
-        return overrideUserFile(user);
-    }
-
-    public boolean overrideUserFile(User user) {
+    public void overrideUserFile(User user) throws IOException {
         Path file = generateFileName(user.getName());
         try (BufferedWriter writer = Files.newBufferedWriter(file, Config.DEFAULT_CHARSET)) {
             String userString = user.toString();
 
             writer.write(userString);
-        } catch (IOException ioe) {
-            log.error("Error writing file.", ioe);
-            return false;
         }
-        return true;
     }
 
     public ConcurrentHashMap<String, User> deserialize() {

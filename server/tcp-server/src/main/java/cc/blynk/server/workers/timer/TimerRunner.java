@@ -44,7 +44,7 @@ public class TimerRunner implements Runnable {
     public void start() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         //millis we need to wait to start scheduler at the beginning of a second.
-        long startDelay = 1001 - (System.currentTimeMillis() % 1000);
+        long startDelay = 1000 - (System.currentTimeMillis() % 1000);
         scheduler.scheduleAtFixedRate(this, startDelay, 1000, TimeUnit.MILLISECONDS);
     }
 

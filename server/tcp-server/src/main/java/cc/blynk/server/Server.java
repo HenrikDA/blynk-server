@@ -7,6 +7,7 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.logging.LoggingHandler;
 import cc.blynk.server.utils.JsonParser;
+import cc.blynk.server.workers.ProfileSaverRunner;
 import cc.blynk.server.workers.timer.TimerRunner;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -46,10 +47,11 @@ public class Server implements Runnable {
 
 
         log.debug("Reading user DB.");
-        this.userRegistry = new UserRegistry(fileManager);
+        this.userRegistry = new UserRegistry(fileManager.deserialize());
         log.debug("Reading user DB finished.");
 
         new TimerRunner(userRegistry, sessionsHolder).start();
+        new ProfileSaverRunner(userRegistry, fileManager).start();
     }
 
     public static void main(String[] args) throws Exception {

@@ -19,13 +19,11 @@ public class UserRegistry {
 
     private static final Logger log = LogManager.getLogger(UserRegistry.class);
     private ConcurrentHashMap<String, User> users;
-    private FileManager fileManager;
     //init user DB if possible
 
-    public UserRegistry(FileManager fileManager) {
-        this.fileManager = fileManager;
+    public UserRegistry(ConcurrentHashMap<String, User> users) {
         //reading DB to RAM.
-        users = fileManager.deserialize();
+        this.users = users;
     }
 
     private static String generateNewToken() {
@@ -66,7 +64,6 @@ public class UserRegistry {
             token = generateNewToken();
             log.info("Generated token for user {} and dashId {} is {}.", user.getName(), dashboardId, token);
             user.getDashTokens().put(dashboardId, token);
-            fileManager.overrideUserFile(user);
         } else {
             log.info("Token for user {} and dashId {} generated already. Token {}", user.getName(), dashboardId, token);
         }
@@ -76,12 +73,7 @@ public class UserRegistry {
 
     public User createNewUser(String userName, String pass) {
         User newUser = new User(userName, pass);
-
         users.put(userName, newUser);
-
-        //todo, yes this not optimal solution, but who cares?
-        //todo this may be moved to separate thread
-        fileManager.saveNewUserToFile(newUser);
         return newUser;
     }
 

@@ -11,7 +11,6 @@ import cc.blynk.server.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
 
 import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.enums.Response.SERVER_ERROR;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
@@ -44,13 +43,7 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
         log.info("Trying save user profile.");
 
         user.setUserProfile(userProfile);
-        boolean profileSaved = fileManager.overrideUserFile(user);
-
-        if (profileSaved) {
-            ctx.writeAndFlush(produce(message.id, OK));
-        } else {
-            ctx.writeAndFlush(produce(message.id, SERVER_ERROR));
-        }
+        ctx.writeAndFlush(produce(message.id, OK));
     }
 
 
