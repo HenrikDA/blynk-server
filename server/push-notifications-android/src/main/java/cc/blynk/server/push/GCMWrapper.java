@@ -1,9 +1,9 @@
 package cc.blynk.server.push;
 
+import cc.blynk.common.utils.PropertiesUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 
@@ -18,22 +18,17 @@ public class GCMWrapper {
 
     private static final Logger log = LogManager.getLogger(GCMSmackCcsClient.class);
 
-    private static final String filePropertiesName = "/gcm.properties";
-    private final Properties props = new Properties();
+    private static final String filePropertiesName = "gcm.properties";
+    private final Properties props;
     private GCMSmackCcsClient ccsClient;
 
     public GCMWrapper() {
-        try (InputStream classPath = GCMWrapper.class.getResourceAsStream(filePropertiesName);
-             InputStream curFolder = GCMWrapper.class.getResourceAsStream("." + filePropertiesName)) {
+        props = PropertiesUtil.loadProperties(filePropertiesName);
 
-            if (classPath != null) {
-                props.load(classPath);
-            }
-            if (curFolder != null) {
-                props.load(curFolder);
-            }
-            this.ccsClient = new GCMSmackCcsClient(props.getProperty("gcm.server"), Integer.valueOf(props.getProperty("gcm.port")));
-            ccsClient.connect(Long.valueOf(props.getProperty("gcm.project.id")), props.getProperty("gcm.api.key"));
+        this.ccsClient = new GCMSmackCcsClient(props.getProperty("gcm.server"), PropertiesUtil.getIntProperty(props, "gcm.port"));
+
+        try {
+            ccsClient.connect(PropertiesUtil.getLongProperty(props, "gcm.project.id"), props.getProperty("gcm.api.key"));
         } catch (Exception e) {
             log.error("Error connecting to google push server.", e);
         }

@@ -1,5 +1,6 @@
 package cc.blynk.server.utils;
 
+import cc.blynk.server.TestBase;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.model.auth.User;
 import org.junit.Before;
@@ -18,12 +19,12 @@ import static org.junit.Assert.assertNotNull;
  * Date: 09.12.13
  * Time: 8:07
  */
-public class FileManagerIntegrationTest {
+public class FileManagerIntegrationTest extends TestBase {
 
     private User user1 = new User("name1", "pass1");
     private User user2 = new User("name2", "pass2");
 
-    private FileManager fileManager = new FileManager();
+    private FileManager fileManager = new FileManager(dataFolder);
 
     @Before
     public void cleanup() throws IOException {

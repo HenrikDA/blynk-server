@@ -40,7 +40,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        FileManager fileManager = new FileManager();
+        FileManager fileManager = new FileManager(dataFolder);
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
         server = new Server(TEST_PORT);

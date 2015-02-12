@@ -7,11 +7,19 @@ package cc.blynk.common.utils;
  */
 public final class ParseUtil {
 
-    public static int parsePortString(String portString) {
+    public static int parseInt(String intProperty) {
         try {
-            return Integer.parseInt(portString);
+            return Integer.parseInt(intProperty);
         } catch (NumberFormatException nfe) {
-            throw new RuntimeException("Port should be an integer.");
+            throw new RuntimeException(intProperty + " not a number. " + nfe.getMessage());
+        }
+    }
+
+    public static long parseLong(String longProperty) {
+        try {
+            return Integer.parseInt(longProperty);
+        } catch (NumberFormatException nfe) {
+            throw new RuntimeException(longProperty + " not a number. " + nfe.getMessage());
         }
     }
 

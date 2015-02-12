@@ -21,20 +21,19 @@ public class ProfileSaverRunner implements Runnable {
     private static final Logger log = LogManager.getLogger(ProfileSaverRunner.class);
 
     //1 min
-    //todo move to properties
-    private static final int SAVE_PERIOD = 1;
-
     private final UserRegistry userRegistry;
     private final FileManager fileManager;
+    private final int periodInMinutes;
 
-    public ProfileSaverRunner(UserRegistry userRegistry, FileManager fileManager) {
+    public ProfileSaverRunner(UserRegistry userRegistry, FileManager fileManager, int periodInMinutes) {
         this.userRegistry = userRegistry;
         this.fileManager = fileManager;
+        this.periodInMinutes = periodInMinutes;
     }
 
     public void start() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(this, 1, SAVE_PERIOD, TimeUnit.MINUTES);
+        scheduler.scheduleAtFixedRate(this, 1, periodInMinutes, TimeUnit.MINUTES);
     }
 
     @Override

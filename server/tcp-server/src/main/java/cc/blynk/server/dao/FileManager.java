@@ -10,11 +10,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -26,28 +24,27 @@ public final class FileManager {
 
     private static final Logger log = LogManager.getLogger(FileManager.class);
 
-    private final Path dataDir;
+    private Path dataDir;
 
-    public FileManager() {
-        Properties properties = new Properties();
-        try (InputStream is = FileManager.class.getResourceAsStream("/server.properties")) {
-            properties.load(is);
-        } catch (IOException ioe) {
-            log.error("Cannot read server.properties file.");
+    public FileManager(String dataFolder) {
+        try {
+            this.dataDir = createDatadir(dataFolder);
+        } catch (RuntimeException e) {
+            this.dataDir = createDatadir(System.getProperty("java.io.tmpdir"));
         }
 
-        String dataFolder = properties.getProperty("data.folder") == null ?
-                System.getProperty("java.io.tmpdir") :
-                properties.getProperty("data.folder");
+        log.info("Data dir created '{}'", dataDir);
+    }
 
-        dataDir = Paths.get(dataFolder);
+    private static Path createDatadir(String dataFolder) {
+        Path dataDir = Paths.get(dataFolder);
         try {
             Files.createDirectories(dataDir);
         } catch (IOException ioe) {
-            log.error("Error creating data folders '{}'", dataFolder);
-            throw new RuntimeException("Error creating data folders.");
+            log.error("Error creating data folder '{}'", dataFolder);
+            throw new RuntimeException("Error creating data folder '" + dataFolder + "'");
         }
-        log.info("Data dir {}", dataFolder);
+        return dataDir;
     }
 
     private static User readUserFromFile(Path path) {

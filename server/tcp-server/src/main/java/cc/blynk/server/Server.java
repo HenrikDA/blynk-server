@@ -1,7 +1,7 @@
 package cc.blynk.server;
 
-import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
+import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -19,6 +19,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Properties;
 
 /**
  * The Blynk Project.
@@ -38,20 +40,28 @@ public class Server implements Runnable {
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
-    public Server(int port) {
+    public Server() {
+        this(null);
+    }
+
+    public Server(Integer port) {
+        Properties serverProperties = PropertiesUtil.loadProperties("server.properties");
+
         //just to init mapper on server start and not first access
         JsonParser.check();
-        this.port = port;
-        this.fileManager = new FileManager();
-        this.sessionsHolder = new SessionsHolder();
 
+        this.port = port == null ? PropertiesUtil.getIntProperty(serverProperties, "server.default.port") : port;
+        log.info("Using port : {}", this.port);
+
+        this.fileManager = new FileManager(serverProperties.getProperty("data.folder"));
+        this.sessionsHolder = new SessionsHolder();
 
         log.debug("Reading user DB.");
         this.userRegistry = new UserRegistry(fileManager.deserialize());
         log.debug("Reading user DB finished.");
 
         new TimerRunner(userRegistry, sessionsHolder).start();
-        new ProfileSaverRunner(userRegistry, fileManager).start();
+        new ProfileSaverRunner(userRegistry, fileManager, PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period")).start();
     }
 
     public static void main(String[] args) throws Exception {
@@ -60,11 +70,9 @@ public class Server implements Runnable {
         options.addOption("port", true, "Server port.");
         CommandLine cmd = new BasicParser().parse(options, args);
 
-        String portString = cmd.getOptionValue("port", String.valueOf(Config.DEFAULT_PORT));
+        String portString = cmd.getOptionValue("port");
 
-        int port = ParseUtil.parsePortString(portString);
-
-        log.info("Using port : {}", port);
+        Integer port = portString == null ? null : ParseUtil.parseInt(portString);
 
         new Thread(new Server(port)).start();
     }

@@ -3,6 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.client.Client;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
@@ -17,6 +18,7 @@ import org.mockito.stubbing.OngoingStubbing;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 
 import static cc.blynk.common.enums.Response.OK;
@@ -47,6 +49,9 @@ public abstract class IntegrationBase {
 
     @Mock
     public BufferedReader bufferedReader2;
+
+    public Properties properties = PropertiesUtil.loadProperties("server.properties");
+    public String dataFolder = properties.getProperty("data.folder");
 
     public static void sleep(int ms) {
         try {

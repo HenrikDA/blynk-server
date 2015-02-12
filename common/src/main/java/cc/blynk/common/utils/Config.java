@@ -9,8 +9,6 @@ import java.nio.charset.Charset;
  */
 public class Config {
 
-    public static final String DEFAULT_HOST = "localhost";
-    public static final int DEFAULT_PORT = 8181;
     public static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
 
 }

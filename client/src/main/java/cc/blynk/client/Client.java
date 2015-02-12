@@ -2,7 +2,6 @@ package cc.blynk.client;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -32,8 +31,9 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class Client {
 
+    public static final String DEFAULT_HOST = "localhost";
+    public static final String DEFAULT_PORT = "8080";
     private static final Logger log = LogManager.getLogger(Client.class);
-
     private final String host;
     private final int port;
     private final Random random;
@@ -51,10 +51,10 @@ public class Client {
         options.addOption("port", true, "Server port.");
         CommandLine cmd = new BasicParser().parse(options, args);
 
-        String host = cmd.getOptionValue("host", Config.DEFAULT_HOST);
-        String portString = cmd.getOptionValue("port", String.valueOf(Config.DEFAULT_PORT));
+        String host = cmd.getOptionValue("host", DEFAULT_HOST);
+        String portString = cmd.getOptionValue("port", DEFAULT_PORT);
 
-        int port = ParseUtil.parsePortString(portString);
+        int port = ParseUtil.parseInt(portString);
 
         log.info("Using host : " + host + ", port : " + port);
 
