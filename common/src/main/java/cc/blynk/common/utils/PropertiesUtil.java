@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -29,18 +30,25 @@ public class PropertiesUtil {
             filePropertiesName = "/" + filePropertiesName;
         }
         Properties props = new Properties();
-        try (InputStream classPath = PropertiesUtil.class.getResourceAsStream(filePropertiesName);
-             InputStream curFolder = Files.newInputStream(Paths.get(System.getProperty("user.dir"), filePropertiesName))) {
-
+        try (InputStream classPath = PropertiesUtil.class.getResourceAsStream(filePropertiesName)) {
             if (classPath != null) {
                 props.load(classPath);
-            }
-            if (curFolder != null) {
-                props.load(curFolder);
             }
         } catch (Exception e) {
             log.error("Error getting '{}' properties file.", filePropertiesName, e);
         }
+
+        Path curDirPath = Paths.get(System.getProperty("user.dir"), filePropertiesName);
+        if (Files.exists(curDirPath)) {
+            try (InputStream curFolder = Files.newInputStream(curDirPath)) {
+                if (curFolder != null) {
+                    props.load(curFolder);
+                }
+            } catch (Exception e) {
+                log.error("Error getting '{}' properties file.", filePropertiesName, e);
+            }
+        }
+
         return props;
     }
 
