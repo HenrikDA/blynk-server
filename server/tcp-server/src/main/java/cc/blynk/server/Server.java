@@ -1,5 +1,6 @@
 package cc.blynk.server;
 
+import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.server.dao.FileManager;
@@ -36,6 +37,7 @@ public class Server implements Runnable {
     private UserRegistry userRegistry;
     private FileManager fileManager;
     private SessionsHolder sessionsHolder;
+    private GlobalStats stats = new GlobalStats();
 
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
@@ -61,7 +63,7 @@ public class Server implements Runnable {
         log.debug("Reading user DB finished.");
 
         new TimerRunner(userRegistry, sessionsHolder).start();
-        new ProfileSaverRunner(userRegistry, fileManager, PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period")).start();
+        new ProfileSaverRunner(userRegistry, fileManager, PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats).start();
     }
 
     public static void main(String[] args) throws Exception {
@@ -87,7 +89,7 @@ public class Server implements Runnable {
                     .channel(NioServerSocketChannel.class)
                             //.handler(new LoggingHandler(LogLevel.INFO))
                     .handler(new LoggingHandler())
-                    .childHandler(new ServerHandlersInitializer(fileManager, userRegistry, sessionsHolder));
+                    .childHandler(new ServerHandlersInitializer(fileManager, userRegistry, sessionsHolder, stats));
 
             ChannelFuture channelFuture = b.bind(port).sync();
             channelFuture.channel().closeFuture().sync();

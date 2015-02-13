@@ -52,7 +52,7 @@ public class SessionsHolder {
         Session group = userSession.get(user);
         //only one side came
         if (group == null) {
-            log.debug("Creating unique session for user: {}", user);
+            log.trace("Creating unique session for user: {}", user);
             group = new Session();
             userSession.put(user, group);
         }

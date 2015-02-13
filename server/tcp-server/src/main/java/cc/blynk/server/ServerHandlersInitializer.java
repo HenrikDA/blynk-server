@@ -2,6 +2,7 @@ package cc.blynk.server;
 
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
+import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -23,11 +24,13 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
     private FileManager fileManager;
     private UserRegistry userRegistry;
     private SessionsHolder sessionsHolder;
+    private GlobalStats stats;
 
-    public ServerHandlersInitializer(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public ServerHandlersInitializer(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
         this.fileManager = fileManager;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
+        this.stats = stats;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
         ChannelPipeline pipeline = ch.pipeline();
 
         //process input
-        pipeline.addLast(new ReplayingMessageDecoder());
+        pipeline.addLast(new ReplayingMessageDecoder(stats));
 
         //process output
         pipeline.addLast(new DeviceMessageEncoder());

@@ -2,6 +2,7 @@ package cc.blynk.common.handlers.decoders;
 
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,6 +24,12 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> {
 
     private static final Logger log = LogManager.getLogger(ReplayingMessageDecoder.class);
 
+    private final GlobalStats stats;
+
+    public ReplayingMessageDecoder(GlobalStats stats) {
+        this.stats = stats;
+    }
+
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         short command = in.readUnsignedByte();
@@ -39,6 +46,10 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> {
         }
 
         log.trace("Incomming {}", message);
+
+        if (stats != null) {
+            stats.incomeMessages.mark();
+        }
 
         out.add(message);
     }

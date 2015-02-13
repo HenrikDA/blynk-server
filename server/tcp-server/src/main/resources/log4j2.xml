@@ -16,6 +16,16 @@
             </Policies>
         </RollingFile>
 
+        <RollingFile name="statsLog" fileName="./stats.log"
+                     filePattern="./stats.log.%d{yyyy-MM-dd}">
+            <PatternLayout>
+                <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+
         <Routing name="Routing">
             <Routes pattern="$${ctx:user}">
 
@@ -56,6 +66,9 @@
         </Logger>
         <Logger name="cc.blynk.server.workers.timer.TimerRunner" level="debug" additivity="false">
             <appender-ref ref="workersLog"/>
+        </Logger>
+        <Logger name="cc.blynk.common.stats.GlobalStats" level="debug" additivity="false">
+            <appender-ref ref="statsLog"/>
         </Logger>
 
         <root level="DEBUG">

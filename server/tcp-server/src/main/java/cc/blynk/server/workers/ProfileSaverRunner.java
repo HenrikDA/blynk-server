@@ -1,5 +1,6 @@
 package cc.blynk.server.workers;
 
+import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.User;
@@ -19,16 +20,19 @@ import java.util.concurrent.TimeUnit;
 public class ProfileSaverRunner implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ProfileSaverRunner.class);
+    private static final Logger statsLog = LogManager.getLogger(GlobalStats.class);
 
     //1 min
     private final UserRegistry userRegistry;
     private final FileManager fileManager;
     private final int periodInMinutes;
+    private final GlobalStats stats;
 
-    public ProfileSaverRunner(UserRegistry userRegistry, FileManager fileManager, int periodInMinutes) {
+    public ProfileSaverRunner(UserRegistry userRegistry, FileManager fileManager, int periodInMinutes, GlobalStats stats) {
         this.userRegistry = userRegistry;
         this.fileManager = fileManager;
         this.periodInMinutes = periodInMinutes;
+        this.stats = stats;
     }
 
     public void start() {
@@ -48,6 +52,9 @@ public class ProfileSaverRunner implements Runnable {
                 log.error("Error saving : {}.", user);
             }
         }
+
+        double stat = stats.incomeMessages.getOneMinuteRate();
+        statsLog.debug("Stats. 1 min rate : {}", stat < 0.01 ? 0 : String.format("%.2f", stat));
         log.debug("Saving user db finished. Saved {} users.", count);
     }
 

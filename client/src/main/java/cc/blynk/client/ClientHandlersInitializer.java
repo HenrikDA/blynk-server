@@ -33,7 +33,7 @@ public class ClientHandlersInitializer extends ChannelInitializer<SocketChannel>
         ChannelPipeline pipeline = ch.pipeline();
 
         //process input
-        pipeline.addLast(new ReplayingMessageDecoder());
+        pipeline.addLast(new ReplayingMessageDecoder(null));
 
         //process output
         pipeline.addLast(new DeviceMessageEncoder());
