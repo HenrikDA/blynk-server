@@ -46,14 +46,8 @@ public final class JsonParser {
         return "{}";
     }
 
-    public static User parseUser(String reader) {
-        try {
-            return mapper.reader(User.class).readValue(reader);
-        } catch (IOException e) {
-            log.error("Error parsing input string : {}", reader);
-            log.error(e);
-        }
-        return null;
+    public static User parseUser(String reader) throws IOException {
+        return mapper.reader(User.class).readValue(reader);
     }
 
     public static UserProfile parseProfile(String reader) {

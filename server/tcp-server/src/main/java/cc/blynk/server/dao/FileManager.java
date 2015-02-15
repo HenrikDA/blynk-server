@@ -51,8 +51,8 @@ public final class FileManager {
         try (BufferedReader reader = Files.newBufferedReader(path, Config.DEFAULT_CHARSET)) {
             String userString = reader.readLine();
             return JsonParser.parseUser(userString);
-        } catch (IOException ioe) {
-            log.error("Error reading temp file.", ioe);
+        } catch (Exception ioe) {
+            log.error("Error reading user file '{}'.", path, ioe);
         }
 
         return null;
