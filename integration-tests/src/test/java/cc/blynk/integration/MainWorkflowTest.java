@@ -1,5 +1,6 @@
 package cc.blynk.integration;
 
+import cc.blynk.common.enums.Command;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.server.Server;
 import cc.blynk.server.dao.FileManager;
@@ -59,6 +60,16 @@ public class MainWorkflowTest extends IntegrationBase {
         sleep(2000);
 
         verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, TWEET_EXCEPTION)));
+    }
+
+    @Test
+    public void testAppSendHardCommandAndBack() throws Exception {
+        ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
+        clientPair.appClient.send("hardware 1 1");
+        verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
+
+        clientPair.hardwareClient.send("hardware 1 1");
+        verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
     }
 
 

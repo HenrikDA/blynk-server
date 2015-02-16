@@ -28,11 +28,11 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, User user, HardwareMessage message) throws Exception {
-        Session group = sessionsHolder.getUserSession().get(user);
+        Session session = sessionsHolder.getUserSession().get(user);
 
         //todo
         //for hardware command do not wait for hardware response.
-        List<ChannelFuture> futures = group.sendMessageToHardware(message);
+        List<ChannelFuture> futures = session.sendMessage(ctx.channel(), message);
         ctx.channel().writeAndFlush(produce(message.id, OK));
 
     }

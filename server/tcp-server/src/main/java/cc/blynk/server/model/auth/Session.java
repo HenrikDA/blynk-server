@@ -28,6 +28,20 @@ public class Session {
     private final Set<Channel> appChannels = new ConcurrentSet<>();
     private final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
+    //todo for now - simplest possible implementation
+    //todo expect right n
+    private static List<ChannelFuture> sendMessageTo(MessageBase message, Set<Channel> channels) {
+        if (channels.size() == 0) {
+            throw new DeviceNotInNetworkException("No device in session.", message.id);
+        }
+        List<ChannelFuture> futureList = new ArrayList<>();
+        for (Channel channel : channels) {
+            log.trace("Sending {} to {}", message, channel);
+            futureList.add(channel.writeAndFlush(message));
+        }
+        return futureList;
+    }
+
     //todo not sure, but netty processes same channel in same thread, so no sync
     public void addAppChannel(Channel channel, int msgId) {
         //if login from same channel again - do not allow.
@@ -50,18 +64,19 @@ public class Session {
         return appChannels;
     }
 
-    //todo for now - simplest possible implementation
-    //todo expect right n
+    public List<ChannelFuture> sendMessage(Channel channel, MessageBase message) {
+        if (hardwareChannels.contains(channel)) {
+            return sendMessageTo(message, appChannels);
+        } else if (appChannels.contains(channel)) {
+            return sendMessageTo(message, hardwareChannels);
+        } else {
+            throw new DeviceNotInNetworkException("No device in session. Should never happen.", message.id);
+        }
+
+    }
+
     public List<ChannelFuture> sendMessageToHardware(MessageBase message) {
-        if (hardwareSize() == 0) {
-            throw new DeviceNotInNetworkException("No devices in session.", message.id);
-        }
-        List<ChannelFuture> futureList = new ArrayList<>();
-        for (Channel hardwareChannel : hardwareChannels) {
-            log.trace("Sending {} to {}", message, hardwareChannel);
-            futureList.add(hardwareChannel.writeAndFlush(message));
-        }
-        return futureList;
+        return sendMessageTo(message, hardwareChannels);
     }
 
     public int hardwareSize() {
