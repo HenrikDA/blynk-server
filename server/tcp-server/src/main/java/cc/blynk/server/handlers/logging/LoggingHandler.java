@@ -23,5 +23,15 @@ public class LoggingHandler extends ChannelDuplexHandler {
         log.info("Server started.");
     }
 
+    @Override
+    public void close(ChannelHandlerContext ctx, ChannelPromise future) throws Exception {
+        log.info("Closing.!!!1");
+        super.close(ctx, future);
+    }
 
+    @Override
+    public void disconnect(ChannelHandlerContext ctx, ChannelPromise future) throws Exception {
+        log.info("Diconecting!!!!");
+        super.disconnect(ctx, future);
+    }
 }

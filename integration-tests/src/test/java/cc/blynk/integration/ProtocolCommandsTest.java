@@ -5,7 +5,6 @@ import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
 import cc.blynk.server.Server;
-import cc.blynk.server.dao.FileManager;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -40,10 +39,11 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        FileManager fileManager = new FileManager(dataFolder);
+        initServerStructures();
+
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        server = new Server(TEST_PORT);
+        server = new Server(TEST_PORT, fileManager, sessionsHolder, userRegistry, stats);
         new Thread(server).start();
 
         //wait util server start.

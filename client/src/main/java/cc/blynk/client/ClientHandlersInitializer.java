@@ -20,6 +20,7 @@ import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.ssl.SslContext;
 
 /**
  * The Blynk Project.
@@ -28,9 +29,29 @@ import io.netty.channel.socket.SocketChannel;
  */
 public class ClientHandlersInitializer extends ChannelInitializer<SocketChannel> {
 
+    private final SslContext sslCtx;
+    private final String host;
+    private final int port;
+
+    public ClientHandlersInitializer(String host, int port) {
+        this.sslCtx = null;
+        this.host = host;
+        this.port = port;
+    }
+
+    public ClientHandlersInitializer(SslContext sslCtx, String host, int port) {
+        this.sslCtx = sslCtx;
+        this.host = host;
+        this.port = port;
+    }
+
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
+
+        if (sslCtx != null) {
+            pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+        }
 
         //process input
         pipeline.addLast(new ReplayingMessageDecoder(null));

@@ -3,7 +3,9 @@ package cc.blynk.common.utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +21,7 @@ public class PropertiesUtil {
     private static final Logger log = LogManager.getLogger(PropertiesUtil.class);
 
     /**
-     * Util class. first loads properties file from class path after that from current folder.
+     * First loads properties file from class path after that from current folder.
      * So properties file in current folder is always overrides properties in classpath.
      *
      * @param filePropertiesName - name of properties file, for example "twitter4j.properties"
@@ -56,8 +58,16 @@ public class PropertiesUtil {
         return ParseUtil.parseInt(props.getProperty(propertyName));
     }
 
+    public static boolean getBoolProperty(Properties props, String propertyName) {
+        return Boolean.parseBoolean(props.getProperty(propertyName));
+    }
+
     public static long getLongProperty(Properties props, String propertyName) {
         return ParseUtil.parseLong(props.getProperty(propertyName));
+    }
+
+    public static File getFileFromResources(String path) throws URISyntaxException {
+        return new File(PropertiesUtil.class.getResource(path).toURI());
     }
 
 }

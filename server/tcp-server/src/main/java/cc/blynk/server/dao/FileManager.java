@@ -33,7 +33,7 @@ public final class FileManager {
             this.dataDir = createDatadir(System.getProperty("java.io.tmpdir"));
         }
 
-        log.info("Data dir created '{}'", dataDir);
+        log.info("Using data dir '{}'", dataDir);
     }
 
     private static Path createDatadir(String dataFolder) {

@@ -3,11 +3,15 @@ package cc.blynk.integration;
 import cc.blynk.client.Client;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
 import cc.blynk.integration.model.TestClient;
+import cc.blynk.server.dao.FileManager;
+import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.JsonParser;
 import org.mockito.ArgumentCaptor;
@@ -53,6 +57,11 @@ public abstract class IntegrationBase {
     public Properties properties = PropertiesUtil.loadProperties("server.properties");
     public String dataFolder = properties.getProperty("data.folder");
 
+    public FileManager fileManager;
+    public SessionsHolder sessionsHolder;
+    public UserRegistry userRegistry;
+    public GlobalStats stats;
+
     public static void sleep(int ms) {
         try {
             Thread.sleep(ms);
@@ -93,6 +102,13 @@ public abstract class IntegrationBase {
         hardClient.reset();
 
         return new ClientPair(appClient, hardClient);
+    }
+
+    public void initServerStructures() {
+        fileManager = new FileManager(properties.getProperty("data.folder"));
+        sessionsHolder = new SessionsHolder();
+        userRegistry = new UserRegistry(fileManager.deserialize());
+        stats = new GlobalStats();
     }
 
     /**

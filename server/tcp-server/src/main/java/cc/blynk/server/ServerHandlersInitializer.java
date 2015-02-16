@@ -13,6 +13,8 @@ import cc.blynk.server.twitter.TwitterWrapper;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslHandler;
 
 /**
  * The Blynk Project.
@@ -21,6 +23,7 @@ import io.netty.channel.socket.SocketChannel;
  */
 public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel> {
 
+    private SslContext sslCtx;
     private FileManager fileManager;
     private UserRegistry userRegistry;
     private SessionsHolder sessionsHolder;
@@ -31,11 +34,25 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.stats = stats;
+        this.sslCtx = null;
+    }
+
+    public ServerHandlersInitializer(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats, SslContext sslCtx) {
+        this.fileManager = fileManager;
+        this.userRegistry = userRegistry;
+        this.sessionsHolder = sessionsHolder;
+        this.stats = stats;
+        this.sslCtx = sslCtx;
     }
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
+
+        if (sslCtx != null) {
+            SslHandler sslHandler = sslCtx.newHandler(ch.alloc());
+            pipeline.addLast(sslHandler);
+        }
 
         //process input
         pipeline.addLast(new ReplayingMessageDecoder(stats));

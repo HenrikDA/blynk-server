@@ -3,7 +3,6 @@ package cc.blynk.integration;
 import cc.blynk.common.enums.Command;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.server.Server;
-import cc.blynk.server.dao.FileManager;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -29,14 +28,15 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Before
     public void init() throws Exception {
-        FileManager fileManager = new FileManager(dataFolder);
+        initServerStructures();
+
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        server = new Server(TEST_PORT);
+        server = new Server(TEST_PORT, fileManager, sessionsHolder, userRegistry, stats);
         new Thread(server).start();
 
         //wait util server start.
-        Thread.sleep(500);
+        sleep(500);
     }
 
     @After
