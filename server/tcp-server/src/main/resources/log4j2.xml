@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration status="DEBUG">
+<configuration>
     <appenders>
 
         <Console name="Console" target="SYSTEM_OUT">
@@ -71,7 +71,7 @@
             <appender-ref ref="statsLog"/>
         </Logger>
 
-        <root level="DEBUG">
+        <root level="debug">
             <appender-ref ref="Console"/>
             <appender-ref ref="Routing"/>
         </root>
