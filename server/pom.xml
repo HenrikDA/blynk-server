@@ -27,7 +27,7 @@
                     <finalName>server-${project.version}</finalName>
                     <archive>
                         <manifest>
-                            <mainClass>cc.blynk.server.Server</mainClass>
+                            <mainClass>cc.blynk.server.Launcher</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

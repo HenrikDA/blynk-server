@@ -1,6 +1,7 @@
 package cc.blynk.server;
 
 import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -9,9 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.SSLException;
-import java.net.URISyntaxException;
-
-import static cc.blynk.common.utils.PropertiesUtil.getFileFromResources;
+import java.io.File;
+import java.util.Properties;
 
 /**
  * The Blynk Project.
@@ -32,9 +32,13 @@ public class SSLServer extends BaseServer {
 
     public static SslContext initSslContext() {
         try {
+            Properties serverProperties = PropertiesUtil.loadProperties("server.properties");
             //todo this is self-signed cerf. just ot simplify for now testing.
-            return SslContext.newServerContext(getFileFromResources("/certs/server.crt"), getFileFromResources("/certs/server.pem"), "testpdd1");
-        } catch (SSLException | URISyntaxException e) {
+            return SslContext.newServerContext(
+                    new File(serverProperties.getProperty("server.ssl.cert")),
+                    new File(serverProperties.getProperty("server.ssl.key")),
+                    serverProperties.getProperty("server.ssl.key.pass"));
+        } catch (SSLException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getCause());
             System.exit(0);
             //todo throw?

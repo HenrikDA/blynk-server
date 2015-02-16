@@ -13,6 +13,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -25,7 +26,6 @@ import java.io.InputStreamReader;
 import java.util.Random;
 
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static cc.blynk.common.utils.PropertiesUtil.getFileFromResources;
 
 /**
  * The Blynk Project.
@@ -66,7 +66,10 @@ public class Client {
         SslContext sslCtx = null;
         if (mode == ClientMode.APP) {
             log.info("Using host {} , sslPort : {}, mode : {}", host, sslPort, mode.name());
-            sslCtx = SslContext.newClientContext(getFileFromResources("/test.crt"));
+
+            //todo think how to simplify with real certs?
+            //sslCtx = SslContext.newClientContext(getFileFromResources("/test.crt"));
+            sslCtx = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
             port = sslPort;
         } else {
             log.info("Using host {} , port : {}, mode : {}", host, port, mode.name());

@@ -3,9 +3,7 @@ package cc.blynk.common.utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,10 +62,6 @@ public class PropertiesUtil {
 
     public static long getLongProperty(Properties props, String propertyName) {
         return ParseUtil.parseLong(props.getProperty(propertyName));
-    }
-
-    public static File getFileFromResources(String path) throws URISyntaxException {
-        return new File(PropertiesUtil.class.getResource(path).toURI());
     }
 
 }
