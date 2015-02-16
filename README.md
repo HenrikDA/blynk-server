@@ -136,9 +136,9 @@ Server guarantees that commands will be processed in same order in which they we
 
         java -jar server.jar -port 8080
 
-+ Run the client (simulates smartphone client)
++ Run the client (simulates smartphone client, app client should always connect to SSL port)
 
-        java -jar client.jar -host localhost -port 8080
+        java -jar client.jar -host localhost -sslPort 8443 -mode app
 
 + In this client: register new user and/or login with the same credentials
 
@@ -153,6 +153,7 @@ Server guarantees that commands will be processed in same order in which they we
 
     	00:05:18.086 INFO  - Sending : Message{messageId=30825, command=5, body='1'}
     	00:05:18.100 INFO  - Getting : Message{messageId=30825, command=5, body='33bcbe756b994a6768494d55d1543c74'}
+
 Where `33bcbe756b994a6768494d55d1543c74` is your Auth Token.
 
 + Start another client (simulates hardware (e.g Arduino)) and use received token to login
