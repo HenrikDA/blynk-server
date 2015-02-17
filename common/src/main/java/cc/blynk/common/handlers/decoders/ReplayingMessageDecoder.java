@@ -1,6 +1,7 @@
 package cc.blynk.common.handlers.decoders;
 
 import cc.blynk.common.enums.Command;
+import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.Config;
@@ -20,7 +21,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  */
 //todo could be optimized with checkpoints if needed
-public class ReplayingMessageDecoder extends ReplayingDecoder<Void> {
+public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements DefaultExceptionHandler {
 
     private static final Logger log = LogManager.getLogger(ReplayingMessageDecoder.class);
 
@@ -57,4 +58,8 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> {
         out.add(message);
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        handleGeneralException(ctx, cause);
+    }
 }

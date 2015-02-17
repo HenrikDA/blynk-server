@@ -1,4 +1,4 @@
-package cc.blynk.server.handlers;
+package cc.blynk.common.handlers;
 
 import cc.blynk.common.exceptions.BaseServerException;
 import io.netty.channel.ChannelHandlerContext;

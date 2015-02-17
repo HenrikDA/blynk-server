@@ -1,11 +1,11 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.exceptions.BaseServerException;
+import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.DefaultExceptionHandler;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -47,7 +47,9 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                 messageReceived(ctx, user, imsg);
                 ThreadContext.clearMap();
             } catch (BaseServerException cause) {
-                user.incrException(cause.errorCode);
+                if (user != null) {
+                    user.incrException(cause.errorCode);
+                }
                 handleAppException(ctx, cause);
             } catch (Throwable t) {
                 handleGeneralException(ctx, t);
