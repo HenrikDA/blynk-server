@@ -30,6 +30,15 @@ public class UserRegistry {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
+    public static int getDashIdByToken(User user, String token) {
+        for (Map.Entry<Integer, String> dashToken : user.getDashTokens().entrySet()) {
+            if (dashToken.getValue().equals(token)) {
+                return dashToken.getKey();
+            }
+        }
+        throw new RuntimeException("Error getting dashId for user. FIX/");
+    }
+
     public boolean isUserExists(String name) {
         return users.get(name) != null;
     }
@@ -43,7 +52,7 @@ public class UserRegistry {
     }
 
     //todo optimize
-    public User getByToken(String token) {
+    public User getUserByToken(String token) {
         for (User user : users.values()) {
             for (String userToken : user.getDashTokens().values()) {
                 if (userToken.equals(token)) {
@@ -54,8 +63,8 @@ public class UserRegistry {
         return null;
     }
 
-    public String getToken(User user, Long dashboardId) {
-        Map<Long, String> dashTokens = user.getDashTokens();
+    public String getToken(User user, Integer dashboardId) {
+        Map<Integer, String> dashTokens = user.getDashTokens();
         String token = dashTokens.get(dashboardId);
 
         //if token not exists. generate new one

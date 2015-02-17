@@ -30,7 +30,7 @@ public class Session {
 
     //todo for now - simplest possible implementation
     //todo expect right n
-    private static List<ChannelFuture> sendMessageTo(MessageBase message, Set<Channel> channels) {
+    public static List<ChannelFuture> sendMessageTo(MessageBase message, Set<Channel> channels) {
         if (channels.size() == 0) {
             throw new DeviceNotInNetworkException("No device in session.", message.id);
         }
@@ -64,15 +64,16 @@ public class Session {
         return appChannels;
     }
 
-    public List<ChannelFuture> sendMessage(Channel channel, MessageBase message) {
-        if (hardwareChannels.contains(channel)) {
-            return sendMessageTo(message, appChannels);
-        } else if (appChannels.contains(channel)) {
-            return sendMessageTo(message, hardwareChannels);
-        } else {
-            throw new DeviceNotInNetworkException("No device in session. Should never happen.", message.id);
-        }
+    public Set<Channel> getHardwareChannels() {
+        return hardwareChannels;
+    }
 
+    public boolean isFromHardware(Channel channel) {
+        return hardwareChannels.contains(channel);
+    }
+
+    public boolean isFromApp(Channel channel) {
+        return appChannels.contains(channel);
     }
 
     public List<ChannelFuture> sendMessageToHardware(MessageBase message) {

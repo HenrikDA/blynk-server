@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class DashBoard {
 
-    private long id;
+    private int id;
 
     private String name;
 
@@ -38,11 +38,26 @@ public class DashBoard {
         return timerWidgets;
     }
 
-    public long getId() {
+    public Set<Byte> getGraphWidgetPins() {
+        if (widgets == null || widgets.length == 0) {
+            return Collections.emptySet();
+        }
+
+        Set<Byte> graphPins = new HashSet<>();
+        for (Widget widget : widgets) {
+            if (widget.getType() == WidgetType.GRAPH) {
+                graphPins.add(widget.getPin());
+            }
+        }
+
+        return graphPins;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

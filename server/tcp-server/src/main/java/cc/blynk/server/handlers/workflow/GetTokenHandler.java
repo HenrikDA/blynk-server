@@ -26,9 +26,9 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
     protected void messageReceived(ChannelHandlerContext ctx, User user, GetTokenMessage message) throws Exception {
         String dashBoardIdString = message.body;
 
-        long dashBoardId;
+        int dashBoardId;
         try {
-            dashBoardId = Long.parseLong(dashBoardIdString);
+            dashBoardId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
             throw new IllegalCommandException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
         }

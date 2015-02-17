@@ -24,7 +24,7 @@ public class User implements Serializable {
 
     private UserProfile userProfile = new UserProfile();
 
-    private Map<Long, String> dashTokens = new HashMap<>();
+    private Map<Integer, String> dashTokens = new HashMap<>();
 
     private Stats stats;
 
@@ -69,11 +69,11 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public Map<Long, String> getDashTokens() {
+    public Map<Integer, String> getDashTokens() {
         return dashTokens;
     }
 
-    public void setDashTokens(Map<Long, String> dashTokens) {
+    public void setDashTokens(Map<Integer, String> dashTokens) {
         this.dashTokens = dashTokens;
     }
 

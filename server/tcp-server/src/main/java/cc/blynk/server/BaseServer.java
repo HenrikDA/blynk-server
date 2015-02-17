@@ -5,11 +5,11 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.logging.LoggingHandler;
+import cc.blynk.server.model.auth.ChannelServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +47,7 @@ public abstract class BaseServer implements Runnable {
         ServerBootstrap b = new ServerBootstrap();
         try {
             b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
+                    .channel(ChannelServer.class)
                     .handler(new LoggingHandler())
                     .childHandler(getServerHandlersInitializer());
 

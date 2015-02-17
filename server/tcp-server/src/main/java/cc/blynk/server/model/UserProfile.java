@@ -2,10 +2,7 @@ package cc.blynk.server.model;
 
 import cc.blynk.server.utils.JsonParser;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: ddumanskiy
@@ -17,6 +14,8 @@ public class UserProfile {
     private DashBoard[] dashBoards;
 
     private TwitterAccessToken twitterAccessToken;
+
+    private transient Map<Integer, Set<Byte>> graphPins;
 
     public DashBoard[] getDashBoards() {
         return dashBoards;
@@ -37,6 +36,23 @@ public class UserProfile {
         }
 
         return timers;
+    }
+
+    public void calcGraphPins() {
+        if (dashBoards == null || dashBoards.length == 0) {
+            graphPins = Collections.emptyMap();
+            return;
+        }
+
+        graphPins = new HashMap<>();
+
+        for (DashBoard dashBoard : dashBoards) {
+            graphPins.put(dashBoard.getId(), dashBoard.getGraphWidgetPins());
+        }
+    }
+
+    public boolean hasGraphPin(int dashId, byte pin) {
+        return graphPins.get(dashId).contains(pin);
     }
 
     public TwitterAccessToken getTwitterAccessToken() {

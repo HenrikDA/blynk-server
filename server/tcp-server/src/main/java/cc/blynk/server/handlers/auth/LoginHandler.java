@@ -9,6 +9,7 @@ import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
 import cc.blynk.server.handlers.DefaultExceptionHandler;
+import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -54,13 +55,19 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> impl
 
     ///todo optimize/simplify
     private void hardwareLogin(ChannelHandlerContext ctx, int messageId, String token) {
-        User user = userRegistry.getByToken(token);
+        User user = userRegistry.getUserByToken(token);
 
         if (user == null) {
             throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), messageId);
         }
 
-        sessionsHolder.addHardwareChannelToGroup(user, ctx.channel(), messageId);
+        int dashId = UserRegistry.getDashIdByToken(user, token);
+
+        ChannelState channelState = (ChannelState) ctx.channel();
+        channelState.dashId = dashId;
+        channelState.isHardwareChannel = true;
+
+        sessionsHolder.addHardwareChannelToGroup(user, channelState, messageId);
 
         log.info("Adding hardware channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }
