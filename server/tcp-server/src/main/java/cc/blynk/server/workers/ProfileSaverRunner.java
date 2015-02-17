@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 public class ProfileSaverRunner implements Runnable {
 
     private static final Logger log = LogManager.getLogger(ProfileSaverRunner.class);
-    private static final Logger statsLog = LogManager.getLogger(GlobalStats.class);
 
     //1 min
     private final UserRegistry userRegistry;
@@ -53,8 +52,7 @@ public class ProfileSaverRunner implements Runnable {
             }
         }
 
-        double stat = stats.incomeMessages.getOneMinuteRate();
-        statsLog.debug("Stats. 1 min rate : {}", stat < 0.01 ? 0 : String.format("%.2f", stat));
+        stats.log();
         log.debug("Saving user db finished. Saved {} users.", count);
     }
 

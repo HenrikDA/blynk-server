@@ -6,7 +6,6 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.DefaultExceptionHandler;
-import cc.blynk.server.model.auth.Stats;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -38,20 +37,17 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (matcher.match(msg)) {
-            Stats stats = null;
+            User user = null;
             try {
                 I imsg = (I) msg;
-                User user = sessionsHolder.findUserByChannel(ctx.channel(), imsg.id);
-                stats = user.getStats();
-                stats.incr(imsg.command);
+                user = sessionsHolder.findUserByChannel(ctx.channel(), imsg.id);
+                user.incrStat(imsg.command);
 
                 ThreadContext.put("user", user.getName());
                 messageReceived(ctx, user, imsg);
                 ThreadContext.clearMap();
             } catch (BaseServerException cause) {
-                if (stats != null) {
-                    stats.incrException(cause.errorCode);
-                }
+                user.incrException(cause.errorCode);
                 handleAppException(ctx, cause);
             } catch (Throwable t) {
                 handleGeneralException(ctx, t);

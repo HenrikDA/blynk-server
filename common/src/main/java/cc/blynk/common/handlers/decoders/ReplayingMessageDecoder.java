@@ -48,7 +48,8 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> {
         log.trace("Incomming {}", message);
 
         if (stats != null) {
-            stats.incomeMessages.mark();
+            stats.mark();
+            stats.mark(message.getClass());
         }
 
         out.add(message);

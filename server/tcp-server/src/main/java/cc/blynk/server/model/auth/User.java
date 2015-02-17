@@ -37,6 +37,14 @@ public class User implements Serializable {
         this.stats = new Stats();
     }
 
+    public void incrStat(short cmd) {
+        stats.incr(cmd);
+    }
+
+    public void incrException(int exceptionCode) {
+        stats.incrException(exceptionCode);
+    }
+
     public String getName() {
         return name;
     }
