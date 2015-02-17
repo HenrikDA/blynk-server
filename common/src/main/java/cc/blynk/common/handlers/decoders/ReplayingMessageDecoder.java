@@ -26,6 +26,10 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> {
 
     private final GlobalStats stats;
 
+    public ReplayingMessageDecoder() {
+        this.stats = new GlobalStats();
+    }
+
     public ReplayingMessageDecoder(GlobalStats stats) {
         this.stats = stats;
     }
@@ -47,10 +51,8 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> {
 
         log.trace("Incomming {}", message);
 
-        if (stats != null) {
-            stats.mark();
-            stats.mark(message.getClass());
-        }
+        stats.mark();
+        stats.mark(message.getClass());
 
         out.add(message);
     }

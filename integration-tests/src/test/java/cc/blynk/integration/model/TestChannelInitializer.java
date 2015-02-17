@@ -23,7 +23,7 @@ public class TestChannelInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         //process input
-        pipeline.addLast(new ReplayingMessageDecoder(null));
+        pipeline.addLast(new ReplayingMessageDecoder());
         //process output
         pipeline.addLast(new DeviceMessageEncoder());
 
