@@ -164,15 +164,49 @@ Where `33bcbe756b994a6768494d55d1543c74` is your Auth Token.
 
 You can run as many clients as you want.
 
-Clients with the same credentials and Auth Token are grouped in one ChatRoom/Group and can send messages to each other.
-All client commands are human-friendly, so you don't have to remember the codes. Examples:
+Clients with the same credentials and Auth Token are grouped in one Session and can send messages to each other.
+All client commands are human-friendly, so you don't have to remember the codes.
 
-    	digitalWrite 1 1
-    	digitalRead 1
-    	analogWrite 1 1
-    	analogRead 1
-    	virtualWrite 1 1
-    	virtualRead 1
+Before sending to hardware some read/write commands, application must first send init command.
+Init command is 'hardware' command that sets all pin modes. Example of init command:
+
+    	hardware pm 1 in 13 out 9 out 8 in
+
+In above example you set pin 1 and pin 8 to 'in' PIN_MODE. This means this pins will read values from hardware (graph, display, etc).
+In opposite pins 13 and 9 has 'out' PIN_MODE. This means this pins will we writable (button, slider).
+
+Hardware commands:
+
++ Digital write:
+
+    	hardware dw 9 1
+    	hardware dw 9 0
+
++ Digital read:
+
+    	hardware dr 9
+    	You should receive response: dw 9 <val>
+
++ Analog write:
+
+    	hardware aw 14 123
+
++ Analog read:
+
+    	hardware ar 14
+        You should receive response: aw 14 <val>
+
++ Virtual write:
+
+    	hardware vw 9 1234
+        hardware vw 9 string
+        hardware vw 9 item1 item2 item3
+        hardware vw 9 key1 val1 key2 val2
+
++ Virtual read:
+
+    	hardware vr 9
+    	You should receive response: vw 9 <values>
 
 Registered users are stored locally in TMP dir of your system in file "user.db". So after the restart you don't have to register again.
 
