@@ -14,6 +14,7 @@
 
     <modules>
         <module>push-notifications-android</module>
+        <module>push-notifications-ios</module>
         <module>twitter</module>
         <module>tcp-server</module>
     </modules>
