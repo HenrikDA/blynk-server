@@ -20,6 +20,10 @@ public abstract class Message extends MessageBase {
         this.body = body == null ? "" : body;
     }
 
+    public static int calcBodyLength(String body) {
+        return body == null ? 0 : body.length();
+    }
+
     @Override
     public int getByteLength() {
         return super.getByteLength() + length;

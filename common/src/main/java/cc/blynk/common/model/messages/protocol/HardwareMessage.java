@@ -12,7 +12,17 @@ import static cc.blynk.common.enums.Command.HARDWARE_COMMAND;
 public class HardwareMessage extends Message {
 
     public HardwareMessage(int messageId, String body) {
-        super(messageId, HARDWARE_COMMAND, body == null ? 0 : body.length(), body);
+        super(messageId, HARDWARE_COMMAND, calcBodyLength(body), body);
+    }
+
+    public static String attachTS(String body) {
+        return body + '\0' + System.currentTimeMillis();
+    }
+
+    public HardwareMessage updateMessageBody(String newBody) {
+        this.body = newBody;
+        this.length = newBody.length();
+        return this;
     }
 
     @Override

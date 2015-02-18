@@ -1,9 +1,7 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
-import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.dao.*;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
@@ -14,7 +12,7 @@ import java.util.List;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static cc.blynk.common.utils.StringUtils.split;
+import static cc.blynk.common.model.messages.protocol.HardwareMessage.attachTS;
 
 /**
  * The Blynk Project.
@@ -24,18 +22,11 @@ import static cc.blynk.common.utils.StringUtils.split;
  */
 public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMessage> {
 
+    private final Storage storage;
+
     public HardwareHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(fileManager, userRegistry, sessionsHolder);
-    }
-
-    private static void storeValue(String body, User user, ChannelState channelState) {
-        if (body.charAt(1) == 'w') {
-            String[] splitted = split(body, '\0');
-            Byte pin = Byte.valueOf(splitted[1]);
-            if (user.getUserProfile().hasGraphPin(channelState.dashId, pin)) {
-                //todo store
-            }
-        }
+        this.storage = new GraphInMemoryStorage(1000);
     }
 
     @Override
@@ -49,8 +40,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
         List<ChannelFuture> futures;
         if (channelState.isHardwareChannel) {
             //if message from hardware, check if it belongs to graph. so we need save it in that case
-            storeValue(message.body, user, channelState);
-            futures = Session.sendMessageTo(message, session.getAppChannels());
+            String newBody = attachTS(message.body);
+            storage.store(user, channelState.dashId, newBody, message.id);
+            futures = Session.sendMessageTo(message.updateMessageBody(newBody), session.getAppChannels());
         } else {
             futures = Session.sendMessageTo(message, session.getHardwareChannels());
         }
