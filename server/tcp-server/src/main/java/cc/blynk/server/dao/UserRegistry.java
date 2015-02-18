@@ -30,7 +30,7 @@ public class UserRegistry {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
-    public static int getDashIdByToken(User user, String token) {
+    public static Integer getDashIdByToken(User user, String token) {
         for (Map.Entry<Integer, String> dashToken : user.getDashTokens().entrySet()) {
             if (dashToken.getValue().equals(token)) {
                 return dashToken.getKey();

@@ -51,7 +51,7 @@ public class UserProfile {
         }
     }
 
-    public boolean hasGraphPin(int dashId, byte pin) {
+    public boolean hasGraphPin(Integer dashId, Byte pin) {
         return graphPins.get(dashId).contains(pin);
     }
 

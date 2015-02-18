@@ -14,7 +14,7 @@ public class ChannelState extends NioSocketChannel {
 
     public boolean isHardwareChannel;
 
-    public int dashId;
+    public Integer dashId;
 
     public ChannelState(Channel parent, SocketChannel socket) {
         super(parent, socket);

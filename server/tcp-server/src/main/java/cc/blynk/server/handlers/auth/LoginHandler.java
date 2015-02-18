@@ -61,7 +61,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> impl
             throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), messageId);
         }
 
-        int dashId = UserRegistry.getDashIdByToken(user, token);
+        Integer dashId = UserRegistry.getDashIdByToken(user, token);
 
         ChannelState channelState = (ChannelState) ctx.channel();
         channelState.dashId = dashId;

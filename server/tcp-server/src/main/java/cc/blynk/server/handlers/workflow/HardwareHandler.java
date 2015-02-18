@@ -30,7 +30,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
     private static void storeValue(String body, User user, ChannelState channelState) {
         String[] splitted = body.split(" ");
         if (splitted[0].charAt(1) == 'w') {
-            byte pin = Byte.parseByte(splitted[1]);
+            Byte pin = Byte.valueOf(splitted[1]);
             if (user.getUserProfile().hasGraphPin(channelState.dashId, pin)) {
                 //todo store
             }
