@@ -14,6 +14,7 @@ import java.util.List;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.utils.StringUtils.split;
 
 /**
  * The Blynk Project.
@@ -28,7 +29,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
     }
 
     private static void storeValue(String body, User user, ChannelState channelState) {
-        String[] splitted = body.split(" ");
+        String[] splitted = split(body, '\0');
         if (splitted[0].charAt(1) == 'w') {
             Byte pin = Byte.valueOf(splitted[1]);
             if (user.getUserProfile().hasGraphPin(channelState.dashId, pin)) {
