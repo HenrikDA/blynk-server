@@ -1,5 +1,6 @@
 package cc.blynk.common.stats;
 
+import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.*;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Meter;
@@ -35,6 +36,7 @@ public class GlobalStats {
         metricRegistry.counter(RegisterMessage.class.getName());
         metricRegistry.counter(SaveProfileMessage.class.getName());
         metricRegistry.counter(TweetMessage.class.getName());
+        metricRegistry.counter(ResponseMessage.class.getName());
 
         this.specificCounters = metricRegistry.getCounters();
     }
