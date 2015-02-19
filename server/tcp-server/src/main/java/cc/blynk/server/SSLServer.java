@@ -24,9 +24,10 @@ public class SSLServer extends BaseServer {
 
     private SslContext sslCtx;
 
-    public SSLServer(Integer port, FileManager fileManager, SessionsHolder sessionsHolder, UserRegistry userRegistry, GlobalStats stats) {
-        super(port, fileManager, sessionsHolder, userRegistry, stats);
+    public SSLServer(Properties props, FileManager fileManager, SessionsHolder sessionsHolder, UserRegistry userRegistry, GlobalStats stats) {
+        super(props, fileManager, sessionsHolder, userRegistry, stats);
         this.sslCtx = initSslContext();
+        this.port = PropertiesUtil.getIntProperty(props, "sserver.ssl.port");
         log.info("Using SSL port : {}", port);
     }
 
@@ -48,7 +49,7 @@ public class SSLServer extends BaseServer {
 
     @Override
     protected ServerHandlersInitializer getServerHandlersInitializer() {
-        return new ServerHandlersInitializer(fileManager, userRegistry, sessionsHolder, stats, sslCtx);
+        return new ServerHandlersInitializer(props, fileManager, userRegistry, sessionsHolder, stats, sslCtx);
     }
 
     @Override

@@ -7,6 +7,8 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Properties;
+
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
@@ -17,8 +19,8 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class LoadProfileHandler extends BaseSimpleChannelInboundHandler<LoadProfileMessage> {
 
-    public LoadProfileHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(fileManager, userRegistry, sessionsHolder);
+    public LoadProfileHandler(Properties properties,FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(properties, fileManager, userRegistry, sessionsHolder);
     }
 
     @Override

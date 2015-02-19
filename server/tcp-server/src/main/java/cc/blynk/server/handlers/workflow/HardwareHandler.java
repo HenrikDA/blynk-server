@@ -9,10 +9,12 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
+import java.util.Properties;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static cc.blynk.common.model.messages.protocol.HardwareMessage.attachTS;
+import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
 
 /**
  * The Blynk Project.
@@ -24,9 +26,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
 
     private final Storage storage;
 
-    public HardwareHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(fileManager, userRegistry, sessionsHolder);
-        this.storage = new GraphInMemoryStorage(1000);
+    public HardwareHandler(Properties properties, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(properties, fileManager, userRegistry, sessionsHolder);
+        this.storage = new GraphInMemoryStorage(getIntProperty(properties, "user.in.memory.storage.limit"));
     }
 
     @Override

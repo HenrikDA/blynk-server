@@ -13,6 +13,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Properties;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -24,6 +26,7 @@ public abstract class BaseServer implements Runnable {
 
     protected int port;
 
+    protected Properties props;
     protected UserRegistry userRegistry;
     protected FileManager fileManager;
     protected SessionsHolder sessionsHolder;
@@ -32,8 +35,8 @@ public abstract class BaseServer implements Runnable {
     protected EventLoopGroup bossGroup;
     protected EventLoopGroup workerGroup;
 
-    protected BaseServer(Integer port, FileManager fileManager, SessionsHolder sessionsHolder, UserRegistry userRegistry, GlobalStats stats) {
-        this.port = port;
+    protected BaseServer(Properties props, FileManager fileManager, SessionsHolder sessionsHolder, UserRegistry userRegistry, GlobalStats stats) {
+        this.props = props;
         this.fileManager = fileManager;
         this.sessionsHolder = sessionsHolder;
         this.userRegistry = userRegistry;
@@ -61,7 +64,7 @@ public abstract class BaseServer implements Runnable {
     }
 
     protected ServerHandlersInitializer getServerHandlersInitializer() {
-        return new ServerHandlersInitializer(fileManager, userRegistry, sessionsHolder, stats);
+        return new ServerHandlersInitializer(props, fileManager, userRegistry, sessionsHolder, stats);
     }
 
     protected void stop() {

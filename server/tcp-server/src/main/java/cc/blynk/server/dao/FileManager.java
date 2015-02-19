@@ -50,7 +50,9 @@ public final class FileManager {
     private static User readUserFromFile(Path path) {
         try (BufferedReader reader = Files.newBufferedReader(path, Config.DEFAULT_CHARSET)) {
             String userString = reader.readLine();
-            return JsonParser.parseUser(userString);
+            User user = JsonParser.parseUser(userString);
+            user.initQuota();
+            return user;
         } catch (Exception ioe) {
             log.error("Error reading user file '{}'.", path, ioe);
         }

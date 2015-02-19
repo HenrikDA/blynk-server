@@ -13,8 +13,8 @@ public class Stats {
 
     public Stats() {
         //21 - is because Commands max value is 20;
-        commands = new int[21];
-        exceptions = new int[20];
+        this.commands = new int[21];
+        this.exceptions = new int[20];
     }
 
     //do not expect to be incremented from different threads

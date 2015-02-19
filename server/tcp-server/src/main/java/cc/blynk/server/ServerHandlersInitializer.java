@@ -16,6 +16,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 
+import java.util.Properties;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -23,13 +25,15 @@ import io.netty.handler.ssl.SslHandler;
  */
 public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel> {
 
+    private Properties props;
     private SslContext sslCtx;
     private FileManager fileManager;
     private UserRegistry userRegistry;
     private SessionsHolder sessionsHolder;
     private GlobalStats stats;
 
-    public ServerHandlersInitializer(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+    public ServerHandlersInitializer(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+        this.props = props;
         this.fileManager = fileManager;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
@@ -37,7 +41,8 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
         this.sslCtx = null;
     }
 
-    public ServerHandlersInitializer(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats, SslContext sslCtx) {
+    public ServerHandlersInitializer(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats, SslContext sslCtx) {
+        this.props = props;
         this.fileManager = fileManager;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
@@ -63,12 +68,12 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
         //business logic
         pipeline.addLast(new RegisterHandler(fileManager, userRegistry, sessionsHolder));
         pipeline.addLast(new LoginHandler(fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new GetTokenHandler(fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new LoadProfileHandler(fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new SaveProfileHandler(fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new HardwareHandler(fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new PingHandler(fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new TweetHandler(fileManager, userRegistry, sessionsHolder, new TwitterWrapper()));
+        pipeline.addLast(new GetTokenHandler(props, fileManager, userRegistry, sessionsHolder));
+        pipeline.addLast(new LoadProfileHandler(props, fileManager, userRegistry, sessionsHolder));
+        pipeline.addLast(new SaveProfileHandler(props, fileManager, userRegistry, sessionsHolder));
+        pipeline.addLast(new HardwareHandler(props, fileManager, userRegistry, sessionsHolder));
+        pipeline.addLast(new PingHandler(props, fileManager, userRegistry, sessionsHolder));
+        pipeline.addLast(new TweetHandler(props, fileManager, userRegistry, sessionsHolder, new TwitterWrapper()));
     }
 }
 

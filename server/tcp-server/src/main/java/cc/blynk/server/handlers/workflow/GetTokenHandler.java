@@ -8,7 +8,10 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Properties;
+
 import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
 
 /**
  * The Blynk Project.
@@ -18,8 +21,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMessage> {
 
-    public GetTokenHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(fileManager, userRegistry, sessionsHolder);
+    private final int MIN_DASH_ID;
+    private final int MAX_DASH_ID;
+
+    public GetTokenHandler(Properties properties, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(properties, fileManager, userRegistry, sessionsHolder);
+        this.MIN_DASH_ID = getIntProperty(properties, "user.dashboard.id.min");
+        this.MAX_DASH_ID = getIntProperty(properties, "user.dashboard.id.max");
     }
 
     @Override
@@ -33,8 +41,10 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
             throw new IllegalCommandException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
         }
 
-        if (dashBoardId < 0 || dashBoardId > 100) {
-            throw new IllegalCommandException(String.format("Token '%s' should be in range [0..100].", dashBoardIdString), message.id);
+        if (dashBoardId < MIN_DASH_ID || dashBoardId > MAX_DASH_ID) {
+            throw new IllegalCommandException(
+                    String.format("Token '%s' should be in range [%d..%d].", dashBoardIdString, MIN_DASH_ID, MAX_DASH_ID),
+                    message.id);
         }
 
         String token = userRegistry.getToken(user, dashBoardId);

@@ -32,7 +32,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        server = new Server(TEST_PORT, fileManager, sessionsHolder, userRegistry, stats);
+        server = new Server(properties, fileManager, sessionsHolder, userRegistry, stats);
         new Thread(server).start();
 
         //wait util server start.
@@ -69,6 +69,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
 
         clientPair.hardwareClient.send("hardware 1 1");
+        verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(1, OK)));
         verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
     }
 

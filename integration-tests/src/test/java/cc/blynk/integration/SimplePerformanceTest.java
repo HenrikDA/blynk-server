@@ -35,7 +35,7 @@ public class SimplePerformanceTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        server = new Server(TEST_PORT, fileManager, sessionsHolder, userRegistry, stats);
+        server = new Server(properties, fileManager, sessionsHolder, userRegistry, stats);
         new Thread(server).start();
 
         //wait util server start.

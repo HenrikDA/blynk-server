@@ -10,6 +10,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
+import java.util.Properties;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -22,8 +23,8 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
 
-    public PingHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(fileManager, userRegistry, sessionsHolder);
+    public PingHandler(Properties properties,FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(properties, fileManager, userRegistry, sessionsHolder);
     }
 
     @Override

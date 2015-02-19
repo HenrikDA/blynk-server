@@ -18,14 +18,12 @@ import java.util.SortedMap;
  */
 public class GlobalStats {
 
+    public static final MetricRegistry metricRegistry = new MetricRegistry();
     private static final Logger log = LogManager.getLogger(GlobalStats.class);
-
-    private MetricRegistry metricRegistry;
     private Meter incomeMessages;
     private SortedMap<String, Counter> specificCounters;
 
     public GlobalStats() {
-        this.metricRegistry = new MetricRegistry();
         this.incomeMessages = metricRegistry.meter("incomeMessages");
 
         metricRegistry.counter(GetTokenMessage.class.getName());
@@ -54,5 +52,6 @@ public class GlobalStats {
         for (Map.Entry<String, Counter> counterEntry : specificCounters.entrySet()) {
             log.debug("{} : {}", counterEntry.getKey(), counterEntry.getValue().getCount());
         }
+        log.debug("--------------------------------------------------------------------------------------");
     }
 }

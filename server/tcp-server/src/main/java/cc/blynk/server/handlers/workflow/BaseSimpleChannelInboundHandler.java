@@ -6,6 +6,7 @@ import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.exceptions.UserQuotaLimitExceededException;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -14,6 +15,10 @@ import io.netty.util.ReferenceCountUtil;
 import io.netty.util.internal.TypeParameterMatcher;
 import org.apache.logging.log4j.ThreadContext;
 
+import java.util.Properties;
+
+import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -21,16 +26,20 @@ import org.apache.logging.log4j.ThreadContext;
  */
 public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> extends ChannelInboundHandlerAdapter implements DefaultExceptionHandler {
 
+    protected final Properties props;
     protected final FileManager fileManager;
     protected final UserRegistry userRegistry;
     protected final SessionsHolder sessionsHolder;
     private final TypeParameterMatcher matcher;
+    private final int USER_QUOTA_LIMIT;
 
-    public BaseSimpleChannelInboundHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public BaseSimpleChannelInboundHandler(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        this.props = props;
         this.fileManager = fileManager;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
+        this.USER_QUOTA_LIMIT = getIntProperty(props, "user.message.quota.limit");
     }
 
     @Override
@@ -41,11 +50,17 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             try {
                 I imsg = (I) msg;
                 user = sessionsHolder.findUserByChannel(ctx.channel(), imsg.id);
+                if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
+                    throw new UserQuotaLimitExceededException("Quota limit exceeded.", imsg.id);
+                }
                 user.incrStat(imsg.command);
 
                 ThreadContext.put("user", user.getName());
                 messageReceived(ctx, user, imsg);
                 ThreadContext.clearMap();
+            } catch (UserQuotaLimitExceededException quotaE) {
+                //this is special case. do not reply anything. in case of high request rate.
+                log.error("User '{}' had exceeded {} rec/sec limit.", user.getName(), USER_QUOTA_LIMIT);
             } catch (BaseServerException cause) {
                 if (user != null) {
                     user.incrException(cause.errorCode);

@@ -55,7 +55,6 @@ public abstract class IntegrationBase {
     public BufferedReader bufferedReader2;
 
     public Properties properties = PropertiesUtil.loadProperties("server.properties");
-    public String dataFolder = properties.getProperty("data.folder");
 
     public FileManager fileManager;
     public SessionsHolder sessionsHolder;

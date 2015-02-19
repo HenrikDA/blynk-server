@@ -1,7 +1,9 @@
 package cc.blynk.server.model.auth;
 
+import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.JsonParser;
+import com.codahale.metrics.Meter;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -28,6 +30,8 @@ public class User implements Serializable {
 
     private Stats stats;
 
+    private transient Meter quotaMeter;
+
     public User() {
     }
 
@@ -35,14 +39,21 @@ public class User implements Serializable {
         this.name = name;
         this.pass = pass;
         this.stats = new Stats();
+        initQuota();
+    }
+
+    public void initQuota() {
+        this.quotaMeter = GlobalStats.metricRegistry.meter(this.name);
     }
 
     public void incrStat(short cmd) {
         stats.incr(cmd);
+        quotaMeter.mark(1);
     }
 
     public void incrException(int exceptionCode) {
         stats.incrException(exceptionCode);
+        quotaMeter.mark(1);
     }
 
     public String getName() {
@@ -87,6 +98,10 @@ public class User implements Serializable {
 
     public Stats getStats() {
         return stats;
+    }
+
+    public Meter getQuotaMeter() {
+        return quotaMeter;
     }
 
     @Override

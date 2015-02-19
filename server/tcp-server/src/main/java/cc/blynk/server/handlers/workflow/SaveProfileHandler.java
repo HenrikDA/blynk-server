@@ -10,6 +10,8 @@ import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Properties;
+
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
@@ -21,8 +23,8 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProfileMessage> {
 
-    public SaveProfileHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(fileManager, userRegistry, sessionsHolder);
+    public SaveProfileHandler(Properties properties,FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(properties, fileManager, userRegistry, sessionsHolder);
     }
 
     @Override

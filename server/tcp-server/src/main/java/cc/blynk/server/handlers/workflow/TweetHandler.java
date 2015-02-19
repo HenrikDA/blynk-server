@@ -9,6 +9,8 @@ import cc.blynk.server.model.auth.User;
 import cc.blynk.server.twitter.TwitterWrapper;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Properties;
+
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
@@ -22,8 +24,8 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
 
     private final TwitterWrapper twitterWrapper;
 
-    public TweetHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, TwitterWrapper twitterWrapper) {
-        super(fileManager, userRegistry, sessionsHolder);
+    public TweetHandler(Properties properties, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, TwitterWrapper twitterWrapper) {
+        super(properties, fileManager, userRegistry, sessionsHolder);
         this.twitterWrapper = twitterWrapper;
     }
 

@@ -41,12 +41,14 @@ public class Launcher {
 
         Properties serverProperties = PropertiesUtil.loadProperties("server.properties");
 
-        Integer port = portString == null ?
-                PropertiesUtil.getIntProperty(serverProperties, "server.default.port") :
-                ParseUtil.parseInt(portString);
-        Integer sslPort = sslPortString == null ?
-                PropertiesUtil.getIntProperty(serverProperties, "server.ssl.port") :
-                ParseUtil.parseInt(sslPortString);
+        if (portString != null) {
+            ParseUtil.parseInt(portString);
+            serverProperties.put("server.default.port", portString);
+        }
+        if (sslPortString != null) {
+            ParseUtil.parseInt(sslPortString);
+            serverProperties.put("server.ssl.port", sslPortString);
+        }
 
         boolean sslEnabled = PropertiesUtil.getBoolProperty(serverProperties, "app.ssl.enabled");
 
@@ -65,10 +67,10 @@ public class Launcher {
 
         if (sslEnabled) {
             log.info("SSL for app. enabled.");
-            new Thread(new SSLServer(sslPort, fileManager, sessionsHolder, userRegistry, stats)).start();
-            new Thread(new Server(port, fileManager, sessionsHolder, userRegistry, stats)).start();
+            new Thread(new SSLServer(serverProperties, fileManager, sessionsHolder, userRegistry, stats)).start();
+            new Thread(new Server(serverProperties, fileManager, sessionsHolder, userRegistry, stats)).start();
         } else {
-            new Thread(new Server(port, fileManager, sessionsHolder, userRegistry, stats)).start();
+            new Thread(new Server(serverProperties, fileManager, sessionsHolder, userRegistry, stats)).start();
         }
     }
 
