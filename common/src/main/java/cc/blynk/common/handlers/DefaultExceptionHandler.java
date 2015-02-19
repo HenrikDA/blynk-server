@@ -21,6 +21,17 @@ public interface DefaultExceptionHandler {
         if (cause instanceof BaseServerException) {
             handleAppException(ctx, (BaseServerException) cause);
         } else {
+            handleUnexpectedException(ctx, cause);
+        }
+    }
+
+    public default void handleUnexpectedException(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        //all this are expected when user goes offline without closing socket correctly...
+        if ("Connection reset by peer".equals(cause.getMessage()) ||
+                "No route to host".equals(cause.getMessage()) ||
+                "Connection timed out".equals(cause.getMessage())) {
+            log.error("Client goes offline. Reason : {}", cause.getMessage());
+        } else {
             log.error("Unexpected error!!!", cause);
         }
     }

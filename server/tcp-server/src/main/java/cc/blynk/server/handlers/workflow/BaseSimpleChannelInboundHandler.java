@@ -67,7 +67,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                 }
                 handleAppException(ctx, cause);
             } catch (Throwable t) {
-                handleGeneralException(ctx, t);
+                handleUnexpectedException(ctx, t);
             } finally {
                 ReferenceCountUtil.release(msg);
             }
