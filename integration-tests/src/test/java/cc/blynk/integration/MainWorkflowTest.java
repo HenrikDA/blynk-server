@@ -1,6 +1,7 @@
 package cc.blynk.integration;
 
 import cc.blynk.common.enums.Command;
+import cc.blynk.common.model.messages.Message;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.server.Server;
 import org.apache.commons.io.FileUtils;
@@ -8,11 +9,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.List;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.enums.Response.TWEET_EXCEPTION;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 /**
@@ -69,10 +75,22 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
 
         clientPair.hardwareClient.send("hardware 1 1");
-        verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(1, OK)));
-        verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
-    }
 
+        ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+        verify(clientPair.appClient.responseMock, times(2)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<Message> arguments = objectArgumentCaptor.getAllValues();
+        assertEquals(produce(1, OK), arguments.get(0));
+        Message hardMessage = arguments.get(1);
+        assertEquals(1, hardMessage.id);
+        assertEquals(Command.HARDWARE_COMMAND, hardMessage.command);
+        assertEquals(17, hardMessage.length);
+        assertTrue(hardMessage.body.startsWith("1 1 ".replaceAll(" ", "\0")));
+
+       // return msg.id == 1 && msg.command == Command.HARDWARE_COMMAND && msg.body.startsWith("1");
+
+
+    }
 
     @Test
     public void testConnectAppAndHardwareAndSendCommands() throws Exception {
