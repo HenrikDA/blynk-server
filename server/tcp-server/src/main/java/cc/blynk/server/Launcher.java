@@ -7,8 +7,8 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.utils.JsonParser;
-import cc.blynk.server.workers.ProfileSaverRunner;
-import cc.blynk.server.workers.timer.TimerRunner;
+import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.server.workers.timer.TimerWorker;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
@@ -59,8 +59,8 @@ public class Launcher {
         log.debug("Reading user DB finished.");
         GlobalStats stats = new GlobalStats();
 
-        new TimerRunner(userRegistry, sessionsHolder).start();
-        new ProfileSaverRunner(userRegistry, fileManager, PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats).start();
+        new TimerWorker(userRegistry, sessionsHolder).start();
+        new ProfileSaverWorker(userRegistry, fileManager, PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats).start();
 
 
         if (sslEnabled) {

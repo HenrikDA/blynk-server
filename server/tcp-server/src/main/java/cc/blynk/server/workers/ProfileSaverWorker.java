@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/12/2015.
  */
-public class ProfileSaverRunner implements Runnable {
+public class ProfileSaverWorker implements Runnable {
 
-    private static final Logger log = LogManager.getLogger(ProfileSaverRunner.class);
+    private static final Logger log = LogManager.getLogger(ProfileSaverWorker.class);
 
     //1 min
     private final UserRegistry userRegistry;
@@ -27,7 +27,7 @@ public class ProfileSaverRunner implements Runnable {
     private final int periodInMinutes;
     private final GlobalStats stats;
 
-    public ProfileSaverRunner(UserRegistry userRegistry, FileManager fileManager, int periodInMinutes, GlobalStats stats) {
+    public ProfileSaverWorker(UserRegistry userRegistry, FileManager fileManager, int periodInMinutes, GlobalStats stats) {
         this.userRegistry = userRegistry;
         this.fileManager = fileManager;
         this.periodInMinutes = periodInMinutes;

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * Created on 2/6/2015.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class TimerRunnerTest {
+public class TimerWorkerTest {
 
     @Mock
     private UserRegistry userRegistry;
@@ -39,7 +39,7 @@ public class TimerRunnerTest {
 
     @Spy
     @InjectMocks
-    private TimerRunner timerRunner;
+    private TimerWorker timerWorker;
 
     @Mock
     private User user;
@@ -83,9 +83,9 @@ public class TimerRunnerTest {
         when(userProfile.getDashBoards()).thenReturn(new DashBoard[] {});
         when(userProfile.getDashboardTimerWidgets()).thenReturn(timers);
 
-        timerRunner.run();
+        timerWorker.run();
 
-        verify(timerRunner, times(1000)).timerTick(eq(curTime), eq(curTime));
+        verify(timerWorker, times(1000)).timerTick(eq(curTime), eq(curTime));
     }
 
 }

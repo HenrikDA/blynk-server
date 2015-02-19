@@ -61,10 +61,10 @@
     </appenders>
     <loggers>
 
-        <Logger name="cc.blynk.server.workers.ProfileSaverRunner" level="debug" additivity="false">
+        <Logger name="cc.blynk.server.workers.ProfileSaverWorker" level="debug" additivity="false">
             <appender-ref ref="workersLog"/>
         </Logger>
-        <Logger name="cc.blynk.server.workers.timer.TimerRunner" level="debug" additivity="false">
+        <Logger name="cc.blynk.server.workers.timer.TimerWorker" level="debug" additivity="false">
             <appender-ref ref="workersLog"/>
         </Logger>
         <Logger name="cc.blynk.common.stats.GlobalStats" level="debug" additivity="false">

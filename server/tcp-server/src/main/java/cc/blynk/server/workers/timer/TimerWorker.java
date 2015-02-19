@@ -25,18 +25,18 @@ import java.util.concurrent.TimeUnit;
  *
  * //todo optimize!!!
  */
-public class TimerRunner implements Runnable {
+public class TimerWorker implements Runnable {
 
-    private static final Logger log = LogManager.getLogger(TimerRunner.class);
+    private static final Logger log = LogManager.getLogger(TimerWorker.class);
 
     private UserRegistry userRegistry;
     private SessionsHolder sessionsHolder;
     private ZoneId UTC = ZoneId.of("UTC");
 
-    protected TimerRunner() {
+    protected TimerWorker() {
     }
 
-    public TimerRunner(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public TimerWorker(UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
     }
