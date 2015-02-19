@@ -27,7 +27,7 @@ public class SSLServer extends BaseServer {
     public SSLServer(Properties props, FileManager fileManager, SessionsHolder sessionsHolder, UserRegistry userRegistry, GlobalStats stats) {
         super(props, fileManager, sessionsHolder, userRegistry, stats);
         this.sslCtx = initSslContext();
-        this.port = PropertiesUtil.getIntProperty(props, "sserver.ssl.port");
+        this.port = PropertiesUtil.getIntProperty(props, "server.ssl.port");
         log.info("Using SSL port : {}", port);
     }
 
