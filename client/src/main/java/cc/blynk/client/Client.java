@@ -6,7 +6,6 @@ import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.utils.ParseUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -110,7 +109,6 @@ public class Client {
 
             // Start the connection attempt.
             Channel clientChannel = b.connect(host, port).sync().channel();
-
             readUserInput(clientChannel, commandInputStream);
         } catch (IOException | InterruptedException e) {
             log.error("Error running client. Shutting down.", e);
@@ -120,9 +118,7 @@ public class Client {
         }
     }
 
-    private ChannelFuture readUserInput(Channel clientChannel, BufferedReader commandInputStream) throws IOException {
-        ChannelFuture lastWriteFuture = null;
-
+    private void readUserInput(Channel clientChannel, BufferedReader commandInputStream) throws IOException {
         String line;
         while ((line = commandInputStream.readLine()) != null) {
             // If user typed the 'quit' command, wait until the server closes the connection.
@@ -136,10 +132,9 @@ public class Client {
             if (msg == null) {
                 continue;
             }
-            lastWriteFuture = clientChannel.writeAndFlush(msg);
-        }
 
-        return lastWriteFuture;
+            clientChannel.writeAndFlush(msg);
+        }
     }
 
 }

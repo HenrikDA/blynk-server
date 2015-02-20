@@ -18,6 +18,7 @@ public class ClientReplayingMessageDecoder extends ReplayingMessageDecoder {
         if (cause instanceof IOException && "An existing connection was forcibly closed by the remote host".equals(cause.getMessage())) {
             ctx.close();
             log.error("Server went down. Shutting down...");
+            //todo find better way
             System.exit(1);
         }
         super.exceptionCaught(ctx, cause);
