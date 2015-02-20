@@ -36,12 +36,8 @@ public class Session {
         }
         List<ChannelFuture> futureList = new ArrayList<>();
         for (Channel channel : channels) {
-            if (channel.isActive()) {
-                log.trace("Sending {} to {}", message, channel);
-                futureList.add(channel.writeAndFlush(message));
-            } else {
-                throw new DeviceNotInNetworkException("No device in session.", message.id);
-            }
+            log.trace("Sending {} to {}", message, channel);
+            futureList.add(channel.writeAndFlush(message));
         }
         return futureList;
     }
@@ -82,6 +78,14 @@ public class Session {
 
     public List<ChannelFuture> sendMessageToHardware(MessageBase message) {
         return sendMessageTo(message, hardwareChannels);
+    }
+
+    public void remove(ChannelState channelServer) {
+        if (channelServer.isHardwareChannel) {
+            hardwareChannels.remove(channelServer);
+        } else {
+            appChannels.remove(channelServer);
+        }
     }
 
     public int hardwareSize() {

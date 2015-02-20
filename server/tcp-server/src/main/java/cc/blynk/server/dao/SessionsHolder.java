@@ -1,6 +1,7 @@
 package cc.blynk.server.dao;
 
 import cc.blynk.server.exceptions.UserNotAuthenticated;
+import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
@@ -28,6 +29,13 @@ public class SessionsHolder {
         Session session = getSessionByUser(user);
         session.addHardwareChannel(channel, msgId);
         channelToken.put(channel, user);
+    }
+
+    public void removeFromSession(Channel channel) {
+        User user = channelToken.remove(channel);
+        if (user != null) {
+            userSession.get(user).remove((ChannelState) channel);
+        }
     }
 
     public Session getUserSession(Channel channel, int messageId) {

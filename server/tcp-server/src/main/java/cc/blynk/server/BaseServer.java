@@ -4,7 +4,6 @@ import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.logging.LoggingHandler;
 import cc.blynk.server.model.auth.ChannelServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -51,7 +50,7 @@ public abstract class BaseServer implements Runnable {
         try {
             b.group(bossGroup, workerGroup)
                     .channel(ChannelServer.class)
-                    .handler(new LoggingHandler())
+                    //.handler(new LoggingHandler())
                     .childHandler(getServerHandlersInitializer());
 
             ChannelFuture channelFuture = b.bind(port).sync();

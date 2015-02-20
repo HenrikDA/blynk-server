@@ -54,6 +54,8 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
+        pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));
+
         if (sslCtx != null) {
             SslHandler sslHandler = sslCtx.newHandler(ch.alloc());
             pipeline.addLast(sslHandler);
