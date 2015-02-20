@@ -36,8 +36,12 @@ public class Session {
         }
         List<ChannelFuture> futureList = new ArrayList<>();
         for (Channel channel : channels) {
-            log.trace("Sending {} to {}", message, channel);
-            futureList.add(channel.writeAndFlush(message));
+            if (channel.isActive()) {
+                log.trace("Sending {} to {}", message, channel);
+                futureList.add(channel.writeAndFlush(message));
+            } else {
+                throw new DeviceNotInNetworkException("No device in session.", message.id);
+            }
         }
         return futureList;
     }
