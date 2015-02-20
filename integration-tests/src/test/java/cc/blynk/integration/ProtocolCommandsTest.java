@@ -213,7 +213,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
         for (final String cmd : commands) {
             ongoingStubbing = ongoingStubbing.thenAnswer(invocation -> {
-                Thread.sleep(100);
+                Thread.sleep(200);
                 return cmd;
             });
         }
