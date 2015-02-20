@@ -14,8 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.enums.Response.TWEET_EXCEPTION;
+import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -54,6 +53,32 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testConnectAppAndHardware() throws Exception {
         initAppAndHardPair("localhost", TEST_PORT);
     }
+
+    @Test
+    public void testPingCommandWorks() throws Exception {
+        ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
+        clientPair.appClient.send("ping");
+        verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, Command.PING, "")));
+        verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(1, OK)));
+    }
+
+    @Test
+    public void testPingCommandNoDevice() throws Exception {
+        ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
+        clientPair.appClient.send("ping");
+        verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, Command.PING, "")));
+        verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(1, OK)));
+
+        //closing hard channel
+        clientPair.hardwareClient.close();
+
+        clientPair.appClient.reset();
+        clientPair.hardwareClient.reset();
+
+        clientPair.appClient.send("ping");
+        verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(1, DEVICE_NOT_IN_NETWORK)));
+    }
+
 
     @Test
     public void testTweetException() throws Exception {
