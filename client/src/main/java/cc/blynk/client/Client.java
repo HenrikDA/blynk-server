@@ -8,7 +8,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -102,7 +101,7 @@ public class Client {
     }
 
     public void start(ChannelInitializer<SocketChannel> channelInitializer, BufferedReader commandInputStream) {
-        EventLoopGroup group = new NioEventLoopGroup();
+        NioEventLoopGroup group = new NioEventLoopGroup(1);
         try {
             Bootstrap b = new Bootstrap();
             b.group(group)
@@ -112,12 +111,7 @@ public class Client {
             // Start the connection attempt.
             Channel clientChannel = b.connect(host, port).sync().channel();
 
-            ChannelFuture lastWriteFuture = readUserInput(clientChannel, commandInputStream);
-            //wait last send command to finish.
-            if (lastWriteFuture != null) {
-                lastWriteFuture.sync();
-            }
-
+            readUserInput(clientChannel, commandInputStream);
         } catch (IOException | InterruptedException e) {
             log.error("Error running client. Shutting down.", e);
         } finally {

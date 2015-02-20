@@ -23,7 +23,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 //todo could be optimized with checkpoints if needed
 public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements DefaultExceptionHandler {
 
-    private static final Logger log = LogManager.getLogger(ReplayingMessageDecoder.class);
+    protected static final Logger log = LogManager.getLogger(ReplayingMessageDecoder.class);
 
     private final GlobalStats stats;
 

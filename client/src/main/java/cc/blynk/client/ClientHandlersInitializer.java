@@ -15,7 +15,7 @@
  */
 package cc.blynk.client;
 
-import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
+import cc.blynk.client.handlers.ClientReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -54,7 +54,7 @@ public class ClientHandlersInitializer extends ChannelInitializer<SocketChannel>
         }
 
         //process input
-        pipeline.addLast(new ReplayingMessageDecoder());
+        pipeline.addLast(new ClientReplayingMessageDecoder());
 
         //process output
         pipeline.addLast(new DeviceMessageEncoder());
