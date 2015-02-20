@@ -2,6 +2,9 @@
 Is Netty based Java server responsible for message forwarding between mobile application and any hardware (Arduino, Raspberry Pi for now).
 Please read more precise project description [here](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
 
+# CI status
+[ ![Codeship Status for theblynk/blynk-server](https://codeship.com/projects/58524b50-9b60-0132-68a2-42ce92b0d790/status?branch=master)](https://codeship.com/projects/64160)
+
 # Requirements
 Java 8 required. (OpenJDK, Oracle)
 
