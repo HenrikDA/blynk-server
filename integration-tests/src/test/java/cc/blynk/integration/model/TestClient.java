@@ -41,6 +41,17 @@ public class TestClient {
         return this;
     }
 
+
+    public TestClient send(String line,  int sleepInterval) {
+        clientChannel.writeAndFlush(Client.produceMessageBaseOnUserInput(line, ++msgId));
+
+        //sleep after every send in order to retrieve response back from server.
+        //it could be less, but for profiling 200 is more o less good
+        IntegrationBase.sleep(sleepInterval);
+
+        return this;
+    }
+
     public TestClient sendNoSleep(String line) {
         clientChannel.writeAndFlush(Client.produceMessageBaseOnUserInput(line, ++msgId));
         return this;

@@ -81,8 +81,11 @@ public abstract class IntegrationBase {
         TestClient appClient = new TestClient(host, port, new TestChannelInitializer(appResponseMock));
         TestClient hardClient = new TestClient(host, port, new TestChannelInitializer(hardResponseMock));
 
+        String userProfileString = readTestUserProfile();
+
         appClient.send("register " + user)
                 .send("login " + user)
+                .send("saveProfile " + userProfileString)
                 .send("getToken 1");
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
@@ -132,10 +135,14 @@ public abstract class IntegrationBase {
         verify(responseMock).channelRead(any(), eq(responseMessage));
     }
 
-    public String readTestUserProfile() {
-        InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
+    public static String readTestUserProfile(String fileName) {
+        InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/" + fileName);
         UserProfile userProfile = JsonParser.parseProfile(is);
         return userProfile.toString();
+    }
+
+    public static String readTestUserProfile() {
+        return readTestUserProfile("user_profile_json.txt");
     }
 
 

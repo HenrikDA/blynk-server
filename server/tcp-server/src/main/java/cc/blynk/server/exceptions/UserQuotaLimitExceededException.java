@@ -11,6 +11,7 @@ import cc.blynk.common.exceptions.BaseServerException;
 public class UserQuotaLimitExceededException extends BaseServerException {
 
     public UserQuotaLimitExceededException(String message, int msgId) {
+        //todo change to "Quota limit???"
         super(message, msgId, Response.DEVICE_NOT_IN_NETWORK);
     }
 

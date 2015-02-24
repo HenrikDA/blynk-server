@@ -1,0 +1,65 @@
+{
+    "dashBoards" :
+        [
+            {
+             "id":1,
+             "name":"My Dashboard",
+             "isActive":true,
+             "widgets"  : [
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"BUTTON",         "pinType":"DIGITAL", "pin":1, "value":"1"},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TOGGLE_BUTTON",  "pinType":"DIGITAL", "pin":2, "value":"1", "state":"ON"},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TOGGLE_BUTTON",  "pinType":"ANALOG", "pin":3, "value":"0", "state":"OFF"},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"SLIDER",         "pinType":"VIRTUAL", "pin":4, "value":"244" },
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TIMER",          "pinType":"DIGITAL", "pin":5, "value":"1", "startTime":0},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"LED",            "pinType":"DIGITAL", "pin":6},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"DIGITAL", "pin":7},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"GRAPH",          "pinType":"DIGITAL", "pin":8}
+             ],
+             "settings" : {"boardType":"UNO", "someParam":"someValue"}
+            },
+            {
+               "id":2,
+               "name":"My Dashboard"
+            },
+            {
+               "id":3,
+               "name":"My Dashboard"
+            },
+            {
+               "id":4,
+               "name":"My Dashboard"
+            },
+            {
+               "id":5,
+               "name":"My Dashboard"
+            },
+            {
+               "id":6,
+               "name":"My Dashboard"
+            },
+            {
+               "id":7,
+               "name":"My Dashboard"
+            },
+            {
+               "id":8,
+               "name":"My Dashboard"
+            },
+            {
+               "id":9,
+               "name":"My Dashboard"
+            },
+            {
+               "id":10,
+               "name":"My Dashboard"
+            },
+            {
+               "id":11,
+               "name":"My Dashboard"
+            }
+        ],
+    "twitterAccessToken" : {
+        "token" : "123",
+        "tokenSecret" : "123"
+    }
+}

@@ -5,6 +5,7 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
@@ -14,6 +15,7 @@ import java.util.Properties;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
+import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
 
 /**
  * The Blynk Project.
@@ -23,8 +25,11 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  */
 public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProfileMessage> {
 
+    private final int MAX_DASH_NUMBER;
+
     public SaveProfileHandler(Properties properties,FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(properties, fileManager, userRegistry, sessionsHolder);
+        this.MAX_DASH_NUMBER = getIntProperty(properties, "user.dashboard.max.limit");
     }
 
     @Override
@@ -40,6 +45,10 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
         UserProfile userProfile = JsonParser.parseProfile(userProfileString);
         if (userProfile == null) {
             throw new IllegalCommandException("Register Handler. Wrong user profile message format.", message.id);
+        }
+
+        if (userProfile.getDashBoards() != null && userProfile.getDashBoards().length > MAX_DASH_NUMBER) {
+            throw new NotAllowedException("Not allowed to create more than {} dashboards.", MAX_DASH_NUMBER);
         }
 
         log.info("Trying save user profile.");

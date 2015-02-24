@@ -2,9 +2,11 @@ package cc.blynk.integration;
 
 import cc.blynk.client.Client;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
 import cc.blynk.server.Server;
+import cc.blynk.server.workers.ProfileSaverWorker;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +39,8 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     private Server server;
 
+    private ProfileSaverWorker profileSaverWorker;
+
     @Before
     public void init() throws Exception {
         initServerStructures();
@@ -44,7 +48,9 @@ public class ProtocolCommandsTest extends IntegrationBase {
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
         server = new Server(properties, fileManager, sessionsHolder, userRegistry, stats);
+        profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager, PropertiesUtil.getIntProperty(properties, "profile.save.worker.period"), stats);
         new Thread(server).start();
+        new Thread(profileSaverWorker).start();
 
         //wait util server start.
         Thread.sleep(500);
@@ -72,14 +78,8 @@ public class ProtocolCommandsTest extends IntegrationBase {
         makeCommand(2, produce(2, OK), "login dmitriy@mail.ua 1", "quit");
 
         makeCommands(
-                new int[] {3,4},
-                new MessageBase[]{produce(3, OK), produce(4, GET_TOKEN, "12345678901234567890123456789012")}, //token is 32 length string
-                "login dmitriy@mail.ua 1", "getToken 1", "quit"
-        );
-
-        makeCommands(
                 new int[] {5,6},
-                new MessageBase[]{produce(5, OK), produce(6, LOAD_PROFILE, "{}")}, //token is 32 length string
+                new MessageBase[]{produce(5, OK), produce(6, LOAD_PROFILE, "{}")},
                 "login dmitriy@mail.ua 1", "loadProfile", "quit"
         );
 
@@ -87,14 +87,23 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
         makeCommands(
                 new int[] {7,8},
-                new MessageBase[]{produce(7, OK), produce(8, OK)}, //token is 32 length string
+                new MessageBase[]{produce(7, OK), produce(8, OK)},
                 "login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "quit"
         );
 
         makeCommands(
                 new int[] {9,10, 11},
-                new MessageBase[]{produce(9, OK), produce(10, OK), produce(11, LOAD_PROFILE, userProfileString)}, //token is 32 length string
+                new MessageBase[]{produce(9, OK), produce(10, OK), produce(11, LOAD_PROFILE, userProfileString)},
                 "login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "loadProfile", "quit"
+        );
+
+        //waiting background thread to save profile.
+        sleep(600);
+
+        makeCommands(
+                new int[] {3,4},
+                new MessageBase[]{produce(3, OK), produce(4, GET_TOKEN, "12345678901234567890123456789012")}, //token is 32 length string
+                "login dmitriy@mail.ua 1", "getToken 1", "quit"
         );
 
     }
@@ -130,14 +139,29 @@ public class ProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
-    public void testGetTokenNotInRange() throws Exception {
+    public void testGetTokenForNonExistentDashId() throws Exception {
         makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
 
         makeCommands(
                 new int[] {2, 3},
                 new MessageBase[]{produce(2, OK), produce(3, ILLEGAL_COMMAND)},
-                "login dmitriy@mail.ua 1", "getToken 101", "quit"
+                "login dmitriy@mail.ua 1", "getToken 1", "quit"
         );
+    }
+
+    @Test
+    //all commands together cause all operations requires register and then login =(.
+    public void testProfileWithManyDashes() throws Exception {
+        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+
+        String userProfileString = readTestUserProfile("user_profile_json_many_dashes.txt");
+
+        makeCommands(
+                new int[] {7,8},
+                new MessageBase[]{produce(7, OK), produce(8, NOT_ALLOWED)},
+                "login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "quit"
+        );
+
     }
 
     @Test
