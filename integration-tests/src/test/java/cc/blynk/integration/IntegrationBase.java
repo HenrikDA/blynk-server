@@ -125,7 +125,7 @@ public abstract class IntegrationBase {
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
         for (final String cmd : commands) {
             ongoingStubbing = ongoingStubbing.thenAnswer(invocation -> {
-                Thread.sleep(100);
+                sleep(100);
                 return cmd;
             });
         }

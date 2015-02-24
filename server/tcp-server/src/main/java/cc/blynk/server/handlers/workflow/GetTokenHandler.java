@@ -36,10 +36,7 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
             throw new IllegalCommandException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
         }
 
-        DashBoard[] userDashes = user.getUserProfile().getDashBoards();
-        if (userDashes != null) {
-            validateDashId(userDashes, dashBoardId, message.id);
-        }
+        validateDashId(user.getUserProfile().getDashBoards(), dashBoardId, message.id);
 
         String token = userRegistry.getToken(user, dashBoardId);
 
@@ -47,6 +44,9 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
     }
 
     private static void validateDashId(DashBoard[] userDashes, int dashBoardId, int msgId) {
+        if (userDashes == null) {
+            throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
+        }
         for (DashBoard dashBoard : userDashes) {
             if (dashBoard.getId() == dashBoardId) {
                 return;

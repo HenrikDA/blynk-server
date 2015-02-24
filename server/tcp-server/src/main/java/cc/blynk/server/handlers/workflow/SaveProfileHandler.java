@@ -48,7 +48,8 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
         }
 
         if (userProfile.getDashBoards() != null && userProfile.getDashBoards().length > MAX_DASH_NUMBER) {
-            throw new NotAllowedException("Not allowed to create more than {} dashboards.", MAX_DASH_NUMBER);
+            throw new NotAllowedException(
+                    String.format("Not allowed to create more than %s dashboards.", MAX_DASH_NUMBER), message.id);
         }
 
         log.info("Trying save user profile.");
