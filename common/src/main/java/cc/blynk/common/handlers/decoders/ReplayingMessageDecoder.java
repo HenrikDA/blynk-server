@@ -7,6 +7,7 @@ import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.ReplayingDecoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,6 +61,11 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements D
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
+        //todo test for that case
+        if (cause instanceof DecoderException) {
+            handleGeneralException(ctx, cause.getCause());
+        } else {
+            handleGeneralException(ctx, cause);
+        }
     }
 }
