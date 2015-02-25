@@ -58,7 +58,7 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
             b) Hardware client must send 1 parameter, which is user Authentication Token : "6a7a3151cb044cd893a92033dd65f655"
         3 - save profile; Must have 1 parameter as content string : "{...}"
         4 - load profile; Don't have any parameters
-        5 - getToken; Must have 1 int parameter, Dashboard ID : "1". ACCEPTED DASH_ID RANGE IS [1..100];
+        5 - getToken; Must have 1 signed int (4 bytes) parameter, Dashboard ID : "1". NOTE : number of dashboards is limited per user by 10.
         6 - ping; Sends request from client to server, then from server to hardware, than back to server and back to the client.
         12 - tweet; Sends tweet request from hardware to server. 140 chars max. 
         20 - hardware; Command for hardware. Every Widget forms it's own body message for hardware command.
