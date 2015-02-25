@@ -1,8 +1,5 @@
 package cc.blynk.common.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,8 +12,6 @@ import java.util.Properties;
  * Created on 2/12/2015.
  */
 public class PropertiesUtil {
-
-    private static final Logger log = LogManager.getLogger(PropertiesUtil.class);
 
     /**
      * First loads properties file from class path after that from current folder.
@@ -35,7 +30,7 @@ public class PropertiesUtil {
                 props.load(classPath);
             }
         } catch (Exception e) {
-            log.error("Error getting '{}' properties file.", filePropertiesName, e);
+            throw new RuntimeException("Error getting properties file : " + filePropertiesName, e);
         }
 
         Path curDirPath = Paths.get(System.getProperty("user.dir"), filePropertiesName);
@@ -45,7 +40,7 @@ public class PropertiesUtil {
                     props.load(curFolder);
                 }
             } catch (Exception e) {
-                log.error("Error getting '{}' properties file.", filePropertiesName, e);
+                throw new RuntimeException("Error getting properties file : " + filePropertiesName, e);
             }
         }
 
