@@ -6,8 +6,8 @@
             <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level - %msg%n"/>
         </Console>
 
-        <RollingFile name="workersLog" fileName="./worker.log"
-                     filePattern="./worker.log.%d{yyyy-MM-dd}">
+        <RollingFile name="workersLog" fileName="${sys:logs.folder}/worker.log"
+                     filePattern="${sys:logs.folder}/worker.log.%d{yyyy-MM-dd}">
             <PatternLayout>
                 <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
             </PatternLayout>
@@ -16,8 +16,8 @@
             </Policies>
         </RollingFile>
 
-        <RollingFile name="statsLog" fileName="./stats.log"
-                     filePattern="./stats.log.%d{yyyy-MM-dd}">
+        <RollingFile name="statsLog" fileName="${sys:logs.folder}/stats.log"
+                     filePattern="${sys:logs.folder}/stats.log.%d{yyyy-MM-dd}">
             <PatternLayout>
                 <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
             </PatternLayout>
@@ -31,8 +31,8 @@
 
                 <!-- This route is chosen if ThreadContext has no value for key "user". -->
                 <Route key="$${ctx:user}">
-                    <RollingFile name="default" fileName="./blynk.log"
-                                 filePattern="./blynk.log.%d{yyyy-MM-dd}">
+                    <RollingFile name="default" fileName="${sys:logs.folder}/blynk.log"
+                                 filePattern="${sys:logs.folder}/blynk.log.%d{yyyy-MM-dd}">
                         <PatternLayout>
                             <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
                         </PatternLayout>
@@ -45,8 +45,8 @@
                 <!-- This route is chosen if ThreadContext has a value for "user"
                 The value dynamically determines the name of the log file. -->
                 <Route>
-                    <RollingFile name="${ctx:user}" fileName="./${ctx:user}.log"
-                                 filePattern="./${ctx:user}.log.%d{yyyy-MM-dd}">
+                    <RollingFile name="${ctx:user}" fileName="${sys:logs.folder}/users/${ctx:user}.log"
+                                 filePattern="${sys:logs.folder}/${ctx:user}.log.%d{yyyy-MM-dd}">
                         <PatternLayout>
                             <pattern>%d{HH:mm:ss.SSS} %-5level - %msg%n</pattern>
                         </PatternLayout>

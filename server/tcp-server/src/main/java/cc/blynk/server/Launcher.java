@@ -24,9 +24,17 @@ import java.util.Properties;
  */
 public class Launcher {
 
-    private static final Logger log = LogManager.getLogger(Launcher.class);
+    private final Logger log = LogManager.getLogger(Launcher.class);
 
     public static void main(String[] args) throws Exception {
+        Properties serverProperties = PropertiesUtil.loadProperties("server.properties");
+        //configurable folder for logs via property.
+        System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
+
+        new Launcher().launch(args, serverProperties);
+    }
+
+    public void launch(String[] args, Properties serverProperties) throws Exception {
         //just to init mapper on server start and not first access
         JsonParser.check();
 
@@ -38,8 +46,6 @@ public class Launcher {
 
         String portString = cmd.getOptionValue("port");
         String sslPortString = cmd.getOptionValue("sslPort");
-
-        Properties serverProperties = PropertiesUtil.loadProperties("server.properties");
 
         if (portString != null) {
             ParseUtil.parseInt(portString);
