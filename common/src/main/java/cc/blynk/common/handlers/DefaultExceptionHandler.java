@@ -27,6 +27,10 @@ public interface DefaultExceptionHandler {
 
     public default void handleUnexpectedException(Throwable cause) throws Exception {
         //all this are expected when user goes offline without closing socket correctly...
+        if (cause.getCause() == null) {
+            log.error("Unexpected error!!!", cause);
+            return;
+        }
         switch (cause.getMessage()) {
             case "Connection reset by peer" :
             case "No route to host" :

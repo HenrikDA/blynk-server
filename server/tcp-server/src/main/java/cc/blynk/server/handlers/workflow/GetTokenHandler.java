@@ -5,6 +5,7 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
@@ -33,7 +34,7 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
         try {
             dashBoardId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new IllegalCommandException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
+            throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
         }
 
         validateDashId(user.getUserProfile().getDashBoards(), dashBoardId, message.id);

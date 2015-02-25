@@ -15,7 +15,7 @@ public class UserProfile {
 
     private TwitterAccessToken twitterAccessToken;
 
-    private transient Map<Integer, Set<Byte>> graphPins;
+    private Map<Integer, Set<Byte>> graphPins;
 
     public DashBoard[] getDashBoards() {
         return dashBoards;
@@ -53,6 +53,14 @@ public class UserProfile {
 
     public boolean hasGraphPin(Integer dashId, Byte pin) {
         return graphPins.get(dashId).contains(pin);
+    }
+
+    public Map<Integer, Set<Byte>> getGraphPins() {
+        return graphPins;
+    }
+
+    public void setGraphPins(Map<Integer, Set<Byte>> graphPins) {
+        this.graphPins = graphPins;
     }
 
     public TwitterAccessToken getTwitterAccessToken() {
