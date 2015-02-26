@@ -94,7 +94,7 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    public void testAppSendHardCommandAndBack() throws Exception {
+    public void testAppSendAnyHardCommandAndBack() throws Exception {
         ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
         clientPair.appClient.send("hardware 1 1");
         verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
@@ -109,13 +109,60 @@ public class MainWorkflowTest extends IntegrationBase {
         Message hardMessage = arguments.get(1);
         assertEquals(1, hardMessage.id);
         assertEquals(Command.HARDWARE_COMMAND, hardMessage.command);
-        assertEquals(17, hardMessage.length);
+        assertEquals(3, hardMessage.length);
         assertTrue(hardMessage.body.startsWith("1 1 ".replaceAll(" ", "\0")));
-
-       // return msg.id == 1 && msg.command == Command.HARDWARE_COMMAND && msg.body.startsWith("1");
-
-
     }
+
+    @Test
+    public void testAppSendWriteHardCommandNotGraphAndBack() throws Exception {
+        ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
+        clientPair.appClient.send("hardware ar 11");
+        verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "ar 11".replaceAll(" ", "\0"))));
+
+        String body = "aw 11 333";
+        clientPair.hardwareClient.send("hardware " + body);
+
+        ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+        verify(clientPair.appClient.responseMock, times(2)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<Message> arguments = objectArgumentCaptor.getAllValues();
+        assertEquals(produce(1, OK), arguments.get(0));
+        Message hardMessage = arguments.get(1);
+        assertEquals(1, hardMessage.id);
+        assertEquals(Command.HARDWARE_COMMAND, hardMessage.command);
+        assertEquals(body.length(), hardMessage.length);
+        assertTrue(hardMessage.body.startsWith(body.replaceAll(" ", "\0")));
+    }
+
+    @Test
+    public void testAppSendWriteHardCommandForGraphAndBack() throws Exception {
+        ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
+        String userProfileWithGraph = readTestUserProfile();
+        clientPair.appClient.send("saveProfile " + userProfileWithGraph);
+        verify(clientPair.appClient.responseMock).channelRead(any(), eq(produce(1, OK)));
+
+        reset(clientPair.appClient.responseMock);
+        clientPair.appClient.reset();
+
+        clientPair.appClient.send("hardware ar 8");
+        verify(clientPair.hardwareClient.responseMock).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "ar 8".replaceAll(" ", "\0"))));
+
+        String body = "aw 8 333";
+        clientPair.hardwareClient.send("hardware " + body);
+
+        ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
+        verify(clientPair.appClient.responseMock, times(2)).channelRead(any(), objectArgumentCaptor.capture());
+
+        List<Message> arguments = objectArgumentCaptor.getAllValues();
+        assertEquals(produce(1, OK), arguments.get(0));
+        Message hardMessage = arguments.get(1);
+        assertEquals(1, hardMessage.id);
+        assertEquals(Command.HARDWARE_COMMAND, hardMessage.command);
+        //"aw 11 333".length + ts.length + separator
+        assertEquals(body.length() + 14, hardMessage.length);
+        assertTrue(hardMessage.body.startsWith(body.replaceAll(" ", "\0")));
+    }
+
 
     @Test
     public void testConnectAppAndHardwareAndSendCommands() throws Exception {
