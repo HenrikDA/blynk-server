@@ -1,6 +1,7 @@
 package cc.blynk.server;
 
 import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.server.dao.FileManager;
@@ -8,6 +9,7 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -27,7 +29,7 @@ public class Launcher {
     private final Logger log = LogManager.getLogger(Launcher.class);
 
     public static void main(String[] args) throws Exception {
-        Properties serverProperties = PropertiesUtil.loadProperties("server.properties");
+        Properties serverProperties = PropertiesUtil.loadProperties(Config.SERVER_PROPERTIES_FILENAME);
         //configurable folder for logs via property.
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
 
@@ -70,14 +72,14 @@ public class Launcher {
         new TimerWorker(userRegistry, sessionsHolder).start();
         new ProfileSaverWorker(userRegistry, fileManager, PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats).start();
 
-
+        Server server = new Server(serverProperties, fileManager, sessionsHolder, userRegistry, stats);
         if (sslEnabled) {
+            SSLServer sslServer = new SSLServer(serverProperties, fileManager, sessionsHolder, userRegistry, stats);
             log.info("SSL for app. enabled.");
-            new Thread(new SSLServer(serverProperties, fileManager, sessionsHolder, userRegistry, stats)).start();
-            new Thread(new Server(serverProperties, fileManager, sessionsHolder, userRegistry, stats)).start();
-        } else {
-            new Thread(new Server(serverProperties, fileManager, sessionsHolder, userRegistry, stats)).start();
+            new Thread(sslServer).start();
         }
+        new Thread(server).start();
+        new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, server.getHandlers());
     }
 
 }

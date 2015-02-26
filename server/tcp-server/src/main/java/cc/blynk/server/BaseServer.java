@@ -4,14 +4,17 @@ import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.ChannelServer;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -33,6 +36,7 @@ public abstract class BaseServer implements Runnable {
 
     protected EventLoopGroup bossGroup;
     protected EventLoopGroup workerGroup;
+    protected BaseSimpleChannelInboundHandler[] handlers;
 
     protected BaseServer(Properties props, FileManager fileManager, SessionsHolder sessionsHolder, UserRegistry userRegistry, GlobalStats stats) {
         this.props = props;
@@ -54,12 +58,31 @@ public abstract class BaseServer implements Runnable {
                     .childHandler(getServerHandlersInitializer());
 
             ChannelFuture channelFuture = b.bind(port).sync();
-            channelFuture.channel().closeFuture().sync();
+
+            Channel channel = channelFuture.channel();
+            this.handlers = fetchHandlers(channel.pipeline());
+
+            channel.closeFuture().sync();
         } catch (InterruptedException e) {
             log.error(e);
         } finally {
             stop();
         }
+    }
+
+    private BaseSimpleChannelInboundHandler[] fetchHandlers(ChannelPipeline pipeline) {
+        List<BaseSimpleChannelInboundHandler> handlerList = new ArrayList<>();
+        for (Map.Entry<String, ChannelHandler> entry : pipeline) {
+            if (entry.getValue() instanceof BaseSimpleChannelInboundHandler) {
+                handlerList.add((BaseSimpleChannelInboundHandler) entry.getValue());
+            }
+        }
+
+        return handlerList.toArray(new BaseSimpleChannelInboundHandler[handlerList.size()]);
+    }
+
+    public BaseSimpleChannelInboundHandler[] getHandlers() {
+        return handlers;
     }
 
     protected ServerHandlersInitializer getServerHandlersInitializer() {

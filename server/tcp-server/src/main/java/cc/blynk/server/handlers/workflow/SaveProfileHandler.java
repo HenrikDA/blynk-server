@@ -25,13 +25,15 @@ import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
  */
 public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProfileMessage> {
 
-    private final int MAX_DASH_NUMBER;
-    private final int USER_PROFILE_MAX_SIZE;
+    //I have to use volatile for reloadable props to be sure updated value will be visible by all threads
+    private volatile int DASH_MAX_LIMIT;
+
+    //I have to use volatile for reloadable props to be sure updated value will be visible by all threads
+    private volatile int USER_PROFILE_MAX_SIZE;
 
     public SaveProfileHandler(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(props, fileManager, userRegistry, sessionsHolder);
-        this.MAX_DASH_NUMBER = getIntProperty(props, "user.dashboard.max.limit");
-        this.USER_PROFILE_MAX_SIZE = getIntProperty(props, "user.profile.max.size") * 1024;
+        updateProperties(props);
     }
 
     @Override
@@ -53,9 +55,9 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
             throw new IllegalCommandException("Register Handler. Wrong user profile message format.", message.id);
         }
 
-        if (userProfile.getDashBoards() != null && userProfile.getDashBoards().length > MAX_DASH_NUMBER) {
+        if (userProfile.getDashBoards() != null && userProfile.getDashBoards().length > DASH_MAX_LIMIT) {
             throw new NotAllowedException(
-                    String.format("Not allowed to create more than %s dashboards.", MAX_DASH_NUMBER), message.id);
+                    String.format("Not allowed to create more than %s dashboards.", DASH_MAX_LIMIT), message.id);
         }
 
         log.info("Trying save user profile.");
@@ -66,5 +68,11 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
         ctx.writeAndFlush(produce(message.id, OK));
     }
 
+    @Override
+    public void updateProperties(Properties props) {
+        super.updateProperties(props);
+        this.DASH_MAX_LIMIT = getIntProperty(props, "user.dashboard.max.limit");
+        this.USER_PROFILE_MAX_SIZE = getIntProperty(props, "user.profile.max.size") * 1024;
+    }
 
 }

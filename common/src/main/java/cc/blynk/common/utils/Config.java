@@ -11,4 +11,6 @@ public class Config {
 
     public static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
 
+    public static final String SERVER_PROPERTIES_FILENAME = "server.properties";
+
 }

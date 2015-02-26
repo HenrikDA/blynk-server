@@ -33,7 +33,7 @@ public class PropertiesUtil {
             throw new RuntimeException("Error getting properties file : " + filePropertiesName, e);
         }
 
-        Path curDirPath = Paths.get(System.getProperty("user.dir"), filePropertiesName);
+        Path curDirPath = getFileInCurrentDir(filePropertiesName);
         if (Files.exists(curDirPath)) {
             try (InputStream curFolder = Files.newInputStream(curDirPath)) {
                 if (curFolder != null) {
@@ -45,6 +45,28 @@ public class PropertiesUtil {
         }
 
         return props;
+    }
+
+    public static Properties loadProperties(Path path) {
+        Properties props = new Properties();
+        if (Files.exists(path)) {
+            try (InputStream curFolder = Files.newInputStream(path)) {
+                if (curFolder != null) {
+                    props.load(curFolder);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Error getting properties file : " + path, e);
+            }
+        }
+        return props;
+    }
+
+    public static Path getCurrentDir() {
+        return Paths.get(System.getProperty("user.dir"));
+    }
+
+    public static Path getFileInCurrentDir(String filename) {
+        return Paths.get(System.getProperty("user.dir"), filename);
     }
 
     public static int getIntProperty(Properties props, String propertyName) {

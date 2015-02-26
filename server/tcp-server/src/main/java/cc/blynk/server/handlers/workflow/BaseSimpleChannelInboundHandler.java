@@ -31,7 +31,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     protected final UserRegistry userRegistry;
     protected final SessionsHolder sessionsHolder;
     private final TypeParameterMatcher matcher;
-    private final int USER_QUOTA_LIMIT;
+    private volatile int USER_QUOTA_LIMIT;
 
     public BaseSimpleChannelInboundHandler(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.props = props;
@@ -39,7 +39,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
         this.matcher = TypeParameterMatcher.find(this, BaseSimpleChannelInboundHandler.class, "I");
-        this.USER_QUOTA_LIMIT = getIntProperty(props, "user.message.quota.limit");
+        updateProperties(props);
     }
 
     @Override
@@ -89,4 +89,11 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      */
     protected abstract void messageReceived(ChannelHandlerContext ctx, User user, I msg) throws Exception;
 
+    /**
+     *  When property file changed during server work, to avoid restart,
+     *  so every child overrides it's property.
+     */
+    public void updateProperties(Properties props) {
+        this.USER_QUOTA_LIMIT = getIntProperty(props, "user.message.quota.limit");
+    }
 }
