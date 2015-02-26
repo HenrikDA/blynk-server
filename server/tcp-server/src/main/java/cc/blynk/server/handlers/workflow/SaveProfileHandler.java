@@ -26,10 +26,12 @@ import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
 public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProfileMessage> {
 
     private final int MAX_DASH_NUMBER;
+    private final int USER_PROFILE_MAX_SIZE;
 
-    public SaveProfileHandler(Properties properties,FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(properties, fileManager, userRegistry, sessionsHolder);
-        this.MAX_DASH_NUMBER = getIntProperty(properties, "user.dashboard.max.limit");
+    public SaveProfileHandler(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, fileManager, userRegistry, sessionsHolder);
+        this.MAX_DASH_NUMBER = getIntProperty(props, "user.dashboard.max.limit");
+        this.USER_PROFILE_MAX_SIZE = getIntProperty(props, "user.profile.max.size") * 1024;
     }
 
     @Override
@@ -39,6 +41,10 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
         //expecting message with 2 parts
         if (userProfileString == null || userProfileString.equals("")) {
             throw new IllegalCommandException("Save Profile Handler. Income profile message is empty.", message.id);
+        }
+
+        if (userProfileString.length() > USER_PROFILE_MAX_SIZE) {
+            throw new NotAllowedException(String.format("User profile size is larger than %d bytes.", USER_PROFILE_MAX_SIZE), message.id);
         }
 
         log.info("Trying to parseProfile user profile : {}", userProfileString);
