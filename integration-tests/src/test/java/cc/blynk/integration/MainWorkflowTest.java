@@ -110,7 +110,7 @@ public class MainWorkflowTest extends IntegrationBase {
         assertEquals(1, hardMessage.id);
         assertEquals(Command.HARDWARE_COMMAND, hardMessage.command);
         assertEquals(3, hardMessage.length);
-        assertTrue(hardMessage.body.startsWith("1 1 ".replaceAll(" ", "\0")));
+        assertEquals("1 1".replaceAll(" ", "\0"), hardMessage.body);
     }
 
     @Test
