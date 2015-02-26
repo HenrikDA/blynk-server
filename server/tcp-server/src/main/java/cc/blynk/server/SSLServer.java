@@ -40,7 +40,7 @@ public class SSLServer extends BaseServer {
                     new File(serverProperties.getProperty("server.ssl.key")),
                     serverProperties.getProperty("server.ssl.key.pass"));
         } catch (SSLException e) {
-            log.error("Error initializing ssl context. Reason : {}", e.getCause());
+            log.error("Error initializing ssl context. Reason : {}", e.getMessage(), e);
             System.exit(0);
             //todo throw?
         }
