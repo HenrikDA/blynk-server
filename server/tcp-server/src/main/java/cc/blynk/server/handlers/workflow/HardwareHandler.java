@@ -13,7 +13,6 @@ import java.util.Properties;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static cc.blynk.common.model.messages.protocol.HardwareMessage.attachTS;
 import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
 
 /**
@@ -42,9 +41,8 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
         List<ChannelFuture> futures;
         if (channelState.isHardwareChannel) {
             //if message from hardware, check if it belongs to graph. so we need save it in that case
-            String newBody = attachTS(message.body);
-            storage.store(user, channelState.dashId, newBody, message.id);
-            futures = Session.sendMessageTo(message.updateMessageBody(newBody), session.getAppChannels());
+            String body = storage.store(user, channelState.dashId, message.body, message.id);
+            futures = Session.sendMessageTo(message.updateMessageBody(body), session.getAppChannels());
         } else {
             futures = Session.sendMessageTo(message, session.getHardwareChannels());
         }

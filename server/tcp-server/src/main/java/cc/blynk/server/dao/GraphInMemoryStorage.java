@@ -1,6 +1,6 @@
 package cc.blynk.server.dao;
 
-import cc.blynk.common.exceptions.UnsupportedCommandException;
+import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.auth.User;
 
 import java.util.LinkedList;
@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static cc.blynk.common.model.messages.protocol.HardwareMessage.attachTS;
 import static cc.blynk.common.utils.StringUtils.split;
 
 /**
@@ -28,17 +29,19 @@ public class GraphInMemoryStorage implements Storage {
     }
 
     @Override
-    public void store(User user, Integer dashId, String body, int msgId) {
+    public String store(User user, Integer dashId, String body, int msgId) {
         if (body.charAt(1) == 'w') {
             if (body.length() < 4) {
-                throw new UnsupportedCommandException("Hardware command body too short.", msgId);
+                throw new IllegalCommandException("Hardware command body too short.", msgId);
             }
             String pinString = split(body);
             Byte pin = Byte.valueOf(pinString);
             if (user.getUserProfile().hasGraphPin(dashId, pin)) {
+                body = attachTS(body);
                 storeValue(user.getName(), dashId, body);
             }
         }
+        return body;
     }
 
     private void storeValue(String userName, Integer dashId, String body) {

@@ -9,6 +9,6 @@ import cc.blynk.server.model.auth.User;
  */
 public interface Storage {
 
-    public void store(User user, Integer dashId, String body, int msgId);
+    public String store(User user, Integer dashId, String body, int msgId);
 
 }
