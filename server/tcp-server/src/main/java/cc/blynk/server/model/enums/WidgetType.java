@@ -7,6 +7,7 @@ package cc.blynk.server.model.enums;
  */
 public enum WidgetType {
 
+    //controls
     BUTTON,
     TOGGLE_BUTTON,
     SLIDER,
@@ -20,13 +21,22 @@ public enum WidgetType {
     TWO_AXIS_JOYSTICK,
     GAMEPAD,
     KEYPAD,
-    NUMERICAL_DISPLAY,
+
+    //outputs
+    LED,
+    DIGIT4_DISPLAY, //same as NUMERICAL_DISPLAY
     GAUGE,
     LCD_DISPLAY,
+    GRAPH,
     LEVEL_DISPLAY,
+
+    //inputs
     MICROPHONE,
     GYROSCOPE,
     ACCELEROMETER,
+    GPS,
+
+    //other
     TERMINAL,
     TWITTER,
     EMAIL,
@@ -34,11 +44,6 @@ public enum WidgetType {
     SD_CARD,
     EVENTOR,
     RCT,
-    GPS,
-    TIMER,
-    LED,
-    DIGIT4_DISPLAY,
-    GRAPH
-
+    TIMER
 
 }
