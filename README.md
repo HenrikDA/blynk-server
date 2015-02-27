@@ -146,7 +146,7 @@ Response message structure:
     NOTIFICATION,
     SD_CARD,
     EVENTOR,
-    TRC,
+    RCT,
     GPS,
     TIMER,
     LED,

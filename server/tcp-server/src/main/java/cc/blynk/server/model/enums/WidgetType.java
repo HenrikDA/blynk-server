@@ -33,7 +33,7 @@ public enum WidgetType {
     NOTIFICATION,
     SD_CARD,
     EVENTOR,
-    TRC,
+    RCT,
     GPS,
     TIMER,
     LED,
