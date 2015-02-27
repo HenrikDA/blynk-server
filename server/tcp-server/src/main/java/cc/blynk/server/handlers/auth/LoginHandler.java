@@ -11,6 +11,7 @@ import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -23,6 +24,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
+@ChannelHandler.Sharable
 public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
 
     protected final FileManager fileManager;

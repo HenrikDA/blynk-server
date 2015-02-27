@@ -7,6 +7,7 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
+@ChannelHandler.Sharable
 public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
 
     public PingHandler(Properties properties,FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {

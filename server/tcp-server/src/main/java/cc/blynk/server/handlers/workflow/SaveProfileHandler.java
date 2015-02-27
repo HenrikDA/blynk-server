@@ -9,6 +9,7 @@ import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Properties;
@@ -23,6 +24,7 @@ import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
  * Created on 2/1/2015.
  *
  */
+@ChannelHandler.Sharable
 public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProfileMessage> {
 
     //I have to use volatile for reloadable props to be sure updated value will be visible by all threads

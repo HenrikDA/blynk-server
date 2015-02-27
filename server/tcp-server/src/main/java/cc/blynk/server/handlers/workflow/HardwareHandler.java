@@ -6,6 +6,7 @@ import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
  * Created on 2/1/2015.
  *
  */
+@ChannelHandler.Sharable
 public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMessage> {
 
     private final Storage storage;

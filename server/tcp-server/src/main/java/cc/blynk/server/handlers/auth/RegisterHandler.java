@@ -6,6 +6,7 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.utils.EMailValidator;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -24,6 +25,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  * For instance, incoming register message may be : "user@mail.ua my_password"
  */
+@ChannelHandler.Sharable
 public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> implements DefaultExceptionHandler {
 
     protected final FileManager fileManager;

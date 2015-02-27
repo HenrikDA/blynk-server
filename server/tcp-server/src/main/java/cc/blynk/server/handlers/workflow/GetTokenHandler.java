@@ -8,6 +8,7 @@ import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Properties;
@@ -20,10 +21,24 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
+@ChannelHandler.Sharable
 public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMessage> {
 
     public GetTokenHandler(Properties properties, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(properties, fileManager, userRegistry, sessionsHolder);
+    }
+
+    private static void validateDashId(DashBoard[] userDashes, int dashBoardId, int msgId) {
+        if (userDashes == null) {
+            throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
+        }
+        for (DashBoard dashBoard : userDashes) {
+            if (dashBoard.getId() == dashBoardId) {
+                return;
+            }
+        }
+
+        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
     }
 
     @Override
@@ -42,18 +57,5 @@ public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMes
         String token = userRegistry.getToken(user, dashBoardId);
 
         ctx.writeAndFlush(produce(message.id, message.command, token));
-    }
-
-    private static void validateDashId(DashBoard[] userDashes, int dashBoardId, int msgId) {
-        if (userDashes == null) {
-            throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
-        }
-        for (DashBoard dashBoard : userDashes) {
-            if (dashBoard.getId() == dashBoardId) {
-                return;
-            }
-        }
-
-        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
     }
 }

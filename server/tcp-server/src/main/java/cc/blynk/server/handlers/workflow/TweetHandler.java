@@ -7,6 +7,7 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.TweetBodyInvalidException;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.twitter.TwitterWrapper;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Properties;
@@ -20,6 +21,7 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  * Created on 2/1/2015.
  *
  */
+@ChannelHandler.Sharable
 public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> {
 
     private final TwitterWrapper twitterWrapper;

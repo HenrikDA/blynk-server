@@ -32,14 +32,15 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
     private SessionsHolder sessionsHolder;
     private GlobalStats stats;
 
-    public ServerHandlersInitializer(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
-        this.props = props;
-        this.fileManager = fileManager;
-        this.userRegistry = userRegistry;
-        this.sessionsHolder = sessionsHolder;
-        this.stats = stats;
-        this.sslCtx = null;
-    }
+    //sharable handlers
+    private RegisterHandler registerHandler;
+    private LoginHandler loginHandler;
+    private GetTokenHandler getTokenHandler;
+    private LoadProfileHandler loadProfileHandler;
+    private SaveProfileHandler saveProfileHandler;
+    private HardwareHandler hardwareHandler;
+    private PingHandler pingHandler;
+    private TweetHandler tweetHandler;
 
     public ServerHandlersInitializer(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats, SslContext sslCtx) {
         this.props = props;
@@ -48,6 +49,22 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
         this.sessionsHolder = sessionsHolder;
         this.stats = stats;
         this.sslCtx = sslCtx;
+        initHandlers();
+    }
+
+    public ServerHandlersInitializer(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+        this(props, fileManager, userRegistry, sessionsHolder, stats, null);
+    }
+
+    private void initHandlers() {
+        registerHandler = new RegisterHandler(fileManager, userRegistry, sessionsHolder);
+        loginHandler = new LoginHandler(fileManager, userRegistry, sessionsHolder);
+        getTokenHandler = new GetTokenHandler(props, fileManager, userRegistry, sessionsHolder);
+        loadProfileHandler = new LoadProfileHandler(props, fileManager, userRegistry, sessionsHolder);
+        saveProfileHandler = new SaveProfileHandler(props, fileManager, userRegistry, sessionsHolder);
+        hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
+        pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
+        tweetHandler = new TweetHandler(props, fileManager, userRegistry, sessionsHolder, new TwitterWrapper());
     }
 
     @Override
@@ -68,14 +85,14 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
         pipeline.addLast(new DeviceMessageEncoder());
 
         //business logic
-        pipeline.addLast(new RegisterHandler(fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new LoginHandler(fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new GetTokenHandler(props, fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new LoadProfileHandler(props, fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new SaveProfileHandler(props, fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new HardwareHandler(props, fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new PingHandler(props, fileManager, userRegistry, sessionsHolder));
-        pipeline.addLast(new TweetHandler(props, fileManager, userRegistry, sessionsHolder, new TwitterWrapper()));
+        pipeline.addLast(registerHandler);
+        pipeline.addLast(loginHandler);
+        pipeline.addLast(getTokenHandler);
+        pipeline.addLast(loadProfileHandler);
+        pipeline.addLast(saveProfileHandler);
+        pipeline.addLast(hardwareHandler);
+        pipeline.addLast(pingHandler);
+        pipeline.addLast(tweetHandler);
     }
 }
 
