@@ -118,6 +118,43 @@ Response message structure:
 		}
 	}
 
+## Widget types
+
+    BUTTON,
+    TOGGLE_BUTTON,
+    SLIDER,
+    SLIDER_LARGE,
+    KNOB,
+    ROTARY_KNOB,
+    RGB,
+    TWO_WAY_ARROW,
+    FOUR_WAY_ARROW,
+    ONE_AXIS_JOYSTICK,
+    TWO_AXIS_JOYSTICK,
+    GAMEPAD,
+    KEYPAD,
+    NUMERICAL_DISPLAY,
+    GAUGE,
+    LCD_DISPLAY,
+    LEVEL_DISPLAY,
+    MICROPHONE,
+    GYROSCOPE,
+    ACCELEROMETER,
+    TERMINAL,
+    TWITTER,
+    EMAIL,
+    NOTIFICATION,
+    SD_CARD,
+    EVENTOR,
+    TRC,
+    GPS,
+    TIMER,
+    LED,
+    DIGIT4_DISPLAY,
+    GRAPH
+
+[Or see class itself](https://bitbucket.org/theblynk/blynk-server/src/b6db715d25732677605a5be1ec12677d3e4ce24c/server/tcp-server/src/main/java/cc/blynk/server/model/enums/WidgetType.java?at=master)
+
 ## Widgets JSON structure
 
 	Button				: {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"BUTTON",         "pinType":"NONE", "pin":13, "value":"1"   } -- sends HIGH on digital pin 13. Possible values 1|0.
