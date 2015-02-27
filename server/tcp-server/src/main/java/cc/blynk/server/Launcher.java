@@ -73,13 +73,15 @@ public class Launcher {
         new ProfileSaverWorker(userRegistry, fileManager, PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats).start();
 
         Server server = new Server(serverProperties, fileManager, sessionsHolder, userRegistry, stats);
+
+        new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, server.getHandlers())).start();
+
         if (sslEnabled) {
             SSLServer sslServer = new SSLServer(serverProperties, fileManager, sessionsHolder, userRegistry, stats);
             log.info("SSL for app. enabled.");
             new Thread(sslServer).start();
         }
         new Thread(server).start();
-        new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, server.getHandlers());
     }
 
 }
