@@ -61,6 +61,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             } catch (UserQuotaLimitExceededException quotaE) {
                 //this is special case. do not reply anything. in case of high request rate.
                 log.error("User '{}' had exceeded {} rec/sec limit.", user.getName(), USER_QUOTA_LIMIT);
+                ctx.close();
             } catch (BaseServerException cause) {
                 if (user != null) {
                     user.incrException(cause.errorCode);
