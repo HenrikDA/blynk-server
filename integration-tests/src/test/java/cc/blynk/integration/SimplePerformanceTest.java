@@ -74,7 +74,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         start = System.currentTimeMillis();
         while (true) {
             for (ClientPair clientPair : clients) {
-                clientPair.appClient.sendNoSleep("hardware 1 1");
+                clientPair.appClient.send("hardware 1 1");
             }
             sleep(100);
         }

@@ -89,14 +89,14 @@ public abstract class IntegrationBase {
                 .send("getToken 1");
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appResponseMock, times(4)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appResponseMock, timeout(500).times(4)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         Message getTokenMessage = (Message) arguments.get(3);
         String token = getTokenMessage.body;
 
         hardClient.send("login " + token);
-        verify(hardResponseMock).channelRead(any(), eq(produce(1, OK)));
+        verify(hardResponseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
 
         reset(hardResponseMock);
         reset(appResponseMock);
@@ -104,6 +104,16 @@ public abstract class IntegrationBase {
         hardClient.reset();
 
         return new ClientPair(appClient, hardClient);
+    }
+
+    public static String readTestUserProfile(String fileName) {
+        InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/" + fileName);
+        UserProfile userProfile = JsonParser.parseProfile(is);
+        return userProfile.toString();
+    }
+
+    public static String readTestUserProfile() {
+        return readTestUserProfile("user_profile_json.txt");
     }
 
     public void initServerStructures() {
@@ -133,16 +143,6 @@ public abstract class IntegrationBase {
         client.start(new TestChannelInitializer(responseMock), bufferedReader);
 
         verify(responseMock).channelRead(any(), eq(responseMessage));
-    }
-
-    public static String readTestUserProfile(String fileName) {
-        InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/" + fileName);
-        UserProfile userProfile = JsonParser.parseProfile(is);
-        return userProfile.toString();
-    }
-
-    public static String readTestUserProfile() {
-        return readTestUserProfile("user_profile_json.txt");
     }
 
 
