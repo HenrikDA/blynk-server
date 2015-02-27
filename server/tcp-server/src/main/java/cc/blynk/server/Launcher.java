@@ -14,6 +14,7 @@ import cc.blynk.server.workers.timer.TimerWorker;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,23 +41,7 @@ public class Launcher {
         //just to init mapper on server start and not first access
         JsonParser.check();
 
-        // create Options object
-        Options options = new Options();
-        options.addOption("port", true, "Server port.");
-        options.addOption("sslPort", true, "Server SSL port.");
-        CommandLine cmd = new BasicParser().parse(options, args);
-
-        String portString = cmd.getOptionValue("port");
-        String sslPortString = cmd.getOptionValue("sslPort");
-
-        if (portString != null) {
-            ParseUtil.parseInt(portString);
-            serverProperties.put("server.default.port", portString);
-        }
-        if (sslPortString != null) {
-            ParseUtil.parseInt(sslPortString);
-            serverProperties.put("server.ssl.port", sslPortString);
-        }
+        processArguments(args, serverProperties);
 
         boolean sslEnabled = PropertiesUtil.getBoolProperty(serverProperties, "app.ssl.enabled");
 
@@ -82,6 +67,25 @@ public class Launcher {
             new Thread(sslServer).start();
         }
         new Thread(server).start();
+    }
+
+    private void processArguments(String[] args, Properties serverProperties) throws ParseException {
+        Options options = new Options();
+        options.addOption("port", true, "Server port.");
+        options.addOption("sslPort", true, "Server SSL port.");
+        CommandLine cmd = new BasicParser().parse(options, args);
+
+        String portString = cmd.getOptionValue("port");
+        String sslPortString = cmd.getOptionValue("sslPort");
+
+        if (portString != null) {
+            ParseUtil.parseInt(portString);
+            serverProperties.put("server.default.port", portString);
+        }
+        if (sslPortString != null) {
+            ParseUtil.parseInt(sslPortString);
+            serverProperties.put("server.ssl.port", sslPortString);
+        }
     }
 
 }
