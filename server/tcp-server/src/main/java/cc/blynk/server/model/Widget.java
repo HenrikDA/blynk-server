@@ -1,6 +1,5 @@
 package cc.blynk.server.model;
 
-import cc.blynk.server.model.enums.PinType;
 import cc.blynk.server.model.enums.State;
 import cc.blynk.server.model.enums.WidgetType;
 
@@ -24,8 +23,6 @@ public class Widget {
     private String label;
 
     private WidgetType type;
-
-    private PinType pinType;
 
     private Byte pin;
 
@@ -85,14 +82,6 @@ public class Widget {
 
     public void setType(WidgetType type) {
         this.type = type;
-    }
-
-    public PinType getPinType() {
-        return pinType;
-    }
-
-    public void setPinType(PinType pinType) {
-        this.pinType = pinType;
     }
 
     public Byte getPin() {
@@ -195,7 +184,6 @@ public class Widget {
         if (y != widget.y) return false;
         if (label != null ? !label.equals(widget.label) : widget.label != null) return false;
         if (pin != null ? !pin.equals(widget.pin) : widget.pin != null) return false;
-        if (pinType != widget.pinType) return false;
         if (startTime != null ? !startTime.equals(widget.startTime) : widget.startTime != null) return false;
         if (state != widget.state) return false;
         if (type != widget.type) return false;
@@ -211,7 +199,6 @@ public class Widget {
         result = 31 * result + y;
         result = 31 * result + (label != null ? label.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
         result = 31 * result + (pin != null ? pin.hashCode() : 0);
         result = 31 * result + (value != null ? value.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);
@@ -229,7 +216,6 @@ public class Widget {
                 ", height=" + height +
                 ", label='" + label + '\'' +
                 ", type=" + type +
-                ", pinType=" + pinType +
                 ", pin=" + pin +
                 ", value='" + value + '\'' +
                 ", state=" + state +
