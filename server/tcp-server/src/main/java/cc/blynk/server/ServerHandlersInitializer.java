@@ -3,20 +3,16 @@ package cc.blynk.server;
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
 import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.auth.LoginHandler;
-import cc.blynk.server.handlers.auth.RegisterHandler;
-import cc.blynk.server.handlers.workflow.*;
-import cc.blynk.server.twitter.TwitterWrapper;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.Properties;
+import javax.net.ssl.SSLException;
+import java.io.File;
 
 /**
  * The Blynk Project.
@@ -25,53 +21,40 @@ import java.util.Properties;
  */
 public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel> {
 
-    private Properties props;
-    private SslContext sslCtx;
-    private FileManager fileManager;
-    private UserRegistry userRegistry;
-    private SessionsHolder sessionsHolder;
-    private GlobalStats stats;
+    private static final Logger log = LogManager.getLogger(ServerHandlersInitializer.class);
 
     //sharable handlers
-    private RegisterHandler registerHandler;
-    private LoginHandler loginHandler;
-    private GetTokenHandler getTokenHandler;
-    private LoadProfileHandler loadProfileHandler;
-    private SaveProfileHandler saveProfileHandler;
-    private HardwareHandler hardwareHandler;
-    private PingHandler pingHandler;
-    private TweetHandler tweetHandler;
+    private HandlersHolder handlersHolder;
+    private GlobalStats stats;
+    private SslContext sslCtx;
 
-    public ServerHandlersInitializer(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats, SslContext sslCtx) {
-        this.props = props;
-        this.fileManager = fileManager;
-        this.userRegistry = userRegistry;
-        this.sessionsHolder = sessionsHolder;
+    public ServerHandlersInitializer(HandlersHolder handlersHolder, GlobalStats stats) {
+        this.handlersHolder = handlersHolder;
         this.stats = stats;
-        this.sslCtx = sslCtx;
-        initHandlers();
     }
 
-    public ServerHandlersInitializer(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
-        this(props, fileManager, userRegistry, sessionsHolder, stats, null);
+    public ServerHandlersInitializer(HandlersHolder handlersHolder, GlobalStats stats, String serverCertPath, String serverKeyPath, String keyPass) {
+        this(handlersHolder, stats);
+        this.sslCtx = initSslContext(new File(serverCertPath), new File(serverKeyPath), keyPass);
     }
 
-    private void initHandlers() {
-        registerHandler = new RegisterHandler(fileManager, userRegistry, sessionsHolder);
-        loginHandler = new LoginHandler(fileManager, userRegistry, sessionsHolder);
-        getTokenHandler = new GetTokenHandler(props, fileManager, userRegistry, sessionsHolder);
-        loadProfileHandler = new LoadProfileHandler(props, fileManager, userRegistry, sessionsHolder);
-        saveProfileHandler = new SaveProfileHandler(props, fileManager, userRegistry, sessionsHolder);
-        hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
-        pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
-        tweetHandler = new TweetHandler(props, fileManager, userRegistry, sessionsHolder, new TwitterWrapper());
+    public static SslContext initSslContext(File serverCert, File serverKey, String keyPass) {
+        try {
+            //todo this is self-signed cerf. just ot simplify for now testing.
+            return SslContext.newServerContext(serverCert, serverKey, keyPass);
+        } catch (SSLException e) {
+            log.error("Error initializing ssl context. Reason : {}", e.getMessage(), e);
+            System.exit(0);
+            //todo throw?
+        }
+        return null;
     }
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
-        pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));
+        pipeline.addLast(handlersHolder.clientChannelStateHandler);
 
         if (sslCtx != null) {
             SslHandler sslHandler = sslCtx.newHandler(ch.alloc());
@@ -85,14 +68,14 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
         pipeline.addLast(new DeviceMessageEncoder());
 
         //business logic
-        pipeline.addLast(registerHandler);
-        pipeline.addLast(loginHandler);
-        pipeline.addLast(getTokenHandler);
-        pipeline.addLast(loadProfileHandler);
-        pipeline.addLast(saveProfileHandler);
-        pipeline.addLast(hardwareHandler);
-        pipeline.addLast(pingHandler);
-        pipeline.addLast(tweetHandler);
+        pipeline.addLast(handlersHolder.registerHandler);
+        pipeline.addLast(handlersHolder.loginHandler);
+        pipeline.addLast(handlersHolder.getTokenHandler);
+        pipeline.addLast(handlersHolder.loadProfileHandler);
+        pipeline.addLast(handlersHolder.saveProfileHandler);
+        pipeline.addLast(handlersHolder.hardwareHandler);
+        pipeline.addLast(handlersHolder.pingHandler);
+        pipeline.addLast(handlersHolder.tweetHandler);
     }
 }
 

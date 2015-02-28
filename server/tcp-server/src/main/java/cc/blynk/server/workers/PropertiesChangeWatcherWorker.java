@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -27,6 +28,10 @@ public class PropertiesChangeWatcherWorker implements Runnable {
         this.fileName = fileName;
         this.handlers = handlers;
         this.propsFileFolder = PropertiesUtil.getCurrentDir();
+    }
+
+    public PropertiesChangeWatcherWorker(String fileName, List<BaseSimpleChannelInboundHandler> handlers) {
+        this(fileName, handlers.toArray(new BaseSimpleChannelInboundHandler[handlers.size()]));
     }
 
     @Override

@@ -7,8 +7,10 @@ import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.ProfileSaverWorker;
+import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -17,6 +19,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -56,15 +59,22 @@ public class Launcher {
         new TimerWorker(userRegistry, sessionsHolder).start();
         new ProfileSaverWorker(userRegistry, fileManager, PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats).start();
 
-        Server server = new Server(serverProperties, fileManager, sessionsHolder, userRegistry, stats);
+        Server server = new Server(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
 
-        //new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, server.getHandlers())).start();
-
+        Server sslServer = null;
         if (sslEnabled) {
-            SSLServer sslServer = new SSLServer(serverProperties, fileManager, sessionsHolder, userRegistry, stats);
+            sslServer = new SSLServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
             log.info("SSL for app. enabled.");
             new Thread(sslServer).start();
         }
+
+        List<BaseSimpleChannelInboundHandler> baseHandlers = server.getHandlersHolder().getBaseHandlers();
+        if (sslServer != null) {
+            baseHandlers.addAll(sslServer.getHandlersHolder().getBaseHandlers());
+        }
+
+        new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, baseHandlers)).start();
+
         new Thread(server).start();
     }
 

@@ -47,7 +47,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        server = new Server(properties, fileManager, sessionsHolder, userRegistry, stats);
+        server = new Server(properties, fileManager, userRegistry, sessionsHolder, stats);
         profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager, PropertiesUtil.getIntProperty(properties, "profile.save.worker.period"), stats);
         new Thread(server).start();
         new Thread(profileSaverWorker).start();

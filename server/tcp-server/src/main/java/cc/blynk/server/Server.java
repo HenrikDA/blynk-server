@@ -1,7 +1,6 @@
 package cc.blynk.server;
 
 import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -16,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Properties;
 
+import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -26,28 +27,20 @@ public class Server implements Runnable {
     private static final Logger log = LogManager.getLogger(Server.class);
 
     protected int port;
-
-    protected Properties props;
-    protected UserRegistry userRegistry;
-    protected FileManager fileManager;
-    protected SessionsHolder sessionsHolder;
-    protected GlobalStats stats;
+    protected HandlersHolder handlersHolder;
+    protected ServerHandlersInitializer serverHandlersInitializer;
 
     protected EventLoopGroup bossGroup;
     protected EventLoopGroup workerGroup;
 
     protected Server() {
-
     }
 
-    public Server(Properties props, FileManager fileManager, SessionsHolder sessionsHolder, UserRegistry userRegistry, GlobalStats stats) {
-        this.props = props;
-        this.fileManager = fileManager;
-        this.sessionsHolder = sessionsHolder;
-        this.userRegistry = userRegistry;
-        this.stats = stats;
-        this.port = PropertiesUtil.getIntProperty(props, "server.default.port");
-        log.info("Server listening on : {} port.", port);
+    public Server(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+        this.port = getIntProperty(props, "server.default.port");
+        this.handlersHolder = new HandlersHolder(props, fileManager, userRegistry, sessionsHolder);
+        this.serverHandlersInitializer = new ServerHandlersInitializer(handlersHolder, stats);
+        log.info("Default server port {}.", port);
     }
 
     @Override
@@ -58,7 +51,7 @@ public class Server implements Runnable {
         try {
             b.group(bossGroup, workerGroup)
                     .channel(ChannelServer.class)
-                    .childHandler(getServerHandlersInitializer());
+                    .childHandler(serverHandlersInitializer);
 
             ChannelFuture channelFuture = b.bind(port).sync();
             Channel channel = channelFuture.channel();
@@ -71,12 +64,12 @@ public class Server implements Runnable {
         }
     }
 
-    protected ServerHandlersInitializer getServerHandlersInitializer() {
-        return new ServerHandlersInitializer(props, fileManager, userRegistry, sessionsHolder, stats);
+    public HandlersHolder getHandlersHolder() {
+        return handlersHolder;
     }
 
     public void stop() {
-        log.info("Shutting down server...");
+        log.info("Shutting down default server...");
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
     }
