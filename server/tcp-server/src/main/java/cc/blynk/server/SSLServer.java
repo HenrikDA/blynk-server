@@ -18,14 +18,18 @@ import java.util.Properties;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class SSLServer extends BaseServer {
+public class SSLServer extends Server {
 
     private static final Logger log = LogManager.getLogger(SSLServer.class);
 
     private SslContext sslCtx;
 
     public SSLServer(Properties props, FileManager fileManager, SessionsHolder sessionsHolder, UserRegistry userRegistry, GlobalStats stats) {
-        super(props, fileManager, sessionsHolder, userRegistry, stats);
+        this.props = props;
+        this.fileManager = fileManager;
+        this.sessionsHolder = sessionsHolder;
+        this.userRegistry = userRegistry;
+        this.stats = stats;
         this.sslCtx = initSslContext();
         this.port = PropertiesUtil.getIntProperty(props, "server.ssl.port");
         log.info("Using SSL port : {}", port);

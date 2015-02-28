@@ -9,7 +9,6 @@ import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.ProfileSaverWorker;
-import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
 import cc.blynk.server.workers.timer.TimerWorker;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -59,7 +58,7 @@ public class Launcher {
 
         Server server = new Server(serverProperties, fileManager, sessionsHolder, userRegistry, stats);
 
-        new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, server.getHandlers())).start();
+        //new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, server.getHandlers())).start();
 
         if (sslEnabled) {
             SSLServer sslServer = new SSLServer(serverProperties, fileManager, sessionsHolder, userRegistry, stats);
