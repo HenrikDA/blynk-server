@@ -21,8 +21,6 @@ public class Widget {
 
     private Integer height;
 
-    private long dashBoardId;
-
     private String label;
 
     private WidgetType type;
@@ -71,14 +69,6 @@ public class Widget {
 
     public void setY(int y) {
         this.y = y;
-    }
-
-    public long getDashBoardId() {
-        return dashBoardId;
-    }
-
-    public void setDashBoardId(long dashBoardId) {
-        this.dashBoardId = dashBoardId;
     }
 
     public String getLabel() {
@@ -200,7 +190,6 @@ public class Widget {
 
         Widget widget = (Widget) o;
 
-        if (dashBoardId != widget.dashBoardId) return false;
         if (id != widget.id) return false;
         if (x != widget.x) return false;
         if (y != widget.y) return false;
@@ -220,7 +209,6 @@ public class Widget {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + x;
         result = 31 * result + y;
-        result = 31 * result + (int) (dashBoardId ^ (dashBoardId >>> 32));
         result = 31 * result + (label != null ? label.hashCode() : 0);
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (pinType != null ? pinType.hashCode() : 0);
@@ -239,7 +227,6 @@ public class Widget {
                 ", y=" + y +
                 ", width=" + width +
                 ", height=" + height +
-                ", dashBoardId=" + dashBoardId +
                 ", label='" + label + '\'' +
                 ", type=" + type +
                 ", pinType=" + pinType +

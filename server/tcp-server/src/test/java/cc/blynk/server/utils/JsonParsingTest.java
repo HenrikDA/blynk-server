@@ -41,7 +41,6 @@ public class JsonParsingTest {
             assertNotNull(widget);
             assertEquals(1, widget.getX());
             assertEquals(1, widget.getY());
-            assertEquals(1, widget.getDashBoardId());
             assertEquals(1, widget.getId());
             assertEquals("Some Text", widget.getLabel());
         }
