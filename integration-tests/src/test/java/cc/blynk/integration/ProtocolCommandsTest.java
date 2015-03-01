@@ -239,7 +239,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
         when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
 
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
-        ongoingStubbing = ongoingStubbing.thenAnswer(invocation -> command);
+        ongoingStubbing = ongoingStubbing.thenReturn(command);
 
         ongoingStubbing.thenAnswer(invocation -> {
             sleep(100);
