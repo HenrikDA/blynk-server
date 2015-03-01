@@ -1,8 +1,6 @@
 package cc.blynk.integration;
 
-import cc.blynk.client.Client;
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.integration.model.ClientPair;
@@ -17,7 +15,6 @@ import cc.blynk.server.utils.JsonParser;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.stubbing.OngoingStubbing;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -121,28 +118,6 @@ public abstract class IntegrationBase {
         sessionsHolder = new SessionsHolder();
         userRegistry = new UserRegistry(fileManager.deserialize());
         stats = new GlobalStats();
-    }
-
-    /**
-     * Creates client socket, sends 1 command, sleeps for 100ms checks that sever response is OK.
-     */
-    public void makeCommand(int msgId, MessageBase responseMessage, String... commands) throws Exception {
-        responseMock = Mockito.mock(SimpleClientHandler.class);
-        Client client = new Client("localhost", TEST_PORT, random);
-
-        when(random.nextInt(Short.MAX_VALUE)).thenReturn(msgId);
-
-        OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
-        for (final String cmd : commands) {
-            ongoingStubbing = ongoingStubbing.thenAnswer(invocation -> {
-                sleep(100);
-                return cmd;
-            });
-        }
-
-        client.start(new TestChannelInitializer(responseMock), bufferedReader);
-
-        verify(responseMock).channelRead(any(), eq(responseMessage));
     }
 
 

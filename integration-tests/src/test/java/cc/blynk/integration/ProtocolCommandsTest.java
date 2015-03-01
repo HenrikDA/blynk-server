@@ -73,9 +73,9 @@ public class ProtocolCommandsTest extends IntegrationBase {
     @Test
     //all commands together cause all operations requires register and then login =(.
     public void testAllCommandOneByOneTestSuit() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+        makeCommand("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommand(2, produce(2, OK), "login dmitriy@mail.ua 1", "quit");
+        makeCommand("login dmitriy@mail.ua 1").check(OK);
 
         makeCommands(
                 new int[] {5,6},
@@ -129,7 +129,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testLogin2Times() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+        makeCommand("register dmitriy@mail.ua 1").check(OK);
 
         makeCommands(
                 new int[] {2, 3},
@@ -140,7 +140,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testGetTokenForNonExistentDashId() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+        makeCommand("register dmitriy@mail.ua 1").check(OK);
 
         makeCommands(
                 new int[] {2, 3},
@@ -152,7 +152,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
     @Test
     //all commands together cause all operations requires register and then login =(.
     public void testProfileWithManyDashes() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+        makeCommand("register dmitriy@mail.ua 1").check(OK);
 
         String userProfileString = readTestUserProfile("user_profile_json_many_dashes.txt");
 
@@ -166,7 +166,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testInvalidTweetBody() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+        makeCommand("register dmitriy@mail.ua 1").check(OK);
 
         makeCommands(
                 new int[] {2,3},
@@ -177,10 +177,10 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testPassNotValid() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+        makeCommand("register dmitriy@mail.ua 1").check(OK);
 
         makeCommands(
-                new int[] {2},
+                new int[]{2},
                 new MessageBase[]{produce(2, USER_NOT_AUTHENTICATED)},
                 "login dmitriy@mail.ua 2", "quit"
         );
@@ -189,10 +189,10 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testHardwareNotInNetwork() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+        makeCommand("register dmitriy@mail.ua 1").check(OK);
 
         makeCommands(
-                new int[] {2, 3},
+                new int[]{2, 3},
                 new MessageBase[]{produce(2, OK), produce(3, DEVICE_NOT_IN_NETWORK)},
                 "login dmitriy@mail.ua 1", "hardware 1 1", "quit"
         );
@@ -201,10 +201,10 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testTryHardLoginWithoutToken() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+        makeCommand("register dmitriy@mail.ua 1").check(OK);
 
         makeCommands(
-                new int[] {2},
+                new int[]{2},
                 new MessageBase[]{produce(2, INVALID_TOKEN)},
                 "login adsadasdasdasdas", "quit"
         );
@@ -215,7 +215,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
     @Test
     //all commands together cause all operations requires register and then login =(.
     public void testPingDeviceNotInNetwork() throws Exception {
-        makeCommand(1, produce(1, OK), "register dmitriy@mail.ua 1", "quit");
+        makeCommand("register dmitriy@mail.ua 1").check(OK);
 
         makeCommands(
                 new int[] {2, 3},
@@ -225,6 +225,39 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     }
 
+    /**
+     * 1) Creates client socket;
+     * 2) Sends commands;
+     * 3) Sleeps for 100ms between every command send;
+     * 4) Checks that sever response is OK;
+     * 5) Closing socket.
+     */
+    public SimpleClientHandler makeCommand(String command) throws Exception {
+        responseMock = Mockito.mock(SimpleClientHandler.class);
+        Client client = new Client("localhost", TEST_PORT, random);
+
+        when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
+
+        OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
+        ongoingStubbing = ongoingStubbing.thenAnswer(invocation -> command);
+
+        ongoingStubbing.thenAnswer(invocation -> {
+            sleep(100);
+            return "quit";
+        });
+
+        client.start(new TestChannelInitializer(responseMock), bufferedReader);
+
+        return responseMock;
+    }
+
+    /**
+     * 1) Creates client socket;
+     * 2) Sends commands;
+     * 3) Sleeps for 100ms between every command send;
+     * 4) Checks that sever response is OK;
+     * 5) Closing socket.
+     */
     private void makeCommands(int[] msgIds, MessageBase[] responseMessages, String... commands) throws Exception {
         responseMock = Mockito.mock(SimpleClientHandler.class);
         Client client = new Client("localhost", TEST_PORT, random);
