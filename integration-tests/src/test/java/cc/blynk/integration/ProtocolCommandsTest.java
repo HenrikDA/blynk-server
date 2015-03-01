@@ -1,8 +1,8 @@
 package cc.blynk.integration;
 
 import cc.blynk.client.Client;
-import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.utils.PropertiesUtil;
+import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
 import cc.blynk.server.Server;
@@ -63,7 +63,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
     @Test
     public void testQuit() throws Exception {
-        responseMock = Mockito.mock(SimpleClientHandler.class);
+        SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
         Client client = new Client("localhost", TEST_PORT, new Random());
         when(bufferedReader.readLine()).thenReturn("quit");
         client.start(new TestChannelInitializer(responseMock), bufferedReader);
@@ -73,156 +73,95 @@ public class ProtocolCommandsTest extends IntegrationBase {
     @Test
     //all commands together cause all operations requires register and then login =(.
     public void testAllCommandOneByOneTestSuit() throws Exception {
-        makeCommand("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommand("login dmitriy@mail.ua 1").check(OK);
+        makeCommands("login dmitriy@mail.ua 1").check(OK);
 
-        makeCommands(
-                new int[] {5,6},
-                new MessageBase[]{produce(5, OK), produce(6, LOAD_PROFILE, "{}")},
-                "login dmitriy@mail.ua 1", "loadProfile", "quit"
-        );
+        makeCommands("login dmitriy@mail.ua 1", "loadProfile").check(OK).check(produce(1, LOAD_PROFILE, "{}"));
 
         String userProfileString = readTestUserProfile();
 
-        makeCommands(
-                new int[] {7,8},
-                new MessageBase[]{produce(7, OK), produce(8, OK)},
-                "login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "quit"
-        );
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString).check(2, OK);
 
-        makeCommands(
-                new int[] {9,10, 11},
-                new MessageBase[]{produce(9, OK), produce(10, OK), produce(11, LOAD_PROFILE, userProfileString)},
-                "login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "loadProfile", "quit"
-        );
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "loadProfile").check(2, OK).check(produce(1, LOAD_PROFILE, userProfileString));
 
         //waiting background thread to save profile.
         sleep(600);
 
-        makeCommands(
-                new int[] {3,4},
-                new MessageBase[]{produce(3, OK), produce(4, GET_TOKEN, "12345678901234567890123456789012")}, //token is 32 length string
-                "login dmitriy@mail.ua 1", "getToken 1", "quit"
-        );
+        makeCommands("login dmitriy@mail.ua 1", "getToken 1").check(OK).check(produce(1, GET_TOKEN, "12345678901234567890123456789012"));
 
     }
 
     @Test
     public void testAppNotRegistered() throws Exception {
-        makeCommands(
-                new int[] {2},
-                new MessageBase[]{produce(2, USER_NOT_REGISTERED)},
-                "login dmitriy@mail.ua 1", "quit"
-        );
+        makeCommands("login dmitriy@mail.ua 1").check(produce(1, USER_NOT_REGISTERED));
     }
 
 
     @Test
     public void testInvalidToken() throws Exception {
-        makeCommands(
-                new int[] {2},
-                new MessageBase[]{produce(2, INVALID_TOKEN)},
-                "login dasdsadasdasdasdasdas", "quit"
-        );
+        makeCommands("login dasdsadasdasdasdasdas").check(produce(1, INVALID_TOKEN));
     }
 
     @Test
     public void testLogin2Times() throws Exception {
-        makeCommand("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands(
-                new int[] {2, 3},
-                new MessageBase[]{produce(2, OK), produce(3, USER_ALREADY_LOGGED_IN)},
-                "login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1", "quit"
-        );
+        makeCommands("login dmitriy@mail.ua 1", "login dmitriy@mail.ua 1").check(OK).check(produce(1, USER_ALREADY_LOGGED_IN));
     }
 
     @Test
     public void testGetTokenForNonExistentDashId() throws Exception {
-        makeCommand("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands(
-                new int[] {2, 3},
-                new MessageBase[]{produce(2, OK), produce(3, ILLEGAL_COMMAND)},
-                "login dmitriy@mail.ua 1", "getToken 1", "quit"
-        );
+        makeCommands("login dmitriy@mail.ua 1", "getToken 1").check(OK).check(produce(1, ILLEGAL_COMMAND));
     }
 
     @Test
     //all commands together cause all operations requires register and then login =(.
     public void testProfileWithManyDashes() throws Exception {
-        makeCommand("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
 
         String userProfileString = readTestUserProfile("user_profile_json_many_dashes.txt");
 
-        makeCommands(
-                new int[] {7,8},
-                new MessageBase[]{produce(7, OK), produce(8, NOT_ALLOWED)},
-                "login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "quit"
-        );
-
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString).check(OK).check(produce(1, NOT_ALLOWED));
     }
 
     @Test
     public void testInvalidTweetBody() throws Exception {
-        makeCommand("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands(
-                new int[] {2,3},
-                new MessageBase[]{produce(2, OK), produce(3, TWEET_BODY_INVALID_EXCEPTION)},
-                "login dmitriy@mail.ua 1", "tweet", "quit"
-        );
+        makeCommands("login dmitriy@mail.ua 1", "tweet").check(OK).check(produce(1, TWEET_BODY_INVALID_EXCEPTION));
     }
 
     @Test
     public void testPassNotValid() throws Exception {
-        makeCommand("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands(
-                new int[]{2},
-                new MessageBase[]{produce(2, USER_NOT_AUTHENTICATED)},
-                "login dmitriy@mail.ua 2", "quit"
-        );
-
+        makeCommands("login dmitriy@mail.ua 2").check(produce(1, USER_NOT_AUTHENTICATED));
     }
 
     @Test
     public void testHardwareNotInNetwork() throws Exception {
-        makeCommand("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands(
-                new int[]{2, 3},
-                new MessageBase[]{produce(2, OK), produce(3, DEVICE_NOT_IN_NETWORK)},
-                "login dmitriy@mail.ua 1", "hardware 1 1", "quit"
-        );
-
+        makeCommands("login dmitriy@mail.ua 1", "hardware 1 1").check(OK).check(produce(1, DEVICE_NOT_IN_NETWORK));
     }
 
     @Test
     public void testTryHardLoginWithoutToken() throws Exception {
-        makeCommand("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands(
-                new int[]{2},
-                new MessageBase[]{produce(2, INVALID_TOKEN)},
-                "login adsadasdasdasdas", "quit"
-        );
-
+        makeCommands("login adsadasdasdasdas").check(produce(1, INVALID_TOKEN));
     }
 
 
     @Test
     //all commands together cause all operations requires register and then login =(.
     public void testPingDeviceNotInNetwork() throws Exception {
-        makeCommand("register dmitriy@mail.ua 1").check(OK);
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands(
-                new int[] {2, 3},
-                new MessageBase[]{produce(2, OK), produce(3, DEVICE_NOT_IN_NETWORK)},
-                "login dmitriy@mail.ua 1", "ping", "quit"
-        );
-
+        makeCommands("login dmitriy@mail.ua 1", "ping").check(OK).check(produce(1, DEVICE_NOT_IN_NETWORK));
     }
 
     /**
@@ -232,55 +171,27 @@ public class ProtocolCommandsTest extends IntegrationBase {
      * 4) Checks that sever response is OK;
      * 5) Closing socket.
      */
-    public SimpleClientHandler makeCommand(String command) throws Exception {
-        responseMock = Mockito.mock(SimpleClientHandler.class);
+    private MockHolder makeCommands(String... commands) throws Exception {
+        SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
         Client client = new Client("localhost", TEST_PORT, random);
 
         when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
 
+
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
-        ongoingStubbing = ongoingStubbing.thenReturn(command);
+        for (final String cmd : commands) {
+            ongoingStubbing = ongoingStubbing.thenReturn(cmd);
+        }
 
         ongoingStubbing.thenAnswer(invocation -> {
-            sleep(100);
+            sleep(200);
             return "quit";
         });
 
         client.start(new TestChannelInitializer(responseMock), bufferedReader);
 
-        return responseMock;
-    }
-
-    /**
-     * 1) Creates client socket;
-     * 2) Sends commands;
-     * 3) Sleeps for 100ms between every command send;
-     * 4) Checks that sever response is OK;
-     * 5) Closing socket.
-     */
-    private void makeCommands(int[] msgIds, MessageBase[] responseMessages, String... commands) throws Exception {
-        responseMock = Mockito.mock(SimpleClientHandler.class);
-        Client client = new Client("localhost", TEST_PORT, random);
-
-        OngoingStubbing<Integer> stubbingRandom = when(random.nextInt(Short.MAX_VALUE));
-        for (int messageId : msgIds) {
-            stubbingRandom = stubbingRandom.thenReturn(messageId);
-        }
-
-        OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
-        for (final String cmd : commands) {
-            ongoingStubbing = ongoingStubbing.thenAnswer(invocation -> {
-                Thread.sleep(200);
-                return cmd;
-            });
-        }
-
-        client.start(new TestChannelInitializer(responseMock), bufferedReader);
-
-        verify(responseMock, times(responseMessages.length)).channelRead(any(), any());
-        for (MessageBase messageBase : responseMessages) {
-            verify(responseMock).channelRead(any(), eq(messageBase));
-        }
+        verify(responseMock, times(commands.length)).channelRead(any(), any());
+        return new MockHolder(responseMock);
     }
 
 }

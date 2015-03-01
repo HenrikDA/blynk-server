@@ -37,8 +37,6 @@ public abstract class IntegrationBase {
 
     public static final int TEST_PORT = 9090;
 
-    public SimpleClientHandler responseMock;
-
     @Mock
     public Random random;
 
