@@ -57,7 +57,9 @@ public class Launcher {
         GlobalStats stats = new GlobalStats();
 
         new TimerWorker(userRegistry, sessionsHolder).start();
-        new ProfileSaverWorker(userRegistry, fileManager, PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats).start();
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager,
+                PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats);
+        profileSaverWorker.start();
 
         Server server = new Server(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
 
@@ -76,6 +78,23 @@ public class Launcher {
         new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, baseHandlers)).start();
 
         new Thread(server).start();
+
+        addShutDownHook(server, sslServer, profileSaverWorker);
+    }
+
+    //todo test it works...
+    private void addShutDownHook(final Server server, final Server sslServer, final ProfileSaverWorker profileSaverWorker) {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                log.info("Catch shutdown hook. Trying to save users and close threads.");
+                profileSaverWorker.run();
+                server.stop();
+                if (sslServer != null) {
+                    sslServer.stop();
+                }
+            }
+        });
     }
 
     private void processArguments(String[] args, Properties serverProperties) throws ParseException {

@@ -70,8 +70,12 @@ public class Server implements Runnable {
 
     public void stop() {
         log.info("Shutting down default server...");
-        bossGroup.shutdownGracefully();
-        workerGroup.shutdownGracefully();
+        try {
+            workerGroup.shutdownGracefully().await();
+            bossGroup.shutdownGracefully().await();
+        } catch (InterruptedException e) {
+            log.error("Error waiting server shutdown.");
+        }
     }
 
 }

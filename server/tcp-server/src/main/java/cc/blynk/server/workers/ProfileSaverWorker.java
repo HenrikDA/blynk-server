@@ -26,16 +26,17 @@ public class ProfileSaverWorker implements Runnable {
     private final FileManager fileManager;
     private final int periodInMillis;
     private final GlobalStats stats;
+    private final ScheduledExecutorService scheduler;
 
     public ProfileSaverWorker(UserRegistry userRegistry, FileManager fileManager, int periodInMillis, GlobalStats stats) {
         this.userRegistry = userRegistry;
         this.fileManager = fileManager;
         this.periodInMillis = periodInMillis;
         this.stats = stats;
+        this.scheduler = Executors.newScheduledThreadPool(1);
     }
 
     public void start() {
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(this, 1000, periodInMillis, TimeUnit.MILLISECONDS);
     }
 
