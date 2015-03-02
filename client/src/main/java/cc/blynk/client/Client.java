@@ -80,7 +80,7 @@ public class Client {
     }
 
     public static Message produceMessageBaseOnUserInput(String line, int msgId) {
-        String[] input = line.split(" ");
+        String[] input = line.split(" ", 2);
 
         short command;
 
@@ -91,7 +91,6 @@ public class Client {
             return null;
         }
 
-        input = line.split(" ", 2);
         String body = input.length == 1 ? "" : input[1];
         if (command == Command.HARDWARE_COMMAND) {
             body = body.replaceAll(" ", "\0");
