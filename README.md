@@ -1,5 +1,5 @@
 # Blynk server
-Is Netty based Java server responsible for message forwarding between mobile application and any hardware (Arduino, Raspberry Pi for now).
+Is Netty based Java server responsible for message forwarding between mobile application and any hardware (e.g. Arduino, Raspberry Pi for now).
 Please read more precise project description [here](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
 
 # CI status
@@ -40,7 +40,7 @@ This is 1 byte field responsible for storing [command code](https://bitbucket.or
 ### Message Id field
 Unsigned short.
 Is 2 bytes field for defining unique message identifier. It’s used in order to distinguish how to manage responses from hardware on mobile client. Message ID field should be generated on client’s side.
-Any ‘read’ protocol command should always have same messageId for the same widget. Let's say, you have a Graph_1 widget which is configured to read data from some analog pin.
+Any ‘read’ protocol command should always have same messageId for the same widget. Let's say, you have a Graph_1 widget which is configured to read data from the analog pin.
 After you reconfigured Graph_1 to read another pin, load command will still look the same, and messageID will be an ID of the widget to display results at.
 
 ### Length field
@@ -57,7 +57,7 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
             a) Mobile client must send send 2 space-separated parameters as a content field (username and password) : "username@example.com UserPassword"
             b) Hardware client must send 1 parameter, which is user Authentication Token : "6a7a3151cb044cd893a92033dd65f655"
         3 - save profile; Must have 1 parameter as content string : "{...}"
-        4 - load profile; Don't have any parameters
+        4 - load profile; Doesn’t have any parameters
         5 - getToken; Must have 1 signed int (4 bytes) parameter, Dashboard ID : "1". NOTE : number of dashboards is limited per user by 10 and token request should request token for id of existing dashboard, that saved via saveProfile
         6 - ping; Sends request from client to server, then from server to hardware, than back to server and back to the client.
         12 - tweet; Sends tweet request from hardware to server. 140 chars max. 
@@ -97,7 +97,7 @@ Response message structure:
     8 - command is not supported
     9 - token is not valid
     10 - server error
-    11 - user have already logged in. Happens in cases when same user tries to login more than one time.
+    11 - user is already logged in. Happens in cases when same user tries to login for more than one time.
     12 - tweet exception, exception occurred during posting request to Twitter could be in case messages are the same in a row;
     13 - tweet body invalid exception; body is empty or larger than 140 chars;
     14 - user has no access token.
@@ -120,7 +120,7 @@ Response message structure:
 
 ## Widget types
 
-    //controls
+    //output
     BUTTON,
     TOGGLE_BUTTON,
     SLIDER,
@@ -135,7 +135,7 @@ Response message structure:
     GAMEPAD,
     KEYPAD,
 
-    //outputs
+    //input
     LED,
     DIGIT4_DISPLAY, //same as NUMERICAL_DISPLAY
     GAUGE,
@@ -143,7 +143,7 @@ Response message structure:
     GRAPH,
     LEVEL_DISPLAY,
 
-    //inputs
+    //sensors
     MICROPHONE,
     GYROSCOPE,
     ACCELEROMETER,
@@ -159,7 +159,7 @@ Response message structure:
     RCT,
     TIMER
 
-[Or see class itself](https://bitbucket.org/theblynk/blynk-server/src/b6db715d25732677605a5be1ec12677d3e4ce24c/server/tcp-server/src/main/java/cc/blynk/server/model/enums/WidgetType.java?at=master)
+[Or see the class itself](https://bitbucket.org/theblynk/blynk-server/src/b6db715d25732677605a5be1ec12677d3e4ce24c/server/tcp-server/src/main/java/cc/blynk/server/model/enums/WidgetType.java?at=master)
 
 ## Widgets JSON structure
 
@@ -215,16 +215,18 @@ Where `33bcbe756b994a6768494d55d1543c74` is your Auth Token.
 
 You can run as many clients as you want.
 
-Clients with the same credentials and Auth Token are grouped in one Session and can send messages to each other.
-All client commands are human-friendly, so you don't have to remember the codes.
+Clients with the same credentials and Auth Token are grouped into one Session and can send messages to each other.
+All client’s commands are human-friendly, so you don't have to remember the codes.
 
-Before sending to hardware some read/write commands, application must first send init command.
+Before sending to hardware any read/write commands, application must first send “init” command.
 Init command is 'hardware' command that sets all pin modes. Example of init command:
 
     	hardware pm 1 in 13 out 9 out 8 in
 
-In above example you set pin 1 and pin 8 to 'in' PIN_MODE. This means this pins will read values from hardware (graph, display, etc).
-In opposite pins 13 and 9 has 'out' PIN_MODE. This means this pins will we writable (button, slider).
+// TODO: take description about pin modes from Blynk Arduino library readme
+
+In the example above, you set pin 1 and pin 8 to 'input’ PIN_MODE. This means this pins will read values from hardware (graph, display, etc).
+Pins 13 and 9 have 'output’ PIN_MODE. This means that these pins will we writable (button, slider).
 
 Hardware commands:
 
@@ -265,8 +267,8 @@ Registered users are stored locally in TMP dir of your system in file "user.db".
 ## Local server setup
 
 ### Behind wifi router
-In case you start Blynk server behind wifi-router and want it to be accessible from internet you have to add port-forwarding rule
-on your router. This is required in order all of the request which come to the router are forwarded to Blynk server within the local network of your router.
+In case you need to run Blynk server behind wifi-router and want it to be accessible from internet you have to add port-forwarding rule
+on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server, 
 Im my router it look like this: {image here}
 
 ## Licensing
