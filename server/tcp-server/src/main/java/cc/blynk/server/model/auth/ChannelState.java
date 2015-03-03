@@ -16,6 +16,8 @@ public class ChannelState extends NioSocketChannel {
 
     public Integer dashId;
 
+    public User user;
+
     public ChannelState(Channel parent, SocketChannel socket) {
         super(parent, socket);
     }

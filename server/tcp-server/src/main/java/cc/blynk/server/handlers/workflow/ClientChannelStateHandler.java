@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.server.dao.SessionsHolder;
+import cc.blynk.server.model.auth.ChannelState;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,7 +24,7 @@ public class ClientChannelStateHandler extends ChannelDuplexHandler {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        sessionsHolder.removeFromSession(ctx.channel());
+        sessionsHolder.removeFromSession((ChannelState) ctx.channel());
         super.channelInactive(ctx);
     }
 }

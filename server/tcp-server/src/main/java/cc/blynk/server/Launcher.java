@@ -23,6 +23,14 @@ import java.util.List;
 import java.util.Properties;
 
 /**
+ * Entry point for server launch.
+ *
+ * By default starts 2 servers on different ports.
+ * First is plain tcp/ip sockets server for hardware, second tls/ssl tcp/ip server for mobile applications.
+ *
+ * In addition launcher start all related to business logic threads like saving user profiles thread, timers
+ * processing thread, properties reload thread and so on.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/16/2015.

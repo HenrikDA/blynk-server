@@ -19,6 +19,9 @@ import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
+ * Handler responsible for managing hardware and apps login messages.
+ * Initializes netty channel with a state tied with user.
+ *
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
@@ -68,6 +71,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> impl
         ChannelState channelState = (ChannelState) ctx.channel();
         channelState.dashId = dashId;
         channelState.isHardwareChannel = true;
+        channelState.user = user;
 
         sessionsHolder.addHardwareChannelToGroup(user, channelState, messageId);
 
@@ -82,10 +86,12 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> impl
             throw new UserNotRegistered(String.format("User not registered. Username '%s', %s", userName, ctx.channel()), messageId);
         }
 
-        //todo fix pass validation
         if (!user.getPass().equals(pass)) {
             throw new UserNotAuthenticated(String.format("User credentials are wrong. Username '%s', %s", userName, ctx.channel()), messageId);
         }
+
+        ChannelState channelState = (ChannelState) ctx.channel();
+        channelState.user = user;
 
         sessionsHolder.addAppChannelToGroup(user, ctx.channel(), messageId);
 

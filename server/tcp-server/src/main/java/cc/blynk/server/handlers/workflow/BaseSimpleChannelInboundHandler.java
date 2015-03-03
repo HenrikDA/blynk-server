@@ -7,6 +7,7 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.UserQuotaLimitExceededException;
+import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -49,7 +50,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             User user = null;
             try {
                 I imsg = (I) msg;
-                user = sessionsHolder.findUserByChannel(ctx.channel(), imsg.id);
+                user = ((ChannelState) ctx.channel()).user;
                 if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
                     throw new UserQuotaLimitExceededException("Quota limit exceeded.", imsg.id);
                 }

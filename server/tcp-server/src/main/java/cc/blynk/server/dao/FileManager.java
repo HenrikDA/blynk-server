@@ -16,6 +16,8 @@ import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Class responsible for saving/reading user data to/from disk.
+ *
  * User: ddumanskiy
  * Date: 8/11/13
  * Time: 6:53 PM
@@ -24,6 +26,9 @@ public final class FileManager {
 
     private static final Logger log = LogManager.getLogger(FileManager.class);
 
+    /**
+     * Folder where all user profiles are stored locally.
+     */
     private Path dataDir;
 
     public FileManager(String dataFolder) {
@@ -83,6 +88,11 @@ public final class FileManager {
         }
     }
 
+    /**
+     * Loads all user profiles one by one from disk using dataDir as starting point.
+     *
+     * @return mapping between username and it's profile.
+     */
     public ConcurrentHashMap<String, User> deserialize() {
         Finder finder = new Finder("u_*.user");
 
