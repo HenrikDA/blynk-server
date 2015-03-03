@@ -34,9 +34,11 @@ public class SessionsHolder {
     }
 
     public void removeFromSession(ChannelState channel) {
-        Session session = userSession.get(channel.user);
-        if (session != null) {
-            session.remove(channel);
+        if (channel.user != null) {
+            Session session = userSession.get(channel.user);
+            if (session != null) {
+                session.remove(channel);
+            }
         }
     }
 
