@@ -47,9 +47,9 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
             futures = Session.sendMessageTo(message.updateMessageBody(body), session.getAppChannels());
         } else {
             futures = Session.sendMessageTo(message, session.getHardwareChannels());
+            ctx.channel().writeAndFlush(produce(message.id, OK));
         }
 
-        ctx.channel().writeAndFlush(produce(message.id, OK));
     }
 
 }
