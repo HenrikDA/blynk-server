@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Helper class for holding info regarding registered users and profiles.
@@ -18,10 +17,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class UserRegistry {
 
     private static final Logger log = LogManager.getLogger(UserRegistry.class);
-    private ConcurrentHashMap<String, User> users;
+    private Map<String, User> users;
     //init user DB if possible
 
-    public UserRegistry(ConcurrentHashMap<String, User> users) {
+    public UserRegistry(Map<String, User> users) {
         //reading DB to RAM.
         this.users = users;
     }
@@ -47,7 +46,7 @@ public class UserRegistry {
         return users.get(name);
     }
 
-    public ConcurrentHashMap<String, User> getUsers() {
+    public Map<String, User> getUsers() {
         return users;
     }
 
@@ -72,7 +71,7 @@ public class UserRegistry {
             log.info("Token for user {} and dashId {} not generated yet.", user.getName(), dashboardId);
             token = generateNewToken();
             log.info("Generated token for user {} and dashId {} is {}.", user.getName(), dashboardId, token);
-            user.getDashTokens().put(dashboardId, token);
+            user.putToken(dashboardId, token);
         } else {
             log.info("Token for user {} and dashId {} generated already. Token {}", user.getName(), dashboardId, token);
         }

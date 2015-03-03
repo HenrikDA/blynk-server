@@ -24,21 +24,27 @@ public class User implements Serializable {
 
     private String id;
 
+    //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
+    private long lastModifiedTs;
+
     private UserProfile userProfile = new UserProfile();
 
     private Map<Integer, String> dashTokens = new HashMap<>();
 
+    //maybe it is bette rto make it transient
     private Stats stats;
 
     private transient Meter quotaMeter;
 
     public User() {
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public User(String name, String pass) {
         this.name = name;
         this.pass = pass;
         this.stats = new Stats();
+        this.lastModifiedTs = System.currentTimeMillis();
         initQuota();
     }
 
@@ -78,6 +84,12 @@ public class User implements Serializable {
 
     public void setUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
+        this.lastModifiedTs = System.currentTimeMillis();
+    }
+
+    public void putToken(Integer dashId, String token) {
+        this.dashTokens.put(dashId, token);
+        this.lastModifiedTs = System.currentTimeMillis();
     }
 
     public String getId() {
@@ -102,6 +114,14 @@ public class User implements Serializable {
 
     public Meter getQuotaMeter() {
         return quotaMeter;
+    }
+
+    public long getLastModifiedTs() {
+        return lastModifiedTs;
+    }
+
+    public void setLastModifiedTs(long lastModifiedTs) {
+        this.lastModifiedTs = lastModifiedTs;
     }
 
     @Override

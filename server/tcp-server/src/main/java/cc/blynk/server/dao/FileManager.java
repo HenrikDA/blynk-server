@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Date: 8/11/13
  * Time: 6:53 PM
  */
-public final class FileManager {
+public class FileManager {
 
     private static final Logger log = LogManager.getLogger(FileManager.class);
 

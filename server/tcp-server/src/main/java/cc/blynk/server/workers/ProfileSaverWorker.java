@@ -27,6 +27,7 @@ public class ProfileSaverWorker implements Runnable {
     private final int periodInMillis;
     private final GlobalStats stats;
     private final ScheduledExecutorService scheduler;
+    private long lastStart;
 
     public ProfileSaverWorker(UserRegistry userRegistry, FileManager fileManager, int periodInMillis, GlobalStats stats) {
         this.userRegistry = userRegistry;
@@ -34,6 +35,7 @@ public class ProfileSaverWorker implements Runnable {
         this.periodInMillis = periodInMillis;
         this.stats = stats;
         this.scheduler = Executors.newScheduledThreadPool(1);
+        this.lastStart = System.currentTimeMillis();
     }
 
     public void start() {
@@ -44,17 +46,23 @@ public class ProfileSaverWorker implements Runnable {
     public void run() {
         log.debug("Starting saving user db.");
         int count = 0;
+        long newStart = System.currentTimeMillis();
+
         for (User user : userRegistry.getUsers().values()) {
-            try {
-                fileManager.overrideUserFile(user);
-                count++;
-            } catch (IOException e) {
-                log.error("Error saving : {}.", user);
+            if (lastStart <= user.getLastModifiedTs()) {
+                try {
+                    fileManager.overrideUserFile(user);
+                    count++;
+                } catch (IOException e) {
+                    log.error("Error saving : {}.", user);
+                }
             }
         }
 
+        lastStart = newStart;
+
         stats.log();
-        log.debug("Saving user db finished. Saved {} users.", count);
+        log.debug("Saving user db finished. Modified {} users.", count);
     }
 
 
