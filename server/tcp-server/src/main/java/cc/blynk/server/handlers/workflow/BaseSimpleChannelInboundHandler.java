@@ -6,6 +6,7 @@ import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserQuotaLimitExceededException;
 import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.User;
@@ -51,6 +52,9 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
             try {
                 I imsg = (I) msg;
                 user = ((ChannelState) ctx.channel()).user;
+                if (user == null) {
+                    throw new UserNotAuthenticated("User not logged.", imsg.id);
+                }
                 if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
                     throw new UserQuotaLimitExceededException("Quota limit exceeded.", imsg.id);
                 }
