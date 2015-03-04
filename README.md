@@ -181,29 +181,33 @@ Server guarantees that commands will be processed in same order in which they we
 
 + Run the server
 
-        java -jar server.jar -port 8080
+        java -jar server-${PUT_LATEST_VERSION_HERE}.jar -port 8080
+
 
 + Run the client (simulates smartphone client, app client should always connect to SSL port)
 
-        java -jar client.jar -host localhost -sslPort 8443 -mode app
+        java -jar client-${PUT_LATEST_VERSION_HERE}.jar -host localhost -sslPort 8443 -mode app
+
 
 + In this client: register new user and/or login with the same credentials
 
         register username@example.com UserPassword
         login username@example.com UserPassword
 
+
 + Save profile with simple dashboard
 
         saveProfile {"dashBoards":[{"id":1, "name":"My Dashboard", "isActive":true}]}
+
 
 + Get the token for hardware (e.g Arduino)
 
         getToken 1
 
-   	You will get server response similar to this:
 
-    	00:05:18.086 INFO  - Sending : Message{messageId=30825, command=5, body='1'}
-    	00:05:18.100 INFO  - Getting : Message{messageId=30825, command=5, body='33bcbe756b994a6768494d55d1543c74'}
++ You will get server response similar to this:
+
+    	00:05:18.100 TRACE  - Incomming : GetTokenMessage{id=30825, command=GET_TOKEN, length=32, body='33bcbe756b994a6768494d55d1543c74'}
 
 Where `33bcbe756b994a6768494d55d1543c74` is your Auth Token.
 
@@ -235,19 +239,23 @@ Hardware commands:
     	hardware dw 9 1
     	hardware dw 9 0
 
+
 + Digital read:
 
     	hardware dr 9
     	You should receive response: dw 9 <val>
 
+
 + Analog write:
 
     	hardware aw 14 123
+
 
 + Analog read:
 
     	hardware ar 14
         You should receive response: aw 14 <val>
+
 
 + Virtual write:
 
@@ -255,6 +263,7 @@ Hardware commands:
         hardware vw 9 string
         hardware vw 9 item1 item2 item3
         hardware vw 9 key1 val1 key2 val2
+
 
 + Virtual read:
 
