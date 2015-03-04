@@ -1,6 +1,7 @@
 package cc.blynk.common.handlers.decoders;
 
 import cc.blynk.common.enums.Command;
+import cc.blynk.common.exceptions.UnsupportedCommandException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.stats.GlobalStats;
@@ -64,6 +65,9 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements D
         //todo test for that case
         if (cause instanceof DecoderException) {
             handleGeneralException(ctx, cause.getCause());
+        } else if (cause instanceof UnsupportedCommandException) {
+            log.error("Input command is invalid. Closing socket.", cause.getMessage());
+            ctx.close();
         } else {
             handleGeneralException(ctx, cause);
         }
