@@ -2,15 +2,20 @@ package cc.blynk.server.workers;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.server.dao.FileManager;
+import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.auth.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+
 
 /**
  * The Blynk Project.
@@ -27,15 +32,17 @@ public class ProfileSaverWorker implements Runnable {
     private final int periodInMillis;
     private final GlobalStats stats;
     private final ScheduledExecutorService scheduler;
+    private final JedisWrapper jedisWrapper;
     private long lastStart;
 
-    public ProfileSaverWorker(UserRegistry userRegistry, FileManager fileManager, int periodInMillis, GlobalStats stats) {
+    public ProfileSaverWorker(JedisWrapper jedisWrapper, UserRegistry userRegistry, FileManager fileManager, int periodInMillis, GlobalStats stats) {
         this.userRegistry = userRegistry;
         this.fileManager = fileManager;
         this.periodInMillis = periodInMillis;
         this.stats = stats;
         this.scheduler = Executors.newScheduledThreadPool(1);
         this.lastStart = System.currentTimeMillis();
+        this.jedisWrapper = jedisWrapper;
     }
 
     public void start() {
@@ -48,9 +55,12 @@ public class ProfileSaverWorker implements Runnable {
         int count = 0;
         long newStart = System.currentTimeMillis();
 
+        List<User> usersToSave = new ArrayList<>();
+
         for (User user : userRegistry.getUsers().values()) {
             if (lastStart <= user.getLastModifiedTs()) {
                 try {
+                    usersToSave.add(user);
                     fileManager.overrideUserFile(user);
                     count++;
                 } catch (IOException e) {
@@ -58,6 +68,8 @@ public class ProfileSaverWorker implements Runnable {
                 }
             }
         }
+
+        jedisWrapper.saveToRemoteStorage(usersToSave);
 
         lastStart = newStart;
 

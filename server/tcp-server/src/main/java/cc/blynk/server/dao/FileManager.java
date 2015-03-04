@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -57,9 +58,7 @@ public class FileManager {
             if (Files.size(path) > 0) {
                 try (BufferedReader reader = Files.newBufferedReader(path, Config.DEFAULT_CHARSET)) {
                     String userString = reader.readLine();
-                    User user = JsonParser.parseUser(userString);
-                    user.initQuota();
-                    return user;
+                    return JsonParser.parseUser(userString);
                 } catch (Exception ioe) {
                     log.error("Error reading user file '{}'.", path, ioe);
                 }
@@ -93,7 +92,7 @@ public class FileManager {
      *
      * @return mapping between username and it's profile.
      */
-    public ConcurrentHashMap<String, User> deserialize() {
+    public Map<String, User> deserialize() {
         Finder finder = new Finder("u_*.user");
 
 
@@ -103,7 +102,7 @@ public class FileManager {
             log.error("Error reading tmp files.", e);
         }
 
-        ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
+        Map<String, User> users = new ConcurrentHashMap<>();
         for (Path path : finder.getFoundFiles()) {
             User user = readUserFromFile(path);
             if (user != null) {

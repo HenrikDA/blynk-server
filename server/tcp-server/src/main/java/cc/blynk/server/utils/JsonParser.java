@@ -49,7 +49,9 @@ public final class JsonParser {
     }
 
     public static User parseUser(String reader) throws IOException {
-        return mapper.reader(User.class).readValue(reader);
+        User user = mapper.reader(User.class).readValue(reader);
+        user.initQuota();
+        return user;
     }
 
     public static UserProfile parseProfile(String reader) {

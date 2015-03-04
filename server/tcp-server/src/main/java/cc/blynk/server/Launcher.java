@@ -5,9 +5,11 @@ import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.server.dao.FileManager;
+import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
+import cc.blynk.server.model.auth.User;
 import cc.blynk.server.utils.JsonParser;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import cc.blynk.server.workers.PropertiesChangeWatcherWorker;
@@ -20,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -59,13 +62,23 @@ public class Launcher {
         FileManager fileManager = new FileManager(serverProperties.getProperty("data.folder"));
         SessionsHolder sessionsHolder = new SessionsHolder();
 
-        log.debug("Reading user DB.");
-        UserRegistry userRegistry = new UserRegistry(fileManager.deserialize());
+        JedisWrapper jedisWrapper = new JedisWrapper(serverProperties);
+
+        log.debug("Starting reading user DB.");
+        //first reading all data from disk
+        Map<String, User> users = fileManager.deserialize();
+        //after that getting full DB from Redis and adding here.
+        users.putAll(jedisWrapper.getAllUsersDB());
+        //todo save all to disk to have latest version locally???
+
+        UserRegistry userRegistry = new UserRegistry(users);
         log.debug("Reading user DB finished.");
+
         GlobalStats stats = new GlobalStats();
 
         new TimerWorker(userRegistry, sessionsHolder).start();
-        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(userRegistry, fileManager,
+
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager,
                 PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats);
         profileSaverWorker.start();
 

@@ -8,6 +8,7 @@ import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
 import cc.blynk.integration.model.TestClient;
 import cc.blynk.server.dao.FileManager;
+import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.UserProfile;
@@ -55,6 +56,7 @@ public abstract class IntegrationBase {
     public SessionsHolder sessionsHolder;
     public UserRegistry userRegistry;
     public GlobalStats stats;
+    public JedisWrapper jedisWrapper;
 
     public static void sleep(int ms) {
         try {
@@ -116,6 +118,7 @@ public abstract class IntegrationBase {
         sessionsHolder = new SessionsHolder();
         userRegistry = new UserRegistry(fileManager.deserialize());
         stats = new GlobalStats();
+        jedisWrapper = new JedisWrapper(properties);
     }
 
 
