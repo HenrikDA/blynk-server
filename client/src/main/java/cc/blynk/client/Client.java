@@ -7,6 +7,7 @@ import cc.blynk.common.utils.ParseUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -21,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.Random;
 
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -70,7 +72,7 @@ public class Client {
             sslCtx = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
             port = sslPort;
         } else {
-            log.info("Using host {} , port : {}, mode : {}", host, port, mode.name());
+            log.info("Using host {}, port : {}, mode : {}", host, port, mode.name());
         }
 
         ClientHandlersInitializer clientHandlersInitializer = new ClientHandlersInitializer(sslCtx, host, port);
@@ -109,6 +111,10 @@ public class Client {
             // Start the connection attempt.
             Channel clientChannel = b.connect(host, port).sync().channel();
             readUserInput(clientChannel, commandInputStream);
+        } catch (UnresolvedAddressException uae) {
+            log.error("Host name '{}' is invalid. Please make sure it is correct name.", host);
+        } catch (ConnectTimeoutException cte) {
+            log.error("Timeout exceeded when connecting to '{}:{}'. Please make sure host available and port is open on target host.", host, port);
         } catch (IOException | InterruptedException e) {
             log.error("Error running client. Shutting down.", e);
         } finally {
