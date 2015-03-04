@@ -43,7 +43,7 @@ public class ServerHandlersInitializer extends ChannelInitializer<SocketChannel>
             //todo this is self-signed cerf. just ot simplify for now testing.
             return SslContext.newServerContext(serverCert, serverKey, keyPass);
         } catch (SSLException e) {
-            log.error("Error initializing ssl context. Reason : {}", e.getMessage(), e);
+            log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             System.exit(0);
             //todo throw?
         }
