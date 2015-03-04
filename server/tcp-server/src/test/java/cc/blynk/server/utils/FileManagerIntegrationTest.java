@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -54,7 +54,7 @@ public class FileManagerIntegrationTest extends TestBase {
         fileManager.overrideUserFile(user1);
         fileManager.overrideUserFile(user2);
 
-        ConcurrentHashMap<String, User> users = fileManager.deserialize();
+        Map<String, User> users = fileManager.deserialize();
         assertNotNull(users);
         assertNotNull(users.get(user1.getName()));
         assertNotNull(users.get(user2.getName()));
@@ -65,7 +65,7 @@ public class FileManagerIntegrationTest extends TestBase {
         fileManager.overrideUserFile(user1);
         fileManager.overrideUserFile(user1);
 
-        ConcurrentHashMap<String, User> users = fileManager.deserialize();
+        Map<String, User> users = fileManager.deserialize();
         assertNotNull(users);
         assertNotNull(users.get(user1.getName()));
     }
