@@ -43,7 +43,7 @@ public class Launcher {
     private final Logger log = LogManager.getLogger(Launcher.class);
 
     public static void main(String[] args) throws Exception {
-        ServerProperties serverProperties = new ServerProperties(Config.SERVER_PROPERTIES_FILENAME);
+        ServerProperties serverProperties = new ServerProperties();
         //configurable folder for logs via property.
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
 

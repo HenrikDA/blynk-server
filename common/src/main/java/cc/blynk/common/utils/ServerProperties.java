@@ -13,6 +13,10 @@ import java.util.Properties;
  */
 public class ServerProperties extends Properties {
 
+    public ServerProperties() {
+        initProperties(Config.SERVER_PROPERTIES_FILENAME);
+    }
+
     public ServerProperties(String propertiesFileName) {
         initProperties(propertiesFileName);
     }

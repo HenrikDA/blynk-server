@@ -49,7 +49,7 @@ public abstract class IntegrationBase {
     @Mock
     public BufferedReader bufferedReader2;
 
-    public ServerProperties properties = new ServerProperties("server.properties");
+    public ServerProperties properties = new ServerProperties();
 
     public FileManager fileManager;
     public SessionsHolder sessionsHolder;

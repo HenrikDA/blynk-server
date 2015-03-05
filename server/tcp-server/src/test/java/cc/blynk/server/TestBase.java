@@ -9,7 +9,7 @@ import cc.blynk.common.utils.ServerProperties;
  */
 public class TestBase {
 
-    public ServerProperties props = new ServerProperties("server.properties");
+    public ServerProperties props = new ServerProperties();
     public String dataFolder = props.getProperty("data.folder");
 
 }
