@@ -1,5 +1,6 @@
 package cc.blynk.server.utils;
 
+import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.auth.User;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -54,23 +55,21 @@ public final class JsonParser {
         return user;
     }
 
-    public static UserProfile parseProfile(String reader) {
+    public static UserProfile parseProfile(String reader, int id) {
         try {
             return mapper.reader(UserProfile.class).readValue(reader);
         } catch (IOException e) {
-            log.error("Error parsing input string : {}", reader);
-            log.error(e);
+            throw new IllegalCommandException("Error parsing user profile. Reason : " + e.getMessage(), id);
         }
-        return null;
     }
 
+    //only for tests
     public static UserProfile parseProfile(InputStream reader) {
         try {
             return mapper.reader(UserProfile.class).readValue(reader);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalCommandException("Error parsing user profile. Reason : " + e.getMessage(), 1);
         }
-        return null;
     }
 
 }

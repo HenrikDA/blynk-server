@@ -51,11 +51,8 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
             throw new NotAllowedException(String.format("User profile size is larger than %d bytes.", USER_PROFILE_MAX_SIZE), message.id);
         }
 
-        log.info("Trying to parseProfile user profile : {}", userProfileString);
-        UserProfile userProfile = JsonParser.parseProfile(userProfileString);
-        if (userProfile == null) {
-            throw new IllegalCommandException("Register Handler. Wrong user profile message format.", message.id);
-        }
+        log.debug("Trying to parse user profile : {}", userProfileString);
+        UserProfile userProfile = JsonParser.parseProfile(userProfileString, message.id);
 
         if (userProfile.getDashBoards() != null && userProfile.getDashBoards().length > DASH_MAX_LIMIT) {
             throw new NotAllowedException(
