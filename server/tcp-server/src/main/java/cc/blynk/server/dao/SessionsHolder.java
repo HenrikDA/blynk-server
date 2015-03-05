@@ -46,14 +46,15 @@ public class SessionsHolder {
         return userSession;
     }
 
+    //threadsafe
     private Session getSessionByUser(User user) {
         Session group = userSession.get(user);
         //only one side came
         if (group == null) {
-            log.trace("Creating unique session for user: {}", user);
             Session value = new Session();
             group = userSession.putIfAbsent(user, value);
             if (group == null) {
+                log.trace("Creating unique session for user: {}", user);
                 return value;
             }
         }
