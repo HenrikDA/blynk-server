@@ -3,6 +3,7 @@ package cc.blynk.server.handlers.workflow;
 import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -19,8 +20,6 @@ import org.apache.logging.log4j.ThreadContext;
 
 import java.util.Properties;
 
-import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -35,7 +34,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     private final TypeParameterMatcher matcher;
     private volatile int USER_QUOTA_LIMIT;
 
-    public BaseSimpleChannelInboundHandler(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public BaseSimpleChannelInboundHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.props = props;
         this.fileManager = fileManager;
         this.userRegistry = userRegistry;
@@ -72,8 +71,8 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                     user.incrException(cause.errorCode);
                 }
                 handleAppException(ctx, cause);
-            } catch (Throwable t) {
-                handleUnexpectedException(t);
+            } catch (Exception e) {
+                handleUnexpectedException(e);
             } finally {
                 ReferenceCountUtil.release(msg);
             }
@@ -99,7 +98,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      *  When property file changed during server work, to avoid restart,
      *  so every child overrides it's property.
      */
-    public void updateProperties(Properties props) {
-        this.USER_QUOTA_LIMIT = getIntProperty(props, "user.message.quota.limit");
+    public void updateProperties(ServerProperties props) {
+        this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
     }
 }

@@ -2,7 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.common.utils.PropertiesUtil;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
@@ -20,7 +20,6 @@ import org.mockito.Mockito;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
 import static cc.blynk.common.enums.Response.OK;
@@ -50,7 +49,7 @@ public abstract class IntegrationBase {
     @Mock
     public BufferedReader bufferedReader2;
 
-    public Properties properties = PropertiesUtil.loadProperties("server.properties");
+    public ServerProperties properties = new ServerProperties("server.properties");
 
     public FileManager fileManager;
     public SessionsHolder sessionsHolder;

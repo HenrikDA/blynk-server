@@ -1,5 +1,6 @@
 package cc.blynk.server;
 
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -10,7 +11,6 @@ import cc.blynk.server.twitter.TwitterWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * The Blynk Project.
@@ -30,7 +30,7 @@ public class HandlersHolder {
     PingHandler pingHandler;
     TweetHandler tweetHandler;
 
-    public HandlersHolder(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public HandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         clientChannelStateHandler = new ClientChannelStateHandler(sessionsHolder);
         registerHandler = new RegisterHandler(fileManager, userRegistry, sessionsHolder);
         loginHandler = new LoginHandler(fileManager, userRegistry, sessionsHolder);
@@ -44,7 +44,7 @@ public class HandlersHolder {
 
     //needed only for reloadable properties
     public List<BaseSimpleChannelInboundHandler> getBaseHandlers() {
-        List<BaseSimpleChannelInboundHandler> handlers = new ArrayList<BaseSimpleChannelInboundHandler>() {
+        return new ArrayList<BaseSimpleChannelInboundHandler>() {
            {
                add(getTokenHandler);
                add(loadProfileHandler);
@@ -54,8 +54,6 @@ public class HandlersHolder {
                add(tweetHandler);
             }
         };
-
-        return handlers;
     }
 
 }

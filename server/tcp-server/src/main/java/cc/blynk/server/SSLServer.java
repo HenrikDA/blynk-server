@@ -1,15 +1,12 @@
 package cc.blynk.server;
 
 import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Properties;
-
-import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
 
 /**
  * The Blynk Project.
@@ -20,8 +17,8 @@ public class SSLServer extends Server {
 
     private static final Logger log = LogManager.getLogger(SSLServer.class);
 
-    public SSLServer(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
-        this.port = getIntProperty(props, "server.ssl.port");
+    public SSLServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+        this.port = props.getIntProperty("server.ssl.port");
         this.handlersHolder = new HandlersHolder(props, fileManager, userRegistry, sessionsHolder);
 
         this.serverHandlersInitializer = new ServerHandlersInitializer(handlersHolder, stats,

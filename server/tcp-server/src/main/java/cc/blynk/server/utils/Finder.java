@@ -1,5 +1,8 @@
 package cc.blynk.server.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -16,6 +19,8 @@ import static java.nio.file.FileVisitResult.CONTINUE;
  * Time: 7:51
  */
 public class Finder extends SimpleFileVisitor<Path> {
+
+    private static final Logger log = LogManager.getLogger(Finder.class);
 
     private final PathMatcher matcher;
     private final List<Path> foundFiles = new ArrayList<>();
@@ -42,7 +47,7 @@ public class Finder extends SimpleFileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) {
-        System.err.println(exc);
+        log.error(exc);
         return CONTINUE;
     }
 

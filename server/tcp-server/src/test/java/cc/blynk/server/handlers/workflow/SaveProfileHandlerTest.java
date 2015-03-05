@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import static cc.blynk.common.enums.Command.SAVE_PROFILE;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
 
 /**
  * The Blynk Project.
@@ -17,12 +16,12 @@ import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
  */
 public class SaveProfileHandlerTest extends TestBase {
 
-    private SaveProfileHandler saveProfileHandler = new SaveProfileHandler(properties, null, null, null);
+    private SaveProfileHandler saveProfileHandler = new SaveProfileHandler(props, null, null, null);
 
     @Test(expected = NotAllowedException.class)
     public void testTooBigUserProfile() throws Exception {
         StringBuilder tmp = new StringBuilder();
-        for (int i = 0; i < getIntProperty(properties, "user.profile.max.size") * 1024 + 1; i++) {
+        for (int i = 0; i < props.getIntProperty("user.profile.max.size") * 1024 + 1; i++) {
             tmp.append('a');
         }
 
@@ -33,7 +32,7 @@ public class SaveProfileHandlerTest extends TestBase {
     @Test(expected = IllegalCommandException.class)
     public void testIllegalProfile() throws Exception {
         StringBuilder tmp = new StringBuilder();
-        for (int i = 0; i < getIntProperty(properties, "user.profile.max.size") * 1024; i++) {
+        for (int i = 0; i < props.getIntProperty("user.profile.max.size") * 1024; i++) {
             tmp.append('a');
         }
 

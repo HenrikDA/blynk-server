@@ -1,6 +1,7 @@
 package cc.blynk.server;
 
 import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -12,10 +13,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Properties;
-
-import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
 
 /**
  * The Blynk Project.
@@ -36,8 +33,8 @@ public class Server implements Runnable {
     protected Server() {
     }
 
-    public Server(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
-        this.port = getIntProperty(props, "server.default.port");
+    public Server(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+        this.port = props.getIntProperty("server.default.port");
         this.handlersHolder = new HandlersHolder(props, fileManager, userRegistry, sessionsHolder);
         this.serverHandlersInitializer = new ServerHandlersInitializer(handlersHolder, stats);
         log.info("Default server port {}.", port);

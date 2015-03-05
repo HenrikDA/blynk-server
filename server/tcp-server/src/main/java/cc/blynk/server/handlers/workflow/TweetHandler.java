@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.TweetMessage;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -9,8 +10,6 @@ import cc.blynk.server.model.auth.User;
 import cc.blynk.server.twitter.TwitterWrapper;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.Properties;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -26,8 +25,8 @@ public class TweetHandler extends BaseSimpleChannelInboundHandler<TweetMessage> 
 
     private final TwitterWrapper twitterWrapper;
 
-    public TweetHandler(Properties properties, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, TwitterWrapper twitterWrapper) {
-        super(properties, fileManager, userRegistry, sessionsHolder);
+    public TweetHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, TwitterWrapper twitterWrapper) {
+        super(props, fileManager, userRegistry, sessionsHolder);
         this.twitterWrapper = twitterWrapper;
     }
 

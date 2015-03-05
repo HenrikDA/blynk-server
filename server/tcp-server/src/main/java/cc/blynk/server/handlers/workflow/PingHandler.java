@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.PingMessage;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -11,7 +12,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
-import java.util.Properties;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -25,8 +25,8 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class PingHandler extends BaseSimpleChannelInboundHandler<PingMessage> {
 
-    public PingHandler(Properties properties,FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(properties, fileManager, userRegistry, sessionsHolder);
+    public PingHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, fileManager, userRegistry, sessionsHolder);
     }
 
     @Override

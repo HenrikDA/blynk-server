@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.GetTokenMessage;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -10,8 +11,6 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-
-import java.util.Properties;
 
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
@@ -24,8 +23,8 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
 @ChannelHandler.Sharable
 public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMessage> {
 
-    public GetTokenHandler(Properties properties, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        super(properties, fileManager, userRegistry, sessionsHolder);
+    public GetTokenHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+        super(props, fileManager, userRegistry, sessionsHolder);
     }
 
     private static void validateDashId(DashBoard[] userDashes, int dashBoardId, int msgId) {

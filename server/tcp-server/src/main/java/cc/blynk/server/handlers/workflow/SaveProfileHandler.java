@@ -1,6 +1,7 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.common.model.messages.protocol.SaveProfileMessage;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -12,11 +13,8 @@ import cc.blynk.server.utils.JsonParser;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.Properties;
-
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
-import static cc.blynk.common.utils.PropertiesUtil.getIntProperty;
 
 /**
  * The Blynk Project.
@@ -33,7 +31,7 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
     //I have to use volatile for reloadable props to be sure updated value will be visible by all threads
     private volatile int USER_PROFILE_MAX_SIZE;
 
-    public SaveProfileHandler(Properties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public SaveProfileHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(props, fileManager, userRegistry, sessionsHolder);
         updateProperties(props);
     }
@@ -68,10 +66,10 @@ public class SaveProfileHandler extends BaseSimpleChannelInboundHandler<SaveProf
     }
 
     @Override
-    public void updateProperties(Properties props) {
+    public void updateProperties(ServerProperties props) {
         super.updateProperties(props);
-        this.DASH_MAX_LIMIT = getIntProperty(props, "user.dashboard.max.limit");
-        this.USER_PROFILE_MAX_SIZE = getIntProperty(props, "user.profile.max.size") * 1024;
+        this.DASH_MAX_LIMIT = props.getIntProperty("user.dashboard.max.limit");
+        this.USER_PROFILE_MAX_SIZE = props.getIntProperty("user.profile.max.size") * 1024;
     }
 
 }

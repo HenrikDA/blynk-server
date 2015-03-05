@@ -1,7 +1,6 @@
 package cc.blynk.integration;
 
 import cc.blynk.client.Client;
-import cc.blynk.common.utils.PropertiesUtil;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
@@ -48,7 +47,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
         server = new Server(properties, fileManager, userRegistry, sessionsHolder, stats);
-        profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, PropertiesUtil.getIntProperty(properties, "profile.save.worker.period"), stats);
+        profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, properties.getIntProperty("profile.save.worker.period"), stats);
         new Thread(server).start();
         new Thread(profileSaverWorker).start();
 

@@ -36,7 +36,7 @@ public class FileManager {
         try {
             this.dataDir = createDatadir(dataFolder);
         } catch (RuntimeException e) {
-            this.dataDir = createDatadir(System.getProperty("java.io.tmpdir"));
+            this.dataDir = createDatadir(Paths.get(System.getProperty("java.io.tmpdir"), "blynk"));
         }
 
         log.info("Using data dir '{}'", dataDir);
@@ -44,11 +44,15 @@ public class FileManager {
 
     private static Path createDatadir(String dataFolder) {
         Path dataDir = Paths.get(dataFolder);
+        return createDatadir(dataDir);
+    }
+
+    private static Path createDatadir(Path dataDir) {
         try {
             Files.createDirectories(dataDir);
         } catch (IOException ioe) {
-            log.error("Error creating data folder '{}'", dataFolder);
-            throw new RuntimeException("Error creating data folder '" + dataFolder + "'");
+            log.error("Error creating data folder '{}'", dataDir);
+            throw new RuntimeException("Error creating data folder '" + dataDir + "'");
         }
         return dataDir;
     }

@@ -1,8 +1,6 @@
 package cc.blynk.server;
 
-import cc.blynk.common.utils.PropertiesUtil;
-
-import java.util.Properties;
+import cc.blynk.common.utils.ServerProperties;
 
 /**
  * The Blynk Project.
@@ -11,7 +9,7 @@ import java.util.Properties;
  */
 public class TestBase {
 
-    public Properties properties = PropertiesUtil.loadProperties("server.properties");
-    public String dataFolder = properties.getProperty("data.folder");
+    public ServerProperties props = new ServerProperties("server.properties");
+    public String dataFolder = props.getProperty("data.folder");
 
 }

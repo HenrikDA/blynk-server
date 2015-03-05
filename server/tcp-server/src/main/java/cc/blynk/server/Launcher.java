@@ -3,7 +3,7 @@ package cc.blynk.server;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
-import cc.blynk.common.utils.PropertiesUtil;
+import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
@@ -43,20 +43,20 @@ public class Launcher {
     private final Logger log = LogManager.getLogger(Launcher.class);
 
     public static void main(String[] args) throws Exception {
-        Properties serverProperties = PropertiesUtil.loadProperties(Config.SERVER_PROPERTIES_FILENAME);
+        ServerProperties serverProperties = new ServerProperties(Config.SERVER_PROPERTIES_FILENAME);
         //configurable folder for logs via property.
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
 
         new Launcher().launch(args, serverProperties);
     }
 
-    public void launch(String[] args, Properties serverProperties) throws Exception {
+    public void launch(String[] args, ServerProperties serverProperties) throws Exception {
         //just to init mapper on server start and not first access
         JsonParser.check();
 
         processArguments(args, serverProperties);
 
-        boolean sslEnabled = PropertiesUtil.getBoolProperty(serverProperties, "app.ssl.enabled");
+        boolean sslEnabled = serverProperties.getBoolProperty("app.ssl.enabled");
 
 
         FileManager fileManager = new FileManager(serverProperties.getProperty("data.folder"));
@@ -79,7 +79,7 @@ public class Launcher {
         new TimerWorker(userRegistry, sessionsHolder).start();
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager,
-                PropertiesUtil.getIntProperty(serverProperties, "profile.save.worker.period"), stats);
+                serverProperties.getIntProperty("profile.save.worker.period"), stats);
         profileSaverWorker.start();
 
         Server server = new Server(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
