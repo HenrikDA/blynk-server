@@ -27,7 +27,7 @@ public class User implements Serializable {
     //used mostly to understand if user profile was changed, all other fields update ignored as it is not so important
     private long lastModifiedTs;
 
-    private UserProfile userProfile = new UserProfile();
+    private UserProfile userProfile;
 
     private Map<Integer, String> dashTokens = new HashMap<>();
 
@@ -38,13 +38,14 @@ public class User implements Serializable {
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
+        this.userProfile = new UserProfile();
     }
 
     public User(String name, String pass) {
+        this();
         this.name = name;
         this.pass = pass;
         this.stats = new Stats();
-        this.lastModifiedTs = System.currentTimeMillis();
         initQuota();
     }
 
