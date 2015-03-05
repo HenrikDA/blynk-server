@@ -138,6 +138,8 @@ public class Client {
                 continue;
             }
 
+            log.trace("Message hex : {}", HexConvertor.messageToHex(msg));
+
             clientChannel.writeAndFlush(msg);
         }
     }
