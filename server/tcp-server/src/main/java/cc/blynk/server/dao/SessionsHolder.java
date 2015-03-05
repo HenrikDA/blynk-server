@@ -46,14 +46,16 @@ public class SessionsHolder {
         return userSession;
     }
 
-    //todo synchronized?
     private Session getSessionByUser(User user) {
         Session group = userSession.get(user);
         //only one side came
         if (group == null) {
             log.trace("Creating unique session for user: {}", user);
-            group = new Session();
-            userSession.put(user, group);
+            Session value = new Session();
+            group = userSession.putIfAbsent(user, value);
+            if (group == null) {
+                return value;
+            }
         }
 
         return group;
