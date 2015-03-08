@@ -15,14 +15,14 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  */
 public class TestClient {
 
-    public SimpleClientHandler responseMock;
+    private TestChannelInitializer channelHandler;
     private Channel clientChannel;
     private EventLoopGroup group;
     private int msgId = 0;
 
     public TestClient(String host, int port, TestChannelInitializer channelHandler) throws Exception {
         this.group = new NioEventLoopGroup();
-        this.responseMock = channelHandler.responseMock;
+        this.channelHandler = channelHandler;
 
         Bootstrap b = new Bootstrap();
         b.group(group).channel(NioSocketChannel.class).handler(channelHandler);
@@ -49,6 +49,15 @@ public class TestClient {
 
     public void reset() {
         msgId = 0;
+    }
+
+    public SimpleClientHandler getSimpleClientHandler() {
+        return channelHandler.responseMock;
+    }
+
+    public void replace(SimpleClientHandler simpleClientHandler) {
+        channelHandler.pipeline.removeLast();
+        channelHandler.pipeline.addLast(simpleClientHandler);
     }
 
     public void close() {

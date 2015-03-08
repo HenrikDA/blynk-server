@@ -14,6 +14,7 @@ import io.netty.channel.socket.SocketChannel;
 public class TestChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     public SimpleClientHandler responseMock;
+    public ChannelPipeline pipeline;
 
     public TestChannelInitializer(SimpleClientHandler responseMock) {
         this.responseMock = responseMock;
@@ -22,6 +23,8 @@ public class TestChannelInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
+        this.pipeline = pipeline;
+
         //process input
         pipeline.addLast(new ReplayingMessageDecoder());
         //process output

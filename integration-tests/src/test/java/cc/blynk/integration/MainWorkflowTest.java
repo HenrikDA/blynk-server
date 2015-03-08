@@ -59,16 +59,16 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testPingCommandWorks() throws Exception {
         ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
         clientPair.appClient.send("ping");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.PING, "")));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.hardwareClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(1, Command.PING, "")));
+        verify(clientPair.appClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(1, OK)));
     }
 
     @Test
     public void testPingCommandNoDevice() throws Exception {
         ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
         clientPair.appClient.send("ping");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.PING, "")));
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.hardwareClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(1, Command.PING, "")));
+        verify(clientPair.appClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(1, OK)));
 
         //closing hard channel
         clientPair.hardwareClient.close();
@@ -77,7 +77,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.hardwareClient.reset();
 
         clientPair.appClient.send("ping");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, DEVICE_NOT_IN_NETWORK)));
+        verify(clientPair.appClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(1, DEVICE_NOT_IN_NETWORK)));
     }
 
 
@@ -88,19 +88,19 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.send("saveProfile " + userProfile);
         clientPair.hardwareClient.send("tweet 123");
 
-        verify(clientPair.hardwareClient.responseMock, timeout(3000)).channelRead(any(), eq(produce(1, TWEET_EXCEPTION)));
+        verify(clientPair.hardwareClient.getSimpleClientHandler(), timeout(3000)).channelRead(any(), eq(produce(1, TWEET_EXCEPTION)));
     }
 
     @Test
     public void testAppSendAnyHardCommandAndBack() throws Exception {
         ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
         clientPair.appClient.send("hardware 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
 
         clientPair.hardwareClient.send("hardware 1 1");
 
         ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-        verify(clientPair.appClient.responseMock, timeout(500).times(2)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(clientPair.appClient.getSimpleClientHandler(), timeout(500).times(2)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Message> arguments = objectArgumentCaptor.getAllValues();
         assertEquals(produce(1, OK), arguments.get(0));
@@ -115,13 +115,13 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testAppSendWriteHardCommandNotGraphAndBack() throws Exception {
         ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
         clientPair.appClient.send("hardware ar 11");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "ar 11".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "ar 11".replaceAll(" ", "\0"))));
 
         String body = "aw 11 333";
         clientPair.hardwareClient.send("hardware " + body);
 
         ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-        verify(clientPair.appClient.responseMock, timeout(500).times(2)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(clientPair.appClient.getSimpleClientHandler(), timeout(500).times(2)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Message> arguments = objectArgumentCaptor.getAllValues();
         assertEquals(produce(1, OK), arguments.get(0));
@@ -137,19 +137,19 @@ public class MainWorkflowTest extends IntegrationBase {
         ClientPair clientPair = initAppAndHardPair("localhost", TEST_PORT);
         String userProfileWithGraph = readTestUserProfile();
         clientPair.appClient.send("saveProfile " + userProfileWithGraph);
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(clientPair.appClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(1, OK)));
 
-        reset(clientPair.appClient.responseMock);
+        reset(clientPair.appClient.getSimpleClientHandler());
         clientPair.appClient.reset();
 
         clientPair.appClient.send("hardware ar 8");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "ar 8".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "ar 8".replaceAll(" ", "\0"))));
 
         String body = "aw 8 333";
         clientPair.hardwareClient.send("hardware " + body);
 
         ArgumentCaptor<Message> objectArgumentCaptor = ArgumentCaptor.forClass(Message.class);
-        verify(clientPair.appClient.responseMock, timeout(500).times(2)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(clientPair.appClient.getSimpleClientHandler(), timeout(500).times(2)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Message> arguments = objectArgumentCaptor.getAllValues();
         assertEquals(produce(1, OK), arguments.get(0));
@@ -173,9 +173,9 @@ public class MainWorkflowTest extends IntegrationBase {
         System.out.println("Time : " + (System.currentTimeMillis() - start));
 
         for (int i = 1; i <= 100; i++) {
-            verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, OK)));
+            verify(clientPair.appClient.getSimpleClientHandler(), timeout(500)).channelRead(any(), eq(produce(i, OK)));
         }
-        verify(clientPair.hardwareClient.responseMock, timeout(500).times(100)).channelRead(any(), any());
+        verify(clientPair.hardwareClient.getSimpleClientHandler(), timeout(500).times(100)).channelRead(any(), any());
     }
 
 }

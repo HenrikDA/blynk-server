@@ -1,6 +1,7 @@
 package cc.blynk.integration;
 
 import cc.blynk.integration.model.ClientPair;
+import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.server.Server;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -50,8 +51,8 @@ public class SimplePerformanceTest extends IntegrationBase {
     @Test
     @Ignore
     public void testConnectAppAndHardware() throws Exception {
-        int clientNumber = 100;
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        int clientNumber = 150;
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
 
         ClientPair[] clients = new ClientPair[clientNumber];
         List<Future<ClientPair>> futures = new ArrayList<>();
@@ -59,14 +60,18 @@ public class SimplePerformanceTest extends IntegrationBase {
         long start = System.currentTimeMillis();
         for (int i = 0; i < clientNumber; i++) {
             Future<ClientPair> future = executorService.submit(
-                    () -> initAppAndHardPair("localhost", TEST_PORT, "dima" + counter.incrementAndGet() + "@mail.ua 1")
+                    () -> initAppAndHardPair("cloud.blynk.cc", 8442, "dima" + counter.incrementAndGet() + "@mail.ua 1")
             );
             futures.add(future);
         }
 
         int counter = 0;
         for (Future<ClientPair> clientPairFuture : futures) {
-            clients[counter++] = clientPairFuture.get();
+            clients[counter] = clientPairFuture.get();
+            //removing mocks, replace with real class
+            clients[counter].appClient.replace(new SimpleClientHandler());
+            clients[counter].hardwareClient.replace(new SimpleClientHandler());
+            counter++;
         }
 
         System.out.println(clientNumber + " client pairs created in " + (System.currentTimeMillis() - start));
@@ -76,12 +81,8 @@ public class SimplePerformanceTest extends IntegrationBase {
             for (ClientPair clientPair : clients) {
                 clientPair.appClient.send("hardware 1 1");
             }
-            sleep(100);
+            sleep(10);
         }
-        //System.out.println("1 command sent to all chnnels in " + (System.currentTimeMillis() - start));
-
-        //Thread.sleep(1100000000);
-
     }
 
 }
