@@ -2,14 +2,14 @@ package cc.blynk.common.stats;
 
 import cc.blynk.common.model.messages.ResponseMessage;
 import cc.blynk.common.model.messages.protocol.*;
-import com.codahale.metrics.Counter;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * The Blynk Project.
@@ -21,26 +21,25 @@ public class GlobalStats {
     public static final MetricRegistry metricRegistry = new MetricRegistry();
     private static final Logger log = LogManager.getLogger(GlobalStats.class);
     private Meter incomeMessages;
-    private SortedMap<String, Counter> specificCounters;
+    private Map<Class<?>, LongAdder> specificCounters;
 
     public GlobalStats() {
-        this.incomeMessages = metricRegistry.meter("incomeMessages");
+        this.incomeMessages = new Meter();
 
-        metricRegistry.counter(GetTokenMessage.class.getName());
-        metricRegistry.counter(HardwareMessage.class.getName());
-        metricRegistry.counter(LoadProfileMessage.class.getName());
-        metricRegistry.counter(LoginMessage.class.getName());
-        metricRegistry.counter(PingMessage.class.getName());
-        metricRegistry.counter(RegisterMessage.class.getName());
-        metricRegistry.counter(SaveProfileMessage.class.getName());
-        metricRegistry.counter(TweetMessage.class.getName());
-        metricRegistry.counter(ResponseMessage.class.getName());
-
-        this.specificCounters = metricRegistry.getCounters();
+        this.specificCounters = new HashMap<>();
+        specificCounters.put(GetTokenMessage.class, new LongAdder());
+        specificCounters.put(HardwareMessage.class, new LongAdder());
+        specificCounters.put(LoadProfileMessage.class, new LongAdder());
+        specificCounters.put(LoginMessage.class, new LongAdder());
+        specificCounters.put(PingMessage.class, new LongAdder());
+        specificCounters.put(RegisterMessage.class, new LongAdder());
+        specificCounters.put(SaveProfileMessage.class, new LongAdder());
+        specificCounters.put(TweetMessage.class, new LongAdder());
+        specificCounters.put(ResponseMessage.class, new LongAdder());
     }
 
     public void mark(Class<?> clazz) {
-        specificCounters.get(clazz.getName()).inc();
+        specificCounters.get(clazz).increment();
     }
 
     public void mark() {
@@ -49,8 +48,8 @@ public class GlobalStats {
 
     public void log() {
         log.debug("1 min rate : {}", incomeMessages.getOneMinuteRate() < 0.01 ? 0 : String.format("%.2f", incomeMessages.getFiveMinuteRate()));
-        for (Map.Entry<String, Counter> counterEntry : specificCounters.entrySet()) {
-            log.debug("{} : {}", counterEntry.getKey(), counterEntry.getValue().getCount());
+        for (Map.Entry<Class<?>, LongAdder> counterEntry : specificCounters.entrySet()) {
+            log.debug("{} : {}", counterEntry.getKey().getSimpleName(), counterEntry.getValue().sum());
         }
         log.debug("--------------------------------------------------------------------------------------");
     }
