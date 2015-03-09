@@ -33,6 +33,9 @@ public class FileManager {
     private Path dataDir;
 
     public FileManager(String dataFolder) {
+        if (dataFolder == null || "".equals(dataFolder)) {
+            dataFolder = Paths.get(System.getProperty("java.io.tmpdir"), "blynk").toString();
+        }
         try {
             this.dataDir = createDatadir(dataFolder);
         } catch (RuntimeException e) {
