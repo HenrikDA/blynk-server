@@ -85,14 +85,14 @@ public abstract class IntegrationBase {
                 .send("getToken 1");
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appResponseMock, timeout(500).times(4)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appResponseMock, timeout(2000).times(4)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         Message getTokenMessage = (Message) arguments.get(3);
         String token = getTokenMessage.body;
 
         hardClient.send("login " + token);
-        verify(hardResponseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
+        verify(hardResponseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
 
         reset(hardResponseMock);
         reset(appResponseMock);
