@@ -3,6 +3,7 @@ package cc.blynk.server.model.auth;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.exceptions.UserAlreadyLoggedIn;
+import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.internal.ConcurrentSet;

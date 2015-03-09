@@ -1,4 +1,4 @@
-package cc.blynk.server.model.auth;
+package cc.blynk.server.model.auth.nio;
 
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.internal.logging.InternalLogger;

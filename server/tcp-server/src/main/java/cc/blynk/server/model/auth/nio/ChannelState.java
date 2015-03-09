@@ -1,5 +1,6 @@
-package cc.blynk.server.model.auth;
+package cc.blynk.server.model.auth.nio;
 
+import cc.blynk.server.model.auth.User;
 import io.netty.channel.Channel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 

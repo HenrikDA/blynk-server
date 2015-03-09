@@ -5,7 +5,7 @@ import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.model.auth.ChannelServer;
+import cc.blynk.server.model.auth.nio.ChannelServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;

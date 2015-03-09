@@ -6,7 +6,6 @@ import cc.blynk.server.Server;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -49,9 +48,8 @@ public class SimplePerformanceTest extends IntegrationBase {
     }
 
     @Test
-    @Ignore
     public void testConnectAppAndHardware() throws Exception {
-        int clientNumber = 150;
+        int clientNumber = 10;
         ExecutorService executorService = Executors.newFixedThreadPool(4);
 
         ClientPair[] clients = new ClientPair[clientNumber];

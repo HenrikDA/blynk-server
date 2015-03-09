@@ -1,8 +1,8 @@
 package cc.blynk.server.dao;
 
-import cc.blynk.server.model.auth.ChannelState;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.Channel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

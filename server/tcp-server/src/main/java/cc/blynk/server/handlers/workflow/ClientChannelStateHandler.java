@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.workflow;
 
 import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.model.auth.ChannelState;
+import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
