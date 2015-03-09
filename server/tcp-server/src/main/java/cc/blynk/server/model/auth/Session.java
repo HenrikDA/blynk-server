@@ -43,22 +43,21 @@ public class Session {
         return futureList;
     }
 
-    //todo not sure, but netty processes same channel in same thread, so no sync
-    public void addAppChannel(Channel channel, int msgId) {
-        //if login from same channel again - do not allow.
-        if (appChannels.contains(channel)) {
-            throw new UserAlreadyLoggedIn("User already logged. Client problem. CHECK!", msgId);
+    public void addChannel(ChannelState channel, int msgId) {
+        if (channel.isHardwareChannel) {
+            addChannel(hardwareChannels, channel, msgId);
+        } else {
+            addChannel(appChannels, channel, msgId);
         }
-        appChannels.add(channel);
     }
 
     //todo not sure, but netty processes same channel in same thread, so no sync
-    public void addHardwareChannel(Channel channel, int msgId) {
+    private void addChannel(Set<Channel> channelSet, Channel channel, int msgId) {
         //if login from same channel again - do not allow.
-        if (hardwareChannels.contains(channel)) {
+        if (channelSet.contains(channel)) {
             throw new UserAlreadyLoggedIn("User already logged. Client problem. CHECK!", msgId);
         }
-        hardwareChannels.add(channel);
+        channelSet.add(channel);
     }
 
     public Set<Channel> getAppChannels() {
@@ -67,14 +66,6 @@ public class Session {
 
     public Set<Channel> getHardwareChannels() {
         return hardwareChannels;
-    }
-
-    public boolean isFromHardware(Channel channel) {
-        return hardwareChannels.contains(channel);
-    }
-
-    public boolean isFromApp(Channel channel) {
-        return appChannels.contains(channel);
     }
 
     public List<ChannelFuture> sendMessageToHardware(MessageBase message) {
@@ -87,14 +78,6 @@ public class Session {
         } else {
             appChannels.remove(channelServer);
         }
-    }
-
-    public int hardwareSize() {
-        return hardwareChannels.size();
-    }
-
-    public int appSize() {
-        return appChannels.size();
     }
 
 }

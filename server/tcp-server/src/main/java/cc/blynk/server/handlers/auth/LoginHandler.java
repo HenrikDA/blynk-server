@@ -73,7 +73,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> impl
         channelState.isHardwareChannel = true;
         channelState.user = user;
 
-        sessionsHolder.addHardwareChannelToGroup(user, channelState, messageId);
+        sessionsHolder.addChannelToGroup(user, channelState, messageId);
 
         log.info("Adding hardware channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }
@@ -93,7 +93,7 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> impl
         ChannelState channelState = (ChannelState) ctx.channel();
         channelState.user = user;
 
-        sessionsHolder.addAppChannelToGroup(user, ctx.channel(), messageId);
+        sessionsHolder.addChannelToGroup(user, channelState, messageId);
 
         log.info("Adding app channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }
