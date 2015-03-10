@@ -3,7 +3,7 @@ package cc.blynk.integration;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.integration.model.ClientPair;
-import cc.blynk.server.Server;
+import cc.blynk.server.core.plain.Server;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;

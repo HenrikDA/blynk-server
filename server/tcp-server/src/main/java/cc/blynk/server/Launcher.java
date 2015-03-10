@@ -4,6 +4,9 @@ import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.ServerProperties;
+import cc.blynk.server.core.BaseServer;
+import cc.blynk.server.core.plain.Server;
+import cc.blynk.server.core.ssl.SSLAppServer;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
@@ -84,16 +87,16 @@ public class Launcher {
 
         Server server = new Server(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
 
-        Server sslServer = null;
+        BaseServer sslServer = null;
         if (sslEnabled) {
-            sslServer = new SSLServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
+            sslServer = new SSLAppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
             log.info("SSL for app. enabled.");
             new Thread(sslServer).start();
         }
 
-        List<BaseSimpleChannelInboundHandler> baseHandlers = server.getHandlersHolder().getBaseHandlers();
+        List<BaseSimpleChannelInboundHandler> baseHandlers = server.getBaseHandlers();
         if (sslServer != null) {
-            baseHandlers.addAll(sslServer.getHandlersHolder().getBaseHandlers());
+            baseHandlers.addAll(sslServer.getBaseHandlers());
         }
 
         new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, baseHandlers)).start();
@@ -104,7 +107,7 @@ public class Launcher {
     }
 
     //todo test it works...
-    private void addShutDownHook(final Server server, final Server sslServer, final ProfileSaverWorker profileSaverWorker) {
+    private void addShutDownHook(final BaseServer server, final BaseServer sslServer, final ProfileSaverWorker profileSaverWorker) {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {

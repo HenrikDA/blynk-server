@@ -1,46 +1,38 @@
-package cc.blynk.server;
+package cc.blynk.server.core;
 
-import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.dao.FileManager;
-import cc.blynk.server.dao.SessionsHolder;
-import cc.blynk.server.dao.UserRegistry;
+import cc.blynk.server.core.plain.Server;
+import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.nio.ChannelServer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
- * Created on 2/1/2015.
+ * Created on 3/10/2015.
  */
-public class Server implements Runnable {
+public abstract class BaseServer implements Runnable {
 
-    private static final Logger log = LogManager.getLogger(Server.class);
+    protected static final Logger log = LogManager.getLogger(Server.class);
+    protected final int port;
+    private final int workerThreads;
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workerGroup;
 
-    protected int port;
-    protected HandlersHolder handlersHolder;
-    protected ServerHandlersInitializer serverHandlersInitializer;
-    protected int workerThreads;
 
-    protected EventLoopGroup bossGroup;
-    protected EventLoopGroup workerGroup;
-
-    protected Server(ServerProperties props) {
+    protected BaseServer(int port, ServerProperties props) {
+        this.port = port;
         this.workerThreads = props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors());
-    }
-
-    public Server(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
-        this(props);
-        this.port = props.getIntProperty("server.default.port");
-        this.handlersHolder = new HandlersHolder(props, fileManager, userRegistry, sessionsHolder);
-        this.serverHandlersInitializer = new ServerHandlersInitializer(handlersHolder, stats);
-        log.info("Default server port {}.", port);
     }
 
     @Override
@@ -51,7 +43,7 @@ public class Server implements Runnable {
         try {
             b.group(bossGroup, workerGroup)
                     .channel(ChannelServer.class)
-                    .childHandler(serverHandlersInitializer);
+                    .childHandler(getChannelInitializer());
 
             ChannelFuture channelFuture = b.bind(port).sync();
             Channel channel = channelFuture.channel();
@@ -64,12 +56,11 @@ public class Server implements Runnable {
         }
     }
 
-    public HandlersHolder getHandlersHolder() {
-        return handlersHolder;
-    }
+    public abstract List<BaseSimpleChannelInboundHandler> getBaseHandlers();
+
+    public abstract ChannelInitializer<SocketChannel> getChannelInitializer();
 
     public void stop() {
-        log.info("Shutting down default server...");
         try {
             workerGroup.shutdownGracefully().await();
             bossGroup.shutdownGracefully().await();
@@ -77,5 +68,4 @@ public class Server implements Runnable {
             log.error("Error waiting server shutdown.");
         }
     }
-
 }

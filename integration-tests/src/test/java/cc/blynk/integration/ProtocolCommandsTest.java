@@ -4,7 +4,7 @@ import cc.blynk.client.Client;
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.SimpleClientHandler;
 import cc.blynk.integration.model.TestChannelInitializer;
-import cc.blynk.server.Server;
+import cc.blynk.server.core.plain.Server;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
