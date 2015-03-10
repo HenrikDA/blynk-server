@@ -73,7 +73,7 @@ For every command client sends to the server it will receive a response back.
 For commands (register, login, saveProfile, hardware) that doesn't request any data back - 'response' (command field 0x00) message is returned.
 For commands (loadProfile, getToken, ping) that request data back - message will be returned with same command code. In case you sent 'loadProfile' you will receive 'loadProfile' command back with filled body.
 
-[Here is the class with all of the codes](https://bitbucket.org/theblynk/blynk-server/src/a3861b0e9bcb9823bbb6dd2722500c55e197bbe6/common/src/main/java/cc/blynk/common/enums/Response.java?at=master).
+[Here is the class with all of the codes](https://bitbucket.org/theblynk/blynk-server/src/251d68546b2ade6651c1393017bf3d1ec4787e6b/common/src/main/java/cc/blynk/common/enums/Response.java?at=master).
 Response message structure:
 
 	    	       BEFORE DECODE
@@ -159,7 +159,7 @@ Response message structure:
     RCT,
     TIMER
 
-[Or see the class itself](https://bitbucket.org/theblynk/blynk-server/src/b6db715d25732677605a5be1ec12677d3e4ce24c/server/tcp-server/src/main/java/cc/blynk/server/model/enums/WidgetType.java?at=master)
+[Or see the class itself](https://bitbucket.org/theblynk/blynk-server/src/251d68546b2ade6651c1393017bf3d1ec4787e6b/server/tcp-server/src/main/java/cc/blynk/server/model/enums/WidgetType.java?at=master)
 
 ## Widgets JSON structure
 
