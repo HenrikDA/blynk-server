@@ -18,6 +18,7 @@ public class SSLServer extends Server {
     private static final Logger log = LogManager.getLogger(SSLServer.class);
 
     public SSLServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+        super(props);
         this.port = props.getIntProperty("server.ssl.port");
         this.handlersHolder = new HandlersHolder(props, fileManager, userRegistry, sessionsHolder);
 

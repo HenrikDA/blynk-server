@@ -122,10 +122,12 @@ public class Launcher {
         Options options = new Options();
         options.addOption("port", true, "Server port.");
         options.addOption("sslPort", true, "Server SSL port.");
+        options.addOption("workerThreads", true, "Server worker threads.");
         CommandLine cmd = new BasicParser().parse(options, args);
 
         String portString = cmd.getOptionValue("port");
         String sslPortString = cmd.getOptionValue("sslPort");
+        String workerThreadsString = cmd.getOptionValue("workerThreads");
 
         if (portString != null) {
             ParseUtil.parseInt(portString);
@@ -134,6 +136,10 @@ public class Launcher {
         if (sslPortString != null) {
             ParseUtil.parseInt(sslPortString);
             serverProperties.put("server.ssl.port", sslPortString);
+        }
+        if (workerThreadsString != null) {
+            ParseUtil.parseInt(workerThreadsString);
+            serverProperties.put("server.worker.threads", workerThreadsString);
         }
     }
 

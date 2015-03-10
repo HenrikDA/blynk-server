@@ -81,6 +81,13 @@ public class ServerProperties extends Properties {
         return ParseUtil.parseInt(getProperty(propertyName));
     }
 
+    public int getIntProperty(String propertyName, int defaultValue) {
+        if (getProperty(propertyName) == null || "".equals(getProperty(propertyName))) {
+            return defaultValue;
+        }
+        return ParseUtil.parseInt(getProperty(propertyName));
+    }
+
     public boolean getBoolProperty(String propertyName) {
         return Boolean.parseBoolean(getProperty(propertyName));
     }

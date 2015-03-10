@@ -26,14 +26,17 @@ public class Server implements Runnable {
     protected int port;
     protected HandlersHolder handlersHolder;
     protected ServerHandlersInitializer serverHandlersInitializer;
+    protected int workerThreads;
 
     protected EventLoopGroup bossGroup;
     protected EventLoopGroup workerGroup;
 
-    protected Server() {
+    protected Server(ServerProperties props) {
+        this.workerThreads = props.getIntProperty("server.worker.threads", Runtime.getRuntime().availableProcessors());
     }
 
     public Server(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+        this(props);
         this.port = props.getIntProperty("server.default.port");
         this.handlersHolder = new HandlersHolder(props, fileManager, userRegistry, sessionsHolder);
         this.serverHandlersInitializer = new ServerHandlersInitializer(handlersHolder, stats);
@@ -43,7 +46,7 @@ public class Server implements Runnable {
     @Override
     public void run() {
         this.bossGroup = new NioEventLoopGroup(1);
-        this.workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
+        this.workerGroup = new NioEventLoopGroup(workerThreads);
         ServerBootstrap b = new ServerBootstrap();
         try {
             b.group(bossGroup, workerGroup)
