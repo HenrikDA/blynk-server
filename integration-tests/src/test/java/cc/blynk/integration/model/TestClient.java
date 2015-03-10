@@ -32,7 +32,9 @@ public class TestClient {
     }
 
     public TestClient send(String line) {
-        clientChannel.writeAndFlush(Client.produceMessageBaseOnUserInput(line, ++msgId));
+        if (clientChannel.isWritable()) {
+            clientChannel.writeAndFlush(Client.produceMessageBaseOnUserInput(line, ++msgId));
+        }
         return this;
     }
 
