@@ -2,10 +2,6 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
-import cc.blynk.server.Server;
-import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,25 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimplePerformanceTest extends IntegrationBase {
 
     final AtomicInteger counter = new AtomicInteger();
-    private Server server;
-
-    @Before
-    public void init() throws Exception {
-        initServerStructures();
-
-        FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
-
-        server = new Server(properties, fileManager, userRegistry, sessionsHolder, stats);
-        new Thread(server).start();
-
-        //wait util server start.
-        Thread.sleep(500);
-    }
-
-    @After
-    public void shutdown() {
-        server.stop();
-    }
 
     @Test
     @Ignore
