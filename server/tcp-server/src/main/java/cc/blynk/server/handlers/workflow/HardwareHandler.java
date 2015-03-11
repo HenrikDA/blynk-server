@@ -12,9 +12,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.List;
 
-import static cc.blynk.common.enums.Response.OK;
-import static cc.blynk.common.model.messages.MessageFactory.produce;
-
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -46,7 +43,6 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
             futures = Session.sendMessageTo(message.updateMessageBody(body), session.getAppChannels());
         } else {
             futures = Session.sendMessageTo(message, session.getHardwareChannels());
-            ctx.channel().writeAndFlush(produce(message.id, OK));
         }
 
     }
