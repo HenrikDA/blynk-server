@@ -22,26 +22,26 @@ public class ClientLauncher {
 
     protected static final String DEFAULT_HOST = "localhost";
     protected static final int DEFAULT_HARDWARE_PORT = 8442;
-    protected static final int DEFAULT_APPLICATION_SSL_PORT = 8443;
+    protected static final int DEFAULT_APPLICATION_PORT = 8443;
 
     private static final Options options = new Options();
 
     static {
         options.addOption("host", true, "Server host or ip.")
-               .addOption("hardPort", true, "Hardware server port.")
-               .addOption("appPort", true, "Application server ssl port.")
+               .addOption("port", true, "Port client should connect to.")
                .addOption("mode", true, "Client mode. 'hardware' or 'app'.");
     }
 
     public static void main(String[] args) throws ParseException {
         CommandLine cmd = new BasicParser().parse(options, args);
 
-        String host = cmd.getOptionValue("host", DEFAULT_HOST);
-        int hardPort = ParseUtil.parseInt(cmd.getOptionValue("hardPort", String.valueOf(DEFAULT_HARDWARE_PORT)));
-        int appPort = ParseUtil.parseInt(cmd.getOptionValue("appPort", String.valueOf(DEFAULT_APPLICATION_SSL_PORT)));
         ClientMode mode = ClientMode.parse(cmd.getOptionValue("mode", ClientMode.HARDWARE.name()));
+        String host = cmd.getOptionValue("host", DEFAULT_HOST);
+        int port = ParseUtil.parseInt(cmd.getOptionValue("port",
+            (mode == ClientMode.APP ? String.valueOf(DEFAULT_APPLICATION_PORT) : String.valueOf(DEFAULT_HARDWARE_PORT)))
+        );
 
-        BaseClient baseClient = mode == ClientMode.APP ? new AppClient(host, appPort) : new HardwareClient(host, hardPort);
+        BaseClient baseClient = mode == ClientMode.APP ? new AppClient(host, port) : new HardwareClient(host, port);
 
         baseClient.start(new BufferedReader(new InputStreamReader(System.in)));
     }
