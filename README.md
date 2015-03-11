@@ -179,14 +179,14 @@ Server guarantees that commands will be processed in same order in which they we
 
 ## GETTING STARTED
 
-+ Run the server
++ Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
-        java -jar server-${PUT_LATEST_VERSION_HERE}.jar -port 8080
+        java -jar server-${PUT_LATEST_VERSION_HERE}.jar
 
 
-+ Run the client (simulates smartphone client, app client should always connect to SSL port)
++ Run the application client
 
-        java -jar client-${PUT_LATEST_VERSION_HERE}.jar -host localhost -sslPort 8443 -mode app
+        java -jar client-${PUT_LATEST_VERSION_HERE}.jar -mode app -host localhost -port 8443
 
 
 + In this client: register new user and/or login with the same credentials
@@ -213,7 +213,7 @@ Where `33bcbe756b994a6768494d55d1543c74` is your Auth Token.
 
 + Start another client (simulates hardware (e.g Arduino)) and use received token to login
 
-    	java -jar client.jar -host localhost -port 8080
+    	java -jar client-${PUT_LATEST_VERSION_HERE}.jar -mode hardware -host localhost -port 8442
     	login 33bcbe756b994a6768494d55d1543c74
    
 
