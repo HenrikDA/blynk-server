@@ -32,7 +32,7 @@ public class EMailValidationTest {
         };
 
         for (String email : mailList) {
-            assertTrue(EMailValidator.isValid(email));
+            assertTrue(email, EMailValidator.isValid(email));
         }
     }
 
@@ -51,7 +51,7 @@ public class EMailValidationTest {
         };
 
         for (String email : mailList) {
-            assertFalse(EMailValidator.isValid(email));
+            assertFalse(email, EMailValidator.isValid(email));
         }
     }
 
