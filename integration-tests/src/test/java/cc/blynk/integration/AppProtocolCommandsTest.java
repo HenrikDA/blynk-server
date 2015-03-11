@@ -84,8 +84,8 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
 
     @Test
-    public void testInvalidToken() throws Exception {
-        makeCommands("login dasdsadasdasdasdasdas").check(produce(1, INVALID_TOKEN));
+    public void testIllegalCommandForHardLoginOnAppChannel() throws Exception {
+        makeCommands("login dasdsadasdasdasdasdas").check(produce(1, ILLEGAL_COMMAND));
     }
 
     @Test
@@ -138,10 +138,10 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
-    public void testTryHardLoginWithoutToken() throws Exception {
+    public void testTryHardLoginInAppChannel() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login adsadasdasdasdas").check(produce(1, INVALID_TOKEN));
+        makeCommands("login adsadasdasdasdas").check(produce(1, ILLEGAL_COMMAND));
     }
 
 

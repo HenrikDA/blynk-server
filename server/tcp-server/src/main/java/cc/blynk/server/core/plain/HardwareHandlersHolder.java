@@ -5,7 +5,7 @@ import cc.blynk.server.core.BaseHandlersHolder;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.handlers.auth.LoginHandler;
+import cc.blynk.server.handlers.auth.HardwareLoginHandler;
 import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.handlers.workflow.HardwareHandler;
 import cc.blynk.server.handlers.workflow.PingHandler;
@@ -23,14 +23,15 @@ import java.util.List;
  */
 class HardwareHandlersHolder implements BaseHandlersHolder {
 
+    //todo cover with tests.
     //sharable handlers
-    private final LoginHandler loginHandler;
+    private final HardwareLoginHandler hardwareLoginHandler;
     private final HardwareHandler hardwareHandler;
     private final PingHandler pingHandler;
     private final TweetHandler tweetHandler;
 
     public HardwareHandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
-        this.loginHandler = new LoginHandler(fileManager, userRegistry, sessionsHolder);
+        this.hardwareLoginHandler = new HardwareLoginHandler(fileManager, userRegistry, sessionsHolder);
         this.hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
         this.pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
         this.tweetHandler = new TweetHandler(props, fileManager, userRegistry, sessionsHolder, new TwitterWrapper());
@@ -51,7 +52,7 @@ class HardwareHandlersHolder implements BaseHandlersHolder {
     public List<ChannelHandler> getAllHandlers() {
         return new ArrayList<ChannelHandler>() {
            {
-               add(loginHandler);
+               add(hardwareLoginHandler);
                add(hardwareHandler);
                add(pingHandler);
                add(tweetHandler);

@@ -6,7 +6,6 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.exceptions.InvalidTokenException;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
 import cc.blynk.server.exceptions.UserNotRegistered;
 import cc.blynk.server.model.auth.User;
@@ -28,13 +27,13 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
+public class AppLoginHandler extends SimpleChannelInboundHandler<LoginMessage> implements DefaultExceptionHandler {
 
     protected final FileManager fileManager;
     protected final UserRegistry userRegistry;
     protected final SessionsHolder sessionsHolder;
 
-    public LoginHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public AppLoginHandler(FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.fileManager = fileManager;
         this.userRegistry = userRegistry;
         this.sessionsHolder = sessionsHolder;
@@ -44,38 +43,13 @@ public class LoginHandler extends SimpleChannelInboundHandler<LoginMessage> impl
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
         String[] messageParts = message.body.split(" ", 2);
 
-        if (messageParts.length == 0) {
-            throw new IllegalCommandException("Wrong income message format.", message.id);
-        }
-
-        if (messageParts.length == 1) {
-            hardwareLogin(ctx, message.id, messageParts[0]);
-        } else if (messageParts.length == 2) {
+        if (messageParts.length == 2) {
             appLogin(ctx, message.id, messageParts[0], messageParts[1]);
+        } else {
+           throw new IllegalCommandException("Wrong income message format.", message.id);
         }
-
 
         ctx.writeAndFlush(produce(message.id, OK));
-    }
-
-    ///todo optimize/simplify
-    private void hardwareLogin(ChannelHandlerContext ctx, int messageId, String token) {
-        User user = userRegistry.getUserByToken(token);
-
-        if (user == null) {
-            throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), messageId);
-        }
-
-        Integer dashId = UserRegistry.getDashIdByToken(user, token);
-
-        ChannelState channelState = (ChannelState) ctx.channel();
-        channelState.dashId = dashId;
-        channelState.isHardwareChannel = true;
-        channelState.user = user;
-
-        sessionsHolder.addChannelToGroup(user, channelState, messageId);
-
-        log.info("Adding hardware channel with id {} to userGroup {}.", ctx.channel(), user.getName());
     }
 
     private void appLogin(ChannelHandlerContext ctx, int messageId, String username, String pass) {

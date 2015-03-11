@@ -57,6 +57,11 @@ public class HardProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
+    public void testInvalidCommandAppLoginOnHardChannel() throws Exception {
+        makeCommands("login dima@dima.ua 1").check(produce(1, ILLEGAL_COMMAND));
+    }
+
+    @Test
     public void testNoRegisterHandlerNoResponse() throws Exception {
         TestHardClient hardClient = new TestHardClient(host, hardPort);
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine()).thenReturn("register dima@dima.ua 1");
