@@ -47,7 +47,7 @@ public class GlobalStats {
     }
 
     public void log() {
-        log.debug("1 min rate : {}", incomeMessages.getOneMinuteRate() < 0.01 ? 0 : String.format("%.2f", incomeMessages.getFiveMinuteRate()));
+        log.debug("1 min rate : {}", incomeMessages.getOneMinuteRate() < 0.01 ? 0 : String.format("%.2f", incomeMessages.getOneMinuteRate()));
         for (Map.Entry<Class<?>, LongAdder> counterEntry : specificCounters.entrySet()) {
             log.debug("{} : {}", counterEntry.getKey().getSimpleName(), counterEntry.getValue().sum());
         }
