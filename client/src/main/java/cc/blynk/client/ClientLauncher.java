@@ -1,6 +1,7 @@
 package cc.blynk.client;
 
 import cc.blynk.client.core.AppClient;
+import cc.blynk.client.core.BaseClient;
 import cc.blynk.client.core.HardwareClient;
 import cc.blynk.client.enums.ClientMode;
 import cc.blynk.common.utils.ParseUtil;

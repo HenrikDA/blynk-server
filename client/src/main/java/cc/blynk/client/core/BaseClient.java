@@ -1,5 +1,7 @@
-package cc.blynk.client;
+package cc.blynk.client.core;
 
+import cc.blynk.client.CommandParser;
+import cc.blynk.client.HexConvertor;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import io.netty.bootstrap.Bootstrap;
