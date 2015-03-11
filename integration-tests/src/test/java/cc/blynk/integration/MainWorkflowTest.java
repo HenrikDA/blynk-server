@@ -8,6 +8,7 @@ import cc.blynk.server.core.ssl.SSLAppServer;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -170,6 +171,20 @@ public class MainWorkflowTest extends IntegrationBase {
 
         for (int i = 0; i < 100; i++) {
             clientPair.appClient.send("hardware 1 1");
+        }
+
+        verify(clientPair.hardwareClient.responseMock, timeout(500).times(100)).channelRead(any(), any());
+    }
+
+    @Test
+    //todo should be fixed.
+    @Ignore
+    public void testTryReachQuotaLimit() throws Exception {
+        ClientPair clientPair = initAppAndHardPair();
+
+        for (int i = 0; i < 200; i++) {
+            clientPair.appClient.send("hardware 1 1");
+            sleep(10);
         }
 
         verify(clientPair.hardwareClient.responseMock, timeout(500).times(100)).channelRead(any(), any());

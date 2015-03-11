@@ -8,7 +8,6 @@ import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.UserNotAuthenticated;
-import cc.blynk.server.exceptions.UserQuotaLimitExceededException;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.auth.nio.ChannelState;
 import io.netty.channel.ChannelHandlerContext;
@@ -55,17 +54,17 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                     throw new UserNotAuthenticated("User not logged.", imsg.id);
                 }
                 if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
-                    throw new UserQuotaLimitExceededException("Quota limit exceeded.", imsg.id);
+                    //throw new UserQuotaLimitExceededException("Quota limit exceeded.", imsg.id);
+                    //this is special case. discard request in case of high request rate.
+                    //todo avoid printing this every time???
+                    log.warn("User '{}' had exceeded {} rec/sec limit.", user.getName(), USER_QUOTA_LIMIT);
+                    return;
                 }
                 user.incrStat(imsg.command);
 
                 ThreadContext.put("user", user.getName());
                 messageReceived(ctx, user, imsg);
                 ThreadContext.clearMap();
-            } catch (UserQuotaLimitExceededException quotaE) {
-                //this is special case. do not reply anything. in case of high request rate.
-                log.error("User '{}' had exceeded {} rec/sec limit.", user.getName(), USER_QUOTA_LIMIT);
-                ctx.close();
             } catch (BaseServerException cause) {
                 if (user != null) {
                     user.incrException(cause.errorCode);
