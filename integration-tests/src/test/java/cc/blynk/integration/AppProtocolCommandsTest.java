@@ -1,21 +1,16 @@
 package cc.blynk.integration;
 
-import cc.blynk.client.Client;
 import cc.blynk.integration.model.MockHolder;
-import cc.blynk.integration.model.SimpleClientHandler;
-import cc.blynk.integration.model.TestChannelInitializer;
-import cc.blynk.server.core.plain.Server;
+import cc.blynk.integration.model.TestAppClient;
+import cc.blynk.server.core.plain.HardwareServer;
+import cc.blynk.server.core.ssl.SSLAppServer;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.OngoingStubbing;
-
-import java.util.Random;
 
 import static cc.blynk.common.enums.Command.GET_TOKEN;
 import static cc.blynk.common.enums.Command.LOAD_PROFILE;
@@ -34,11 +29,10 @@ import static org.mockito.Mockito.*;
  *
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ProtocolCommandsTest extends IntegrationBase {
+public class AppProtocolCommandsTest extends IntegrationBase {
 
-    private Server server;
-
-    private ProfileSaverWorker profileSaverWorker;
+    private SSLAppServer appServer;
+    private HardwareServer hardServer;
 
     @Before
     public void init() throws Exception {
@@ -46,28 +40,24 @@ public class ProtocolCommandsTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        server = new Server(properties, fileManager, userRegistry, sessionsHolder, stats);
-        profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, properties.getIntProperty("profile.save.worker.period"), stats);
-        new Thread(server).start();
+        appServer = new SSLAppServer(properties, fileManager, userRegistry, sessionsHolder, stats);
+        hardServer = new HardwareServer(properties, fileManager, userRegistry, sessionsHolder, stats);
+
+        ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, properties.getIntProperty("profile.save.worker.period"), stats);
+        new Thread(appServer).start();
         new Thread(profileSaverWorker).start();
 
-        //wait util server start.
+        //wait util servers start.
         Thread.sleep(500);
     }
 
+    /*
     @After
     public void shutdown() {
-        server.stop();
+        appServer.stop();
+        hardServer.stop();
     }
-
-    @Test
-    public void testQuit() throws Exception {
-        SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
-        Client client = new Client("localhost", TEST_PORT, new Random());
-        when(bufferedReader.readLine()).thenReturn("quit");
-        client.start(new TestChannelInitializer(responseMock), bufferedReader);
-        verify(responseMock, never()).channelRead(any(), any());
-    }
+    */
 
     @Test
     //all commands together cause all operations requires register and then login =(.
@@ -184,8 +174,7 @@ public class ProtocolCommandsTest extends IntegrationBase {
      * 5) Closing socket.
      */
     private MockHolder makeCommands(String... commands) throws Exception {
-        SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
-        Client client = new Client("localhost", TEST_PORT, random);
+        TestAppClient appClient = new TestAppClient(host, appPort);
 
         when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
 
@@ -196,14 +185,14 @@ public class ProtocolCommandsTest extends IntegrationBase {
         }
 
         ongoingStubbing.thenAnswer(invocation -> {
-            sleep(200);
+            sleep(500);
             return "quit";
         });
 
-        client.start(new TestChannelInitializer(responseMock), bufferedReader);
+        appClient.start(bufferedReader);
 
-        verify(responseMock, times(commands.length)).channelRead(any(), any());
-        return new MockHolder(responseMock);
+        verify(appClient.responseMock, times(commands.length)).channelRead(any(), any());
+        return new MockHolder(appClient.responseMock);
     }
 
 }

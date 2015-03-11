@@ -1,7 +1,7 @@
 package cc.blynk.server.core;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.core.plain.Server;
+import cc.blynk.server.core.plain.HardwareServer;
 import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
 import cc.blynk.server.model.auth.nio.ChannelServer;
 import io.netty.bootstrap.ServerBootstrap;
@@ -23,7 +23,7 @@ import java.util.List;
  */
 public abstract class BaseServer implements Runnable {
 
-    protected static final Logger log = LogManager.getLogger(Server.class);
+    protected static final Logger log = LogManager.getLogger(HardwareServer.class);
     protected final int port;
     private final int workerThreads;
     private EventLoopGroup bossGroup;

@@ -18,15 +18,15 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class Server extends BaseServer {
+public class HardwareServer extends BaseServer {
 
     private final BaseHandlersHolder handlersHolder;
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public Server(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+    public HardwareServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
         super(props.getIntProperty("server.default.port"), props);
 
-        this.handlersHolder = new HandlersHolder(props, fileManager, userRegistry, sessionsHolder);
+        this.handlersHolder = new HardwareHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
         this.channelInitializer = new HardwareChannelInitializer(sessionsHolder, stats, handlersHolder);
 
         log.info("Default server port {}.", port);

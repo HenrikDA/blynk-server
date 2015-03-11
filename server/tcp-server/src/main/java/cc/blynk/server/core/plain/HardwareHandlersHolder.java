@@ -21,7 +21,7 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/27/2015.
  */
-class HandlersHolder implements BaseHandlersHolder {
+class HardwareHandlersHolder implements BaseHandlersHolder {
 
     //sharable handlers
     private final LoginHandler loginHandler;
@@ -29,7 +29,7 @@ class HandlersHolder implements BaseHandlersHolder {
     private final PingHandler pingHandler;
     private final TweetHandler tweetHandler;
 
-    public HandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public HardwareHandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.loginHandler = new LoginHandler(fileManager, userRegistry, sessionsHolder);
         this.hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
         this.pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);

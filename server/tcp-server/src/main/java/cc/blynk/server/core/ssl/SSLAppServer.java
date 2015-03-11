@@ -14,6 +14,7 @@ import io.netty.handler.ssl.SslContext;
 
 import javax.net.ssl.SSLException;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -33,18 +34,31 @@ public class SSLAppServer extends BaseServer {
 
         this.channelInitializer = new SSLAppChannelInitializer(sessionsHolder, stats, handlersHolder,
                 initSslContext(
-                        new File(props.getProperty("server.ssl.cert")),
-                        new File(props.getProperty("server.ssl.key")),
+                        props.getProperty("server.ssl.cert"),
+                        props.getProperty("server.ssl.key"),
                         props.getProperty("server.ssl.key.pass"))
         );
 
         log.info("SSL server port {}.", port);
     }
 
-    public static SslContext initSslContext(File serverCert, File serverKey, String keyPass) {
+    public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String keyPass) {
         try {
+            File serverCert = new File(serverCertPath);
+            if (!serverCert.exists()) {
+                serverCert = new File(SSLAppServer.class.getResource(serverCertPath).toURI());
+            }
+
+            File serverKey = new File(serverKeyPath);
+            if (!serverKey.exists()) {
+                serverKey = new File(SSLAppServer.class.getResource(serverKeyPath).toURI());
+            }
+
             //todo this is self-signed cerf. just to simplify for now for testing.
             return SslContext.newServerContext(serverCert, serverKey, keyPass);
+        } catch (URISyntaxException e) {
+            log.error("Error initializing certs path. Reason : {} ", e.getMessage());
+            System.exit(0);
         } catch (SSLException e) {
             log.error("Error initializing ssl context. Reason : {}", e.getMessage());
             System.exit(0);

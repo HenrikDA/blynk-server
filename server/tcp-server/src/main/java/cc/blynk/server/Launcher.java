@@ -5,7 +5,7 @@ import cc.blynk.common.utils.Config;
 import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BaseServer;
-import cc.blynk.server.core.plain.Server;
+import cc.blynk.server.core.plain.HardwareServer;
 import cc.blynk.server.core.ssl.SSLAppServer;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
@@ -85,7 +85,7 @@ public class Launcher {
                 serverProperties.getIntProperty("profile.save.worker.period"), stats);
         profileSaverWorker.start();
 
-        Server server = new Server(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
+        HardwareServer hardwareServer = new HardwareServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
 
         BaseServer sslServer = null;
         if (sslEnabled) {
@@ -94,16 +94,16 @@ public class Launcher {
             new Thread(sslServer).start();
         }
 
-        List<BaseSimpleChannelInboundHandler> baseHandlers = server.getBaseHandlers();
+        List<BaseSimpleChannelInboundHandler> baseHandlers = hardwareServer.getBaseHandlers();
         if (sslServer != null) {
             baseHandlers.addAll(sslServer.getBaseHandlers());
         }
 
         new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, baseHandlers)).start();
 
-        new Thread(server).start();
+        new Thread(hardwareServer).start();
 
-        addShutDownHook(server, sslServer, profileSaverWorker);
+        addShutDownHook(hardwareServer, sslServer, profileSaverWorker);
     }
 
     //todo test it works...

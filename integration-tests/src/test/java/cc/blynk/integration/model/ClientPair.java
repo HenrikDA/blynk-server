@@ -7,11 +7,11 @@ package cc.blynk.integration.model;
  */
 public class ClientPair {
 
-    public TestClient appClient;
+    public TestAppClient appClient;
 
-    public TestClient hardwareClient;
+    public TestHardClient hardwareClient;
 
-    public ClientPair(TestClient appClient, TestClient hardwareClient) {
+    public ClientPair(TestAppClient appClient, TestHardClient hardwareClient) {
         this.appClient = appClient;
         this.hardwareClient = hardwareClient;
     }

@@ -19,7 +19,7 @@
                     <finalName>client-${project.version}</finalName>
                     <archive>
                         <manifest>
-                            <mainClass>cc.blynk.client.Client</mainClass>
+                            <mainClass>cc.blynk.client.ClientLauncher</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

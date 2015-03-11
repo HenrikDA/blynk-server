@@ -4,18 +4,17 @@ import cc.blynk.common.model.messages.Message;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.integration.model.ClientPair;
-import cc.blynk.integration.model.SimpleClientHandler;
-import cc.blynk.integration.model.TestChannelInitializer;
-import cc.blynk.integration.model.TestClient;
+import cc.blynk.integration.model.TestAppClient;
+import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.JsonParser;
+import org.junit.BeforeClass;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -26,7 +25,8 @@ import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 /**
  * The Blynk Project.
@@ -35,27 +35,31 @@ import static org.mockito.Mockito.*;
  */
 public abstract class IntegrationBase {
 
-    public static final int TEST_PORT = 9090;
-
+    public static ServerProperties properties;
+    public static int appPort;
+    public static int hardPort;
+    public static String host;
     @Mock
     public Random random;
-
     @Mock
     public Random random2;
-
     @Mock
     public BufferedReader bufferedReader;
-
     @Mock
     public BufferedReader bufferedReader2;
-
-    public ServerProperties properties = new ServerProperties();
-
     public FileManager fileManager;
     public SessionsHolder sessionsHolder;
     public UserRegistry userRegistry;
     public GlobalStats stats;
     public JedisWrapper jedisWrapper;
+
+    @BeforeClass
+    public static void initBase() {
+        properties = new ServerProperties();
+        appPort = properties.getIntProperty("server.ssl.port");
+        hardPort = properties.getIntProperty("server.default.port");
+        host = "localhost";
+    }
 
     public static void sleep(int ms) {
         try {
@@ -66,16 +70,17 @@ public abstract class IntegrationBase {
 
     }
 
-    public static ClientPair initAppAndHardPair(String host, int port) throws Exception {
-        return initAppAndHardPair(host, port, "dima@mail.ua 1");
+    public static ClientPair initAppAndHardPair() throws Exception {
+        return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1");
     }
 
-    public static ClientPair initAppAndHardPair(String host, int port, String user) throws Exception {
-        SimpleClientHandler appResponseMock = Mockito.mock(SimpleClientHandler.class);
-        SimpleClientHandler hardResponseMock = Mockito.mock(SimpleClientHandler.class);
+    public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort) throws Exception {
+        return initAppAndHardPair(host, appPort, hardPort, "dima@mail.ua 1");
+    }
 
-        TestClient appClient = new TestClient(host, port, new TestChannelInitializer(appResponseMock));
-        TestClient hardClient = new TestClient(host, port, new TestChannelInitializer(hardResponseMock));
+    public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user) throws Exception {
+        TestAppClient appClient = new TestAppClient(host, appPort);
+        TestHardClient hardClient = new TestHardClient(host, hardPort);
 
         String userProfileString = readTestUserProfile();
 
@@ -85,17 +90,15 @@ public abstract class IntegrationBase {
                 .send("getToken 1");
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appResponseMock, timeout(2000).times(4)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appClient.responseMock, timeout(2000).times(4)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
         Message getTokenMessage = (Message) arguments.get(3);
         String token = getTokenMessage.body;
 
         hardClient.send("login " + token);
-        verify(hardResponseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
+        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
 
-        reset(hardResponseMock);
-        reset(appResponseMock);
         appClient.reset();
         hardClient.reset();
 

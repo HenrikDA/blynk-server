@@ -37,7 +37,7 @@ public class SimplePerformanceTest extends IntegrationBase {
         long start = System.currentTimeMillis();
         for (int i = 0; i < clientNumber; i++) {
             Future<ClientPair> future = executorService.submit(
-                    () -> initAppAndHardPair("cloud.blynk.cc", 8442, "dima" + counter.incrementAndGet() + "@mail.ua 1")
+                    () -> initAppAndHardPair("cloud.blynk.cc", 8443, 8442, "dima" + counter.incrementAndGet() + "@mail.ua 1")
             );
             futures.add(future);
         }
