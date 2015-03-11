@@ -19,7 +19,6 @@ import org.mockito.Mock;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Random;
 
 import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -39,18 +38,22 @@ public abstract class IntegrationBase {
     public static int appPort;
     public static int hardPort;
     public static String host;
-    @Mock
-    public Random random;
-    @Mock
-    public Random random2;
+
+
     @Mock
     public BufferedReader bufferedReader;
+
     @Mock
     public BufferedReader bufferedReader2;
+
     public FileManager fileManager;
+
     public SessionsHolder sessionsHolder;
+
     public UserRegistry userRegistry;
+
     public GlobalStats stats;
+
     public JedisWrapper jedisWrapper;
 
     @BeforeClass
@@ -70,17 +73,26 @@ public abstract class IntegrationBase {
 
     }
 
-    public static ClientPair initAppAndHardPair() throws Exception {
+    public static String readTestUserProfile(String fileName) {
+        InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/" + fileName);
+        UserProfile userProfile = JsonParser.parseProfile(is);
+        return userProfile.toString();
+    }
+
+    public static String readTestUserProfile() {
+        return readTestUserProfile("user_profile_json.txt");
+    }
+
+    public ClientPair initAppAndHardPair() throws Exception {
         return initAppAndHardPair("localhost", appPort, hardPort, "dima@mail.ua 1");
     }
 
-    public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort) throws Exception {
-        return initAppAndHardPair(host, appPort, hardPort, "dima@mail.ua 1");
-    }
-
-    public static ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user) throws Exception {
+    public ClientPair initAppAndHardPair(String host, int appPort, int hardPort, String user) throws Exception {
         TestAppClient appClient = new TestAppClient(host, appPort);
         TestHardClient hardClient = new TestHardClient(host, hardPort);
+
+        appClient.start(null);
+        hardClient.start(null);
 
         String userProfileString = readTestUserProfile();
 
@@ -103,16 +115,6 @@ public abstract class IntegrationBase {
         hardClient.reset();
 
         return new ClientPair(appClient, hardClient);
-    }
-
-    public static String readTestUserProfile(String fileName) {
-        InputStream is = IntegrationBase.class.getResourceAsStream("/json_test/" + fileName);
-        UserProfile userProfile = JsonParser.parseProfile(is);
-        return userProfile.toString();
-    }
-
-    public static String readTestUserProfile() {
-        return readTestUserProfile("user_profile_json.txt");
     }
 
     public void initServerStructures() {

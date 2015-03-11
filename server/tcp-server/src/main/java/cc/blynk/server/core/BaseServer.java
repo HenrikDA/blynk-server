@@ -8,7 +8,6 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
@@ -26,9 +25,8 @@ public abstract class BaseServer implements Runnable {
     protected static final Logger log = LogManager.getLogger(HardwareServer.class);
     protected final int port;
     private final int workerThreads;
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
 
+    private Channel channel;
 
     protected BaseServer(int port, ServerProperties props) {
         this.port = port;
@@ -37,8 +35,8 @@ public abstract class BaseServer implements Runnable {
 
     @Override
     public void run() {
-        this.bossGroup = new NioEventLoopGroup(1);
-        this.workerGroup = new NioEventLoopGroup(workerThreads);
+        NioEventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup(workerThreads);
         ServerBootstrap b = new ServerBootstrap();
         try {
             b.group(bossGroup, workerGroup)
@@ -46,13 +44,14 @@ public abstract class BaseServer implements Runnable {
                     .childHandler(getChannelInitializer());
 
             ChannelFuture channelFuture = b.bind(port).sync();
-            Channel channel = channelFuture.channel();
 
-            channel.closeFuture().sync();
-        } catch (InterruptedException e) {
+            this.channel = channelFuture.channel();
+            this.channel.closeFuture().sync();
+        } catch (Exception e) {
             log.error(e);
         } finally {
-            stop();
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
         }
     }
 
@@ -61,11 +60,6 @@ public abstract class BaseServer implements Runnable {
     public abstract ChannelInitializer<SocketChannel> getChannelInitializer();
 
     public void stop() {
-        try {
-            workerGroup.shutdownGracefully().await();
-            bossGroup.shutdownGracefully().await();
-        } catch (InterruptedException e) {
-            log.error("Error waiting server shutdown.");
-        }
+        channel.close().awaitUninterruptibly();
     }
 }

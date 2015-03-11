@@ -18,7 +18,12 @@ public class HardwareClient extends BaseClient {
 
     public HardwareClient(String host, int port) {
         super(host, port, new Random());
-        log.info("Creating hardware client. Host {}, port : {}", host, port);
+        log.info("Creating hardware client. Host : {}, port : {}", host, port);
+    }
+
+    public HardwareClient(String host, int port, Random msgIdGenerator) {
+        super(host, port, msgIdGenerator);
+        log.info("Creating hardware client. Host : {}, port : {}", host, port);
     }
 
     @Override

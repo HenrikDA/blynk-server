@@ -4,6 +4,7 @@ import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.server.core.plain.HardwareServer;
+import cc.blynk.server.core.ssl.SSLAppServer;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class MainWorkflowTest extends IntegrationBase {
 
+    private SSLAppServer appServer;
     private HardwareServer hardwareServer;
 
     @Before
@@ -38,7 +40,9 @@ public class MainWorkflowTest extends IntegrationBase {
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
         hardwareServer = new HardwareServer(properties, fileManager, userRegistry, sessionsHolder, stats);
+        appServer = new SSLAppServer(properties, fileManager, userRegistry, sessionsHolder, stats);
         new Thread(hardwareServer).start();
+        new Thread(appServer).start();
 
         //todo improve this
         //wait util server starts.
@@ -47,6 +51,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @After
     public void shutdown() {
+        appServer.stop();
         hardwareServer.stop();
     }
 
@@ -166,11 +171,9 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testConnectAppAndHardwareAndSendCommands() throws Exception {
         ClientPair clientPair = initAppAndHardPair();
 
-        long start = System.currentTimeMillis();
         for (int i = 0; i < 100; i++) {
             clientPair.appClient.send("hardware 1 1");
         }
-        System.out.println("Time : " + (System.currentTimeMillis() - start));
 
         for (int i = 1; i <= 100; i++) {
             verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(i, OK)));

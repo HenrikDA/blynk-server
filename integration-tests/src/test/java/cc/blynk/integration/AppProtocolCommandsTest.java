@@ -2,10 +2,10 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestAppClient;
-import cc.blynk.server.core.plain.HardwareServer;
 import cc.blynk.server.core.ssl.SSLAppServer;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +32,6 @@ import static org.mockito.Mockito.*;
 public class AppProtocolCommandsTest extends IntegrationBase {
 
     private SSLAppServer appServer;
-    private HardwareServer hardServer;
 
     @Before
     public void init() throws Exception {
@@ -41,23 +40,20 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
         appServer = new SSLAppServer(properties, fileManager, userRegistry, sessionsHolder, stats);
-        hardServer = new HardwareServer(properties, fileManager, userRegistry, sessionsHolder, stats);
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, properties.getIntProperty("profile.save.worker.period"), stats);
         new Thread(appServer).start();
         new Thread(profileSaverWorker).start();
 
         //wait util servers start.
+        //todo fix.
         Thread.sleep(500);
     }
 
-    /*
     @After
     public void shutdown() {
         appServer.stop();
-        hardServer.stop();
     }
-    */
 
     @Test
     //all commands together cause all operations requires register and then login =(.
@@ -75,7 +71,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "loadProfile").check(2, OK).check(produce(1, LOAD_PROFILE, userProfileString));
 
         //waiting background thread to save profile.
-        sleep(600);
+        sleep(200);
 
         makeCommands("login dmitriy@mail.ua 1", "getToken 1").check(OK).check(produce(1, GET_TOKEN, "12345678901234567890123456789012"));
 
@@ -123,17 +119,8 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         makeCommands("loadProfile").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("saveProfile {}").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("getToken").check(produce(1, USER_NOT_AUTHENTICATED));
-        makeCommands("tweet bla").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("hardware 1 1").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("ping").check(produce(1, USER_NOT_AUTHENTICATED));
-    }
-
-
-    @Test
-    public void testInvalidTweetBody() throws Exception {
-        makeCommands("register dmitriy@mail.ua 1").check(OK);
-
-        makeCommands("login dmitriy@mail.ua 1", "tweet").check(OK).check(produce(1, TWEET_BODY_INVALID_EXCEPTION));
     }
 
     @Test
@@ -176,16 +163,14 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     private MockHolder makeCommands(String... commands) throws Exception {
         TestAppClient appClient = new TestAppClient(host, appPort);
 
-        when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
-
-
         OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
-        for (final String cmd : commands) {
+        for (String cmd : commands) {
             ongoingStubbing = ongoingStubbing.thenReturn(cmd);
         }
 
         ongoingStubbing.thenAnswer(invocation -> {
-            sleep(500);
+            //todo think how to avoid this
+            sleep(400);
             return "quit";
         });
 

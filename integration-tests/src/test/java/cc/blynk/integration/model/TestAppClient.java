@@ -3,11 +3,15 @@ package cc.blynk.integration.model;
 import cc.blynk.client.core.AppClient;
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import org.mockito.Mockito;
 
+import java.io.BufferedReader;
 import java.util.Random;
 
 /**
@@ -28,6 +32,25 @@ public class TestAppClient extends AppClient {
 
         this.responseMock = Mockito.mock(SimpleClientHandler.class);
         this.msgId = 0;
+    }
+
+    @Override
+    public void start(BufferedReader commandInputStream) {
+        if (commandInputStream == null) {
+            nioEventLoopGroup = new NioEventLoopGroup();
+
+            Bootstrap b = new Bootstrap();
+            b.group(nioEventLoopGroup).channel(NioSocketChannel.class).handler(getChannelInitializer());
+
+            try {
+                // Start the connection attempt.
+                this.channel = b.connect(host, port).sync().channel();
+            } catch (InterruptedException e) {
+                log.error(e);
+            }
+        } else {
+            super.start(commandInputStream);
+        }
     }
 
     @Override

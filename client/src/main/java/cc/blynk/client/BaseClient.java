@@ -41,7 +41,7 @@ public abstract class BaseClient {
         this.random = messageIdGenerator;
     }
 
-    protected static Message produceMessageBaseOnUserInput(String line, int msgId) {
+    public static Message produceMessageBaseOnUserInput(String line, int msgId) {
         String[] input = line.split(" ", 2);
 
         short command;
@@ -77,6 +77,8 @@ public abstract class BaseClient {
             log.error("Timeout exceeded when connecting to '{}:{}'. Please make sure host available and port is open on target host.", host, port);
         } catch (IOException | InterruptedException e) {
             log.error("Error running client. Shutting down.", e);
+        } catch (Exception e) {
+            log.error(e);
         } finally {
             // The connection is closed automatically on shutdown.
             nioEventLoopGroup.shutdownGracefully();
@@ -90,7 +92,7 @@ public abstract class BaseClient {
         while ((line = commandInputStream.readLine()) != null) {
             // If user typed the 'quit' command, wait until the server closes the connection.
             if ("quit".equals(line.toLowerCase())) {
-                log.info("Got 'quit' command. Shutting down.");
+                log.info("Got 'quit' command. Closing client.");
                 channel.close();
                 break;
             }
@@ -113,10 +115,6 @@ public abstract class BaseClient {
     }
 
     public void stop() {
-        try {
-            nioEventLoopGroup.shutdownGracefully().await();
-        } catch (InterruptedException e) {
-            log.error("Error shutting down client.", e);
-        }
+        channel.close().awaitUninterruptibly();
     }
 }
