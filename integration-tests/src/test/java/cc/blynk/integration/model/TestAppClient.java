@@ -27,7 +27,7 @@ public class TestAppClient extends AppClient {
     private int msgId;
 
     public TestAppClient(String host, int port) {
-        super(host, port, Mockito.mock(Random.class));
+        super(host, port, Mockito.mock(Random.class), true);
         Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
 
         this.responseMock = Mockito.mock(SimpleClientHandler.class);
