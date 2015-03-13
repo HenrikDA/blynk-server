@@ -27,7 +27,7 @@ public class ClientTest {
     @Test
     @Ignore
     public void testQuitApp() throws Exception {
-        AppClient testAppClient = new AppClient(DEFAULT_HOST, DEFAULT_APPLICATION_PORT);
+        AppClient testAppClient = new AppClient(DEFAULT_HOST, DEFAULT_APPLICATION_PORT, true);
         when(bufferedReader.readLine()).thenReturn("quit");
         testAppClient.start(bufferedReader);
         //verify(testAppClient.responseMock, never()).channelRead(any(), any());

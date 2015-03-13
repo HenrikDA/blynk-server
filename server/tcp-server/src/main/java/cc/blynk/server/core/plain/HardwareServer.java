@@ -29,7 +29,7 @@ public class HardwareServer extends BaseServer {
         this.handlersHolder = new HardwareHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
         this.channelInitializer = new HardwareChannelInitializer(sessionsHolder, stats, handlersHolder);
 
-        log.info("Default server port {}.", port);
+        log.info("Hardware server port {}.", port);
     }
 
     @Override

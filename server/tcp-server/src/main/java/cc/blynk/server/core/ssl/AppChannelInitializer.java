@@ -34,7 +34,9 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
 
-        pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+        if (sslCtx != null) {
+            pipeline.addLast(sslCtx.newHandler(ch.alloc()));
+        }
 
         //non-sharable handlers
         pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));

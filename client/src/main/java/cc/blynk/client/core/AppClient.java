@@ -18,24 +18,26 @@ import java.util.Random;
  */
 public class AppClient extends BaseClient {
 
-    protected final SslContext sslCtx;
+    protected SslContext sslCtx;
 
-    public AppClient(String host, int port) {
-        this(host, port, new Random());
+    public AppClient(String host, int port, boolean enableSsl) {
+        this(host, port, new Random(), enableSsl);
     }
 
-    public AppClient(String host, int port, Random msgIdGenerator) {
+    public AppClient(String host, int port, Random msgIdGenerator, boolean enableSsl) {
         super(host, port, msgIdGenerator);
         log.info("Creating app client. Host {}, sslPort : {}", host, port);
 
-        //todo think how to simplify with real certs?
-        //sslCtx = SslContext.newClientContext(getFileFromResources("/test.crt"));
-        try {
-            this.sslCtx = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
-        } catch (SSLException e) {
-            log.error("Error initializing SSL context. Reason : {}", e.getMessage());
-            log.debug(e);
-            throw new RuntimeException();
+        if (enableSsl) {
+            //todo think how to simplify with real certs?
+            //sslCtx = SslContext.newClientContext(getFileFromResources("/test.crt"));
+            try {
+                this.sslCtx = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
+            } catch (SSLException e) {
+                log.error("Error initializing SSL context. Reason : {}", e.getMessage());
+                log.debug(e);
+                throw new RuntimeException();
+            }
         }
     }
 
@@ -45,7 +47,9 @@ public class AppClient extends BaseClient {
             @Override
             public void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+                if (sslCtx != null) {
+                    pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+                }
                 pipeline.addLast(new ClientReplayingMessageDecoder());
                 pipeline.addLast(new DeviceMessageEncoder());
             }

@@ -59,9 +59,6 @@ public class Launcher {
 
         processArguments(args, serverProperties);
 
-        boolean sslEnabled = serverProperties.getBoolProperty("app.ssl.enabled");
-
-
         FileManager fileManager = new FileManager(serverProperties.getProperty("data.folder"));
         SessionsHolder sessionsHolder = new SessionsHolder();
 
@@ -86,36 +83,29 @@ public class Launcher {
         profileSaverWorker.start();
 
         HardwareServer hardwareServer = new HardwareServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
-
-        BaseServer sslServer = null;
-        if (sslEnabled) {
-            sslServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
-            log.info("SSL for app. enabled.");
-            new Thread(sslServer).start();
-        }
+        BaseServer appServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
 
         List<BaseSimpleChannelInboundHandler> baseHandlers = hardwareServer.getBaseHandlers();
-        if (sslServer != null) {
-            baseHandlers.addAll(sslServer.getBaseHandlers());
-        }
+        baseHandlers.addAll(appServer.getBaseHandlers());
 
         new Thread(new PropertiesChangeWatcherWorker(Config.SERVER_PROPERTIES_FILENAME, baseHandlers)).start();
 
+        new Thread(appServer).start();
         new Thread(hardwareServer).start();
 
-        addShutDownHook(hardwareServer, sslServer, profileSaverWorker);
+        addShutDownHook(hardwareServer, appServer, profileSaverWorker);
     }
 
     //todo test it works...
-    private void addShutDownHook(final BaseServer server, final BaseServer sslServer, final ProfileSaverWorker profileSaverWorker) {
+    private void addShutDownHook(final BaseServer server, final BaseServer appServer, final ProfileSaverWorker profileSaverWorker) {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 log.info("Catch shutdown hook. Trying to save users and close threads.");
                 profileSaverWorker.run();
                 server.stop();
-                if (sslServer != null) {
-                    sslServer.stop();
+                if (appServer != null) {
+                    appServer.stop();
                 }
             }
         });

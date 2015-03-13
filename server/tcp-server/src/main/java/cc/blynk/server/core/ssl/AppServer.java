@@ -32,14 +32,18 @@ public class AppServer extends BaseServer {
 
         this.handlersHolder = new AppHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
 
-        this.channelInitializer = new AppChannelInitializer(sessionsHolder, stats, handlersHolder,
-                initSslContext(
-                        props.getProperty("server.ssl.cert"),
-                        props.getProperty("server.ssl.key"),
-                        props.getProperty("server.ssl.key.pass"))
-        );
+        boolean sslEnabled = props.getBoolProperty("app.ssl.enabled");
+        SslContext sslContext = null;
+        if (sslEnabled) {
+            log.info("SSL for Application enabled.");
+            sslContext = initSslContext(props.getProperty("server.ssl.cert"),
+                    props.getProperty("server.ssl.key"),
+                    props.getProperty("server.ssl.key.pass"));
+        }
 
-        log.info("SSL server port {}.", port);
+        this.channelInitializer = new AppChannelInitializer(sessionsHolder, stats, handlersHolder, sslContext);
+
+        log.info("Application server port {}.", port);
     }
 
     public static SslContext initSslContext(String serverCertPath, String serverKeyPath, String keyPass) {
