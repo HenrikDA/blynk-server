@@ -2,7 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestAppClient;
-import cc.blynk.server.core.ssl.SSLAppServer;
+import cc.blynk.server.core.ssl.AppServer;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class AppProtocolCommandsTest extends IntegrationBase {
 
-    private SSLAppServer appServer;
+    private AppServer appServer;
 
     @Before
     public void init() throws Exception {
@@ -39,7 +39,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
-        appServer = new SSLAppServer(properties, fileManager, userRegistry, sessionsHolder, stats);
+        appServer = new AppServer(properties, fileManager, userRegistry, sessionsHolder, stats);
 
         ProfileSaverWorker profileSaverWorker = new ProfileSaverWorker(jedisWrapper, userRegistry, fileManager, properties.getIntProperty("profile.save.worker.period"), stats);
         new Thread(appServer).start();

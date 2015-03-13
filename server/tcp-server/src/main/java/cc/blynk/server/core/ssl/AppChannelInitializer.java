@@ -16,14 +16,14 @@ import io.netty.handler.ssl.SslContext;
 * Created by Dmitriy Dumanskiy.
 * Created on 11.03.15.
 */
-final class SSLAppChannelInitializer extends ChannelInitializer<SocketChannel> {
+final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SessionsHolder sessionsHolder;
     private final GlobalStats stats;
     private final BaseHandlersHolder handlersHolder;
     private final SslContext sslCtx;
 
-    public SSLAppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, BaseHandlersHolder handlersHolder, SslContext sslContext) {
+    public AppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, BaseHandlersHolder handlersHolder, SslContext sslContext) {
         this.sessionsHolder = sessionsHolder;
         this.stats = stats;
         this.handlersHolder = handlersHolder;

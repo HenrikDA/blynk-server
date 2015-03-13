@@ -18,7 +18,7 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/10/2015.
  */
-class SSLAppHandlersHolder implements BaseHandlersHolder {
+class AppHandlersHolder implements BaseHandlersHolder {
 
     private final RegisterHandler registerHandler;
     private final AppLoginHandler appLoginHandler;
@@ -28,7 +28,7 @@ class SSLAppHandlersHolder implements BaseHandlersHolder {
     private final HardwareHandler hardwareHandler;
     private final PingHandler pingHandler;
 
-    public SSLAppHandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public AppHandlersHolder(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.registerHandler = new RegisterHandler(fileManager, userRegistry, sessionsHolder);
         this.appLoginHandler = new AppLoginHandler(fileManager, userRegistry, sessionsHolder);
         this.getTokenHandler = new GetTokenHandler(props, fileManager, userRegistry, sessionsHolder);

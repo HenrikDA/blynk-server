@@ -22,17 +22,17 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
  */
-public class SSLAppServer extends BaseServer {
+public class AppServer extends BaseServer {
 
     private final BaseHandlersHolder handlersHolder;
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
-    public SSLAppServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
+    public AppServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {
         super(props.getIntProperty("server.ssl.port"), props);
 
-        this.handlersHolder = new SSLAppHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
+        this.handlersHolder = new AppHandlersHolder(props, fileManager, userRegistry, sessionsHolder);
 
-        this.channelInitializer = new SSLAppChannelInitializer(sessionsHolder, stats, handlersHolder,
+        this.channelInitializer = new AppChannelInitializer(sessionsHolder, stats, handlersHolder,
                 initSslContext(
                         props.getProperty("server.ssl.cert"),
                         props.getProperty("server.ssl.key"),
@@ -46,12 +46,12 @@ public class SSLAppServer extends BaseServer {
         try {
             File serverCert = new File(serverCertPath);
             if (!serverCert.exists()) {
-                serverCert = new File(SSLAppServer.class.getResource(serverCertPath).toURI());
+                serverCert = new File(AppServer.class.getResource(serverCertPath).toURI());
             }
 
             File serverKey = new File(serverKeyPath);
             if (!serverKey.exists()) {
-                serverKey = new File(SSLAppServer.class.getResource(serverKeyPath).toURI());
+                serverKey = new File(AppServer.class.getResource(serverKeyPath).toURI());
             }
 
             //todo this is self-signed cerf. just to simplify for now for testing.

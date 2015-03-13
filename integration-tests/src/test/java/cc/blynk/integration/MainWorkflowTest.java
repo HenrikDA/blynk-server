@@ -4,7 +4,7 @@ import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.server.core.plain.HardwareServer;
-import cc.blynk.server.core.ssl.SSLAppServer;
+import cc.blynk.server.core.ssl.AppServer;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class MainWorkflowTest extends IntegrationBase {
 
-    private SSLAppServer appServer;
+    private AppServer appServer;
     private HardwareServer hardwareServer;
 
     @Before
@@ -41,7 +41,7 @@ public class MainWorkflowTest extends IntegrationBase {
         FileUtils.deleteDirectory(fileManager.getDataDir().toFile());
 
         hardwareServer = new HardwareServer(properties, fileManager, userRegistry, sessionsHolder, stats);
-        appServer = new SSLAppServer(properties, fileManager, userRegistry, sessionsHolder, stats);
+        appServer = new AppServer(properties, fileManager, userRegistry, sessionsHolder, stats);
         new Thread(hardwareServer).start();
         new Thread(appServer).start();
 

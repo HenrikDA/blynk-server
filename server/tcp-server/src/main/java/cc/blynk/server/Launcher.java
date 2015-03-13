@@ -6,7 +6,7 @@ import cc.blynk.common.utils.ParseUtil;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.core.plain.HardwareServer;
-import cc.blynk.server.core.ssl.SSLAppServer;
+import cc.blynk.server.core.ssl.AppServer;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.JedisWrapper;
 import cc.blynk.server.dao.SessionsHolder;
@@ -89,7 +89,7 @@ public class Launcher {
 
         BaseServer sslServer = null;
         if (sslEnabled) {
-            sslServer = new SSLAppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
+            sslServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
             log.info("SSL for app. enabled.");
             new Thread(sslServer).start();
         }
