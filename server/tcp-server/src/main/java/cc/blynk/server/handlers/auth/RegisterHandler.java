@@ -9,6 +9,7 @@ import cc.blynk.server.utils.EMailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.ssl.NotSslRecordException;
 
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -75,7 +76,12 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        handleGeneralException(ctx, cause);
+        if (cause instanceof NotSslRecordException) {
+            log.error("Not secure connection detected. Reason {}.", cause.getMessage());
+            ctx.close();
+        } else {
+            handleGeneralException(ctx, cause);
+        }
     }
 
 }
