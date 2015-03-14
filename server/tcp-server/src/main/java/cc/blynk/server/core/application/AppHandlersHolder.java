@@ -1,4 +1,4 @@
-package cc.blynk.server.core.ssl;
+package cc.blynk.server.core.application;
 
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;

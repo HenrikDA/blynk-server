@@ -1,4 +1,4 @@
-package cc.blynk.server.core.plain;
+package cc.blynk.server.core.hardware;
 
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;

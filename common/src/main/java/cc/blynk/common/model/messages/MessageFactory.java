@@ -3,7 +3,10 @@ package cc.blynk.common.model.messages;
 import cc.blynk.common.enums.Command;
 import cc.blynk.common.exceptions.BaseServerException;
 import cc.blynk.common.exceptions.UnsupportedCommandException;
-import cc.blynk.common.model.messages.protocol.*;
+import cc.blynk.common.model.messages.protocol.HardwareMessage;
+import cc.blynk.common.model.messages.protocol.PingMessage;
+import cc.blynk.common.model.messages.protocol.appllication.*;
+import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 
 import static cc.blynk.common.enums.Command.*;
 

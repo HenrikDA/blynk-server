@@ -2,7 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestHardClient;
-import cc.blynk.server.core.plain.HardwareServer;
+import cc.blynk.server.core.hardware.HardwareServer;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;

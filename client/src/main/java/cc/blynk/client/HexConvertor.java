@@ -1,7 +1,8 @@
 package cc.blynk.client;
 
 import cc.blynk.common.model.messages.Message;
-import cc.blynk.common.model.messages.protocol.LoginMessage;
+import cc.blynk.common.model.messages.MessageBase;
+import cc.blynk.common.model.messages.protocol.appllication.LoginMessage;
 import cc.blynk.common.utils.Config;
 
 import java.nio.ByteBuffer;
@@ -17,7 +18,7 @@ public class HexConvertor {
 
 
     public static String messageToHex(Message message) {
-        ByteBuffer bb = ByteBuffer.allocate(message.getByteLength());
+        ByteBuffer bb = ByteBuffer.allocate(MessageBase.HEADER_LENGTH + message.length);
         bb.put((byte) message.command);
         bb.putShort((short) message.id);
         bb.putShort((short) message.length);

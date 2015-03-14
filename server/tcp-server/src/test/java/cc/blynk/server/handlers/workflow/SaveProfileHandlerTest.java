@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.workflow;
 
-import cc.blynk.common.model.messages.protocol.SaveProfileMessage;
+import cc.blynk.common.model.messages.protocol.appllication.SaveProfileMessage;
 import cc.blynk.server.TestBase;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.exceptions.NotAllowedException;

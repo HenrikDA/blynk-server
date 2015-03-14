@@ -6,6 +6,11 @@ import cc.blynk.common.enums.Command;
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
  * Created on 2/1/2015.
+ *
+ * Yes, I don't use getters and setters, inlining is not always works as expected.
+ *
+ * IMPORTANT : have in mind, in body we retrieve always unsigned bytes, shorts, while in java
+ * is only signed types, so we require 2 times larger types.
  */
 public abstract class MessageBase {
 
@@ -22,10 +27,6 @@ public abstract class MessageBase {
         this.command = command;
         this.id = id;
         this.length = length;
-    }
-
-    public int getByteLength() {
-        return HEADER_LENGTH;
     }
 
     @Override

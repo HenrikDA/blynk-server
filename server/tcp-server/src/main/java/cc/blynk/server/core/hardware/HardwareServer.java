@@ -1,4 +1,4 @@
-package cc.blynk.server.core.plain;
+package cc.blynk.server.core.hardware;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;

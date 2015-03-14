@@ -1,7 +1,7 @@
 package cc.blynk.server.handlers.auth;
 
 import cc.blynk.common.handlers.DefaultExceptionHandler;
-import cc.blynk.common.model.messages.protocol.RegisterMessage;
+import cc.blynk.common.model.messages.protocol.appllication.RegisterMessage;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;

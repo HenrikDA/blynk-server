@@ -1,4 +1,4 @@
-package cc.blynk.common.model.messages.protocol;
+package cc.blynk.common.model.messages.protocol.hardware;
 
 import cc.blynk.common.model.messages.Message;
 

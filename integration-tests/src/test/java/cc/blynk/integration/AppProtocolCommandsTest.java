@@ -2,7 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.MockHolder;
 import cc.blynk.integration.model.TestAppClient;
-import cc.blynk.server.core.ssl.AppServer;
+import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.workers.ProfileSaverWorker;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;

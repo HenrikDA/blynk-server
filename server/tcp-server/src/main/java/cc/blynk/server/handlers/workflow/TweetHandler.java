@@ -1,6 +1,6 @@
 package cc.blynk.server.handlers.workflow;
 
-import cc.blynk.common.model.messages.protocol.TweetMessage;
+import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
