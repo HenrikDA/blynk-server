@@ -3,7 +3,6 @@ package cc.blynk.server.core.ssl;
 import cc.blynk.common.handlers.decoders.ReplayingMessageDecoder;
 import cc.blynk.common.handlers.encoders.DeviceMessageEncoder;
 import cc.blynk.common.stats.GlobalStats;
-import cc.blynk.server.core.BaseHandlersHolder;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.handlers.workflow.ClientChannelStateHandler;
 import io.netty.channel.ChannelInitializer;
@@ -20,10 +19,10 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SessionsHolder sessionsHolder;
     private final GlobalStats stats;
-    private final BaseHandlersHolder handlersHolder;
+    private final AppHandlersHolder handlersHolder;
     private final SslContext sslCtx;
 
-    public AppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, BaseHandlersHolder handlersHolder, SslContext sslContext) {
+    public AppChannelInitializer(SessionsHolder sessionsHolder, GlobalStats stats, AppHandlersHolder handlersHolder, SslContext sslContext) {
         this.sessionsHolder = sessionsHolder;
         this.stats = stats;
         this.handlersHolder = handlersHolder;

@@ -2,7 +2,6 @@ package cc.blynk.server.core.plain;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.core.BaseHandlersHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
@@ -20,7 +19,7 @@ import java.util.List;
  */
 public class HardwareServer extends BaseServer {
 
-    private final BaseHandlersHolder handlersHolder;
+    private final HardwareHandlersHolder handlersHolder;
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public HardwareServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {

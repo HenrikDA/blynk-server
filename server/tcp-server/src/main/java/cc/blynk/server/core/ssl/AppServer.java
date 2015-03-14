@@ -2,7 +2,6 @@ package cc.blynk.server.core.ssl;
 
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.core.BaseHandlersHolder;
 import cc.blynk.server.core.BaseServer;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
@@ -24,7 +23,7 @@ import java.util.List;
  */
 public class AppServer extends BaseServer {
 
-    private final BaseHandlersHolder handlersHolder;
+    private final AppHandlersHolder handlersHolder;
     private final ChannelInitializer<SocketChannel> channelInitializer;
 
     public AppServer(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder, GlobalStats stats) {

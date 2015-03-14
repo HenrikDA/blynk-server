@@ -1,7 +1,6 @@
 package cc.blynk.server.core.ssl;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.core.BaseHandlersHolder;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -18,7 +17,7 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 3/10/2015.
  */
-class AppHandlersHolder implements BaseHandlersHolder {
+class AppHandlersHolder {
 
     private final RegisterHandler registerHandler;
     private final AppLoginHandler appLoginHandler;
@@ -38,7 +37,6 @@ class AppHandlersHolder implements BaseHandlersHolder {
         this.pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
     }
 
-    @Override
     public List<BaseSimpleChannelInboundHandler> getBaseHandlers() {
         return new ArrayList<BaseSimpleChannelInboundHandler>() {
            {
@@ -51,7 +49,6 @@ class AppHandlersHolder implements BaseHandlersHolder {
         };
     }
 
-    @Override
     public List<ChannelHandler> getAllHandlers() {
         return new ArrayList<ChannelHandler>() {
            {

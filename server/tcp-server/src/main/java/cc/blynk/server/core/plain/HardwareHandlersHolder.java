@@ -1,7 +1,6 @@
 package cc.blynk.server.core.plain;
 
 import cc.blynk.common.utils.ServerProperties;
-import cc.blynk.server.core.BaseHandlersHolder;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
@@ -21,7 +20,7 @@ import java.util.List;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/27/2015.
  */
-class HardwareHandlersHolder implements BaseHandlersHolder {
+class HardwareHandlersHolder {
 
     //todo cover with tests.
     //sharable handlers
@@ -37,7 +36,6 @@ class HardwareHandlersHolder implements BaseHandlersHolder {
         this.tweetHandler = new TweetHandler(props, fileManager, userRegistry, sessionsHolder, new TwitterWrapper());
     }
 
-    @Override
     public List<BaseSimpleChannelInboundHandler> getBaseHandlers() {
         return new ArrayList<BaseSimpleChannelInboundHandler>() {
            {
@@ -48,7 +46,6 @@ class HardwareHandlersHolder implements BaseHandlersHolder {
         };
     }
 
-    @Override
     public List<ChannelHandler> getAllHandlers() {
         return new ArrayList<ChannelHandler>() {
            {
