@@ -63,9 +63,7 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements D
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         //todo test for that case
-        if (cause instanceof DecoderException) {
-            handleGeneralException(ctx, cause.getCause());
-        } else if (cause instanceof UnsupportedCommandException) {
+        if (cause instanceof DecoderException && cause.getCause() instanceof UnsupportedCommandException) {
             log.error("Input command is invalid. Closing socket.", cause.getMessage());
             ctx.close();
         } else {
