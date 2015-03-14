@@ -50,8 +50,8 @@ public abstract class BaseServer implements Runnable {
         } catch (Exception e) {
             log.error(e);
         } finally {
-            workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
         }
     }
 

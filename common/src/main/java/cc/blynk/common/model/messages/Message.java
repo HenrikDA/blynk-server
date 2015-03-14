@@ -16,12 +16,7 @@ public abstract class Message extends MessageBase {
 
     public Message(int messageId, short command, int length, String body) {
         super(messageId, command, length);
-        //to avoid annoying null checks.
-        this.body = body == null ? "" : body;
-    }
-
-    public static int calcBodyLength(String body) {
-        return body == null ? 0 : body.length();
+        this.body = body;
     }
 
     @Override

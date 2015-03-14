@@ -48,7 +48,7 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements D
             message = produce(messageId, responseCode);
         } else {
             int length = in.readUnsignedShort();
-            String messageBody = (length == 0 ? "" : in.readSlice(length).toString(Config.DEFAULT_CHARSET));
+            String messageBody = in.readSlice(length).toString(Config.DEFAULT_CHARSET);
             message = produce(messageId, command, messageBody);
         }
 
