@@ -13,14 +13,18 @@ import java.io.IOException;
 public class ClientReplayingMessageDecoder extends ReplayingMessageDecoder {
 
     @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        throw new IOException("Server closed client connection.");
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         //server goes down
-        if (cause instanceof IOException && "An existing connection was forcibly closed by the remote host".equals(cause.getMessage())) {
+        if (cause instanceof IOException) {
             ctx.close();
-            log.error("Server went down. Shutting down...");
+            log.error("Client socket closed. Reason : {}", cause.getMessage());
             //todo find better way
-            System.exit(1);
+            System.exit(0);
         }
-        super.exceptionCaught(ctx, cause);
     }
 }

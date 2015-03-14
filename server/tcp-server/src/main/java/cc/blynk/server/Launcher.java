@@ -83,7 +83,7 @@ public class Launcher {
         profileSaverWorker.start();
 
         HardwareServer hardwareServer = new HardwareServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
-        BaseServer appServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
+        AppServer appServer = new AppServer(serverProperties, fileManager, userRegistry, sessionsHolder, stats);
 
         List<BaseSimpleChannelInboundHandler> baseHandlers = hardwareServer.getBaseHandlers();
         baseHandlers.addAll(appServer.getBaseHandlers());
