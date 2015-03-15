@@ -186,7 +186,7 @@ Server guarantees that commands will be processed in same order in which they we
 
 + Run the application client
 
-        java -jar client-${PUT_LATEST_VERSION_HERE}.jar -mode app -host localhost -port 8443
+        java -jar client-${PUT_LATEST_VERSION_HERE}.jar -mode app -host localhost -port 8443 -enableAppSsl
 
 
 + In this client: register new user and/or login with the same credentials
