@@ -16,7 +16,6 @@ public class InstanceLoadMeter {
     private static final long TICK_INTERVAL = TimeUnit.SECONDS.toMillis(1);
     private static final double TICK_INTERVAL_DOUBLE = (double) TICK_INTERVAL;
 
-    private final LongAdder count = new LongAdder();
     private final AtomicLong lastTick;
     private final LongAdder uncounted = new LongAdder();
     private final double alpha = 1 - exp(-1/60.0);
@@ -41,7 +40,6 @@ public class InstanceLoadMeter {
      */
     public void mark(long n) {
         tickIfNecessary();
-        count.add(n);
         uncounted.add(n);
     }
 
@@ -58,10 +56,6 @@ public class InstanceLoadMeter {
                 }
             }
         }
-    }
-
-    public long getCount() {
-        return count.sum();
     }
 
     public double getOneMinuteRate() {
