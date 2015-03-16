@@ -20,15 +20,15 @@ public class AppClient extends BaseClient {
 
     protected SslContext sslCtx;
 
-    public AppClient(String host, int port, boolean enableSsl) {
-        this(host, port, new Random(), enableSsl);
+    public AppClient(String host, int port, boolean disableAppSsl) {
+        this(host, port, new Random(), disableAppSsl);
     }
 
-    public AppClient(String host, int port, Random msgIdGenerator, boolean enableSsl) {
+    public AppClient(String host, int port, Random msgIdGenerator, boolean disableAppSsl) {
         super(host, port, msgIdGenerator);
         log.info("Creating app client. Host {}, sslPort : {}", host, port);
 
-        if (enableSsl) {
+        if (!disableAppSsl) {
             //todo think how to simplify with real certs?
             //sslCtx = SslContext.newClientContext(getFileFromResources("/test.crt"));
             try {

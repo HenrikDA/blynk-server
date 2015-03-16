@@ -30,7 +30,7 @@ public class ClientLauncher {
         options.addOption("host", true, "Server host or ip.")
                .addOption("port", true, "Port client should connect to.")
                .addOption("mode", true, "Client mode. 'hardware' or 'app'.")
-               .addOption("enableAppSsl", false, "Enables SSL for app mode.");
+               .addOption("disableAppSsl", false, "Disables SSL for app mode.");
     }
 
     public static void main(String[] args) throws ParseException {
@@ -41,9 +41,9 @@ public class ClientLauncher {
         int port = ParseUtil.parseInt(cmd.getOptionValue("port",
             (mode == ClientMode.APP ? String.valueOf(DEFAULT_APPLICATION_PORT) : String.valueOf(DEFAULT_HARDWARE_PORT)))
         );
-        boolean enableSsl = cmd.hasOption("enableAppSsl");
+        boolean disableAppSsl = cmd.hasOption("disableAppSsl");
 
-        BaseClient baseClient = mode == ClientMode.APP ? new AppClient(host, port, enableSsl) : new HardwareClient(host, port);
+        BaseClient baseClient = mode == ClientMode.APP ? new AppClient(host, port, disableAppSsl) : new HardwareClient(host, port);
 
         baseClient.start(new BufferedReader(new InputStreamReader(System.in)));
     }
