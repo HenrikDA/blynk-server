@@ -6,7 +6,6 @@ import cc.blynk.common.model.messages.protocol.PingMessage;
 import cc.blynk.common.model.messages.protocol.appllication.*;
 import cc.blynk.common.model.messages.protocol.hardware.TweetMessage;
 import com.codahale.metrics.Meter;
-import com.codahale.metrics.MetricRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +20,6 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class GlobalStats {
 
-    public static final MetricRegistry metricRegistry = new MetricRegistry();
     private static final Logger log = LogManager.getLogger(GlobalStats.class);
     private Meter incomeMessages;
     private Map<Class<?>, LongAdder> specificCounters;

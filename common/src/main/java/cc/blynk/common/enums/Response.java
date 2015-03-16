@@ -27,6 +27,8 @@ public final class Response {
     public static final int TWEET_BODY_INVALID_EXCEPTION = 13;
     public static final int TWEET_NOT_AUTHORIZED_EXCEPTION = 14;
 
+    public static final int MESSAGE_QUOTA_LIMIT_EXCEEDED = 19;
+
 
 
     //all this code just to make logging more user-friendly

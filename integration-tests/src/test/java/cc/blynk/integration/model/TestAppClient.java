@@ -74,6 +74,11 @@ public class TestAppClient extends AppClient {
         return this;
     }
 
+    public TestAppClient send(String line, int id) {
+        send(produceMessageBaseOnUserInput(line, id));
+        return this;
+    }
+
     public void reset() {
         Mockito.reset(responseMock);
         msgId = 0;

@@ -1,9 +1,8 @@
 package cc.blynk.server.model.auth;
 
-import cc.blynk.common.stats.GlobalStats;
+import cc.blynk.common.stats.metrics.InstanceLoadMeter;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.utils.JsonParser;
-import com.codahale.metrics.Meter;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -34,7 +33,10 @@ public class User implements Serializable {
     //maybe it is bette rto make it transient
     private Stats stats;
 
-    private transient Meter quotaMeter;
+    //stats related logic
+    //todo move to session?
+    private transient InstanceLoadMeter quotaMeter;
+    private transient volatile long lastQuotaExceededTime;
 
     public User() {
         this.lastModifiedTs = System.currentTimeMillis();
@@ -50,17 +52,17 @@ public class User implements Serializable {
     }
 
     public void initQuota() {
-        this.quotaMeter = GlobalStats.metricRegistry.meter(this.name);
+        this.quotaMeter = new InstanceLoadMeter();
     }
 
     public void incrStat(short cmd) {
         stats.incr(cmd);
-        quotaMeter.mark(1);
+        quotaMeter.mark();
     }
 
     public void incrException(int exceptionCode) {
         stats.incrException(exceptionCode);
-        quotaMeter.mark(1);
+        quotaMeter.mark();
     }
 
     public String getName() {
@@ -113,7 +115,7 @@ public class User implements Serializable {
         return stats;
     }
 
-    public Meter getQuotaMeter() {
+    public InstanceLoadMeter getQuotaMeter() {
         return quotaMeter;
     }
 
@@ -123,6 +125,14 @@ public class User implements Serializable {
 
     public void setLastModifiedTs(long lastModifiedTs) {
         this.lastModifiedTs = lastModifiedTs;
+    }
+
+    public long getLastQuotaExceededTime() {
+        return lastQuotaExceededTime;
+    }
+
+    public void setLastQuotaExceededTime(long lastQuotaExceededTime) {
+        this.lastQuotaExceededTime = lastQuotaExceededTime;
     }
 
     @Override

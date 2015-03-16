@@ -1,6 +1,5 @@
 package cc.blynk.integration;
 
-import cc.blynk.common.enums.Command;
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.server.core.application.AppServer;
@@ -16,6 +15,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 
+import static cc.blynk.common.enums.Command.HARDWARE_COMMAND;
+import static cc.blynk.common.enums.Command.PING;
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.junit.Assert.assertEquals;
@@ -65,7 +66,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testPingCommandWorks() throws Exception {
         ClientPair clientPair = initAppAndHardPair();
         clientPair.appClient.send("ping");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.PING, "")));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, PING, "")));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
     }
 
@@ -73,7 +74,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testPingCommandNoDevice() throws Exception {
         ClientPair clientPair = initAppAndHardPair();
         clientPair.appClient.send("ping");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.PING, "")));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, PING, "")));
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
 
         //closing hard channel
@@ -101,7 +102,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testAppSendAnyHardCommandAndBack() throws Exception {
         ClientPair clientPair = initAppAndHardPair();
         clientPair.appClient.send("hardware 1 1");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
 
         clientPair.hardwareClient.send("hardware 1 1");
 
@@ -111,7 +112,7 @@ public class MainWorkflowTest extends IntegrationBase {
         List<Message> arguments = objectArgumentCaptor.getAllValues();
         Message hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(Command.HARDWARE_COMMAND, hardMessage.command);
+        assertEquals(HARDWARE_COMMAND, hardMessage.command);
         assertEquals(3, hardMessage.length);
         assertEquals("1 1".replaceAll(" ", "\0"), hardMessage.body);
     }
@@ -120,7 +121,7 @@ public class MainWorkflowTest extends IntegrationBase {
     public void testAppSendWriteHardCommandNotGraphAndBack() throws Exception {
         ClientPair clientPair = initAppAndHardPair();
         clientPair.appClient.send("hardware ar 11");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "ar 11".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "ar 11".replaceAll(" ", "\0"))));
 
         String body = "aw 11 333";
         clientPair.hardwareClient.send("hardware " + body);
@@ -131,7 +132,7 @@ public class MainWorkflowTest extends IntegrationBase {
         List<Message> arguments = objectArgumentCaptor.getAllValues();
         Message hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(Command.HARDWARE_COMMAND, hardMessage.command);
+        assertEquals(HARDWARE_COMMAND, hardMessage.command);
         assertEquals(body.length(), hardMessage.length);
         assertTrue(hardMessage.body.startsWith(body.replaceAll(" ", "\0")));
     }
@@ -147,7 +148,7 @@ public class MainWorkflowTest extends IntegrationBase {
         clientPair.appClient.reset();
 
         clientPair.appClient.send("hardware ar 8");
-        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, Command.HARDWARE_COMMAND, "ar 8".replaceAll(" ", "\0"))));
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "ar 8".replaceAll(" ", "\0"))));
 
         String body = "aw 8 333";
         clientPair.hardwareClient.send("hardware " + body);
@@ -158,7 +159,7 @@ public class MainWorkflowTest extends IntegrationBase {
         List<Message> arguments = objectArgumentCaptor.getAllValues();
         Message hardMessage = arguments.get(0);
         assertEquals(1, hardMessage.id);
-        assertEquals(Command.HARDWARE_COMMAND, hardMessage.command);
+        assertEquals(HARDWARE_COMMAND, hardMessage.command);
         //"aw 11 333".length + ts.length + separator
         assertEquals(body.length() + 14, hardMessage.length);
         assertTrue(hardMessage.body.startsWith(body.replaceAll(" ", "\0")));
@@ -177,17 +178,63 @@ public class MainWorkflowTest extends IntegrationBase {
     }
 
     @Test
-    //todo should be fixed.
-    @Ignore
     public void testTryReachQuotaLimit() throws Exception {
         ClientPair clientPair = initAppAndHardPair();
 
-        for (int i = 0; i < 200; i++) {
-            clientPair.appClient.send("hardware 1 1");
-            sleep(10);
+        String body = "ar 100 100";
+
+        //within 1 second sending more messages than default limit 100.
+        for (int i = 0; i < 1000 / 9; i++) {
+            clientPair.appClient.send("hardware " + body, 1);
+            sleep(9);
         }
 
-        verify(clientPair.hardwareClient.responseMock, timeout(500).times(100)).channelRead(any(), any());
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, MESSAGE_QUOTA_LIMIT_EXCEEDED)));
+        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+
+        clientPair.appClient.reset();
+        clientPair.hardwareClient.reset();
+
+        //check no more accepted
+        for (int i = 0; i < 10; i++) {
+            clientPair.appClient.send("hardware " + body, 1);
+            sleep(9);
+        }
+
+        verify(clientPair.appClient.responseMock, times(0)).channelRead(any(), eq(produce(1, MESSAGE_QUOTA_LIMIT_EXCEEDED)));
+        verify(clientPair.hardwareClient.responseMock, times(0)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+    }
+
+    @Test
+    @Ignore("hard to test this case...")
+    public void testTryReachQuotaLimitAndWarningExceededLimit() throws Exception {
+        ClientPair clientPair = initAppAndHardPair();
+
+        String body = "ar 100 100";
+
+        //within 1 second sending more messages than default limit 100.
+        for (int i = 0; i < 1000 / 9; i++) {
+            clientPair.appClient.send("hardware " + body, 1);
+            sleep(9);
+        }
+
+        verify(clientPair.appClient.responseMock, timeout(1000)).channelRead(any(), eq(produce(1, MESSAGE_QUOTA_LIMIT_EXCEEDED)));
+        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+
+        clientPair.appClient.reset();
+        clientPair.hardwareClient.reset();
+
+        //waiting to avoid limit.
+        sleep(1000);
+
+        for (int i = 0; i < 100000 / 9; i++) {
+            clientPair.appClient.send("hardware " + body, 1);
+            sleep(9);
+        }
+
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, MESSAGE_QUOTA_LIMIT_EXCEEDED)));
+        verify(clientPair.hardwareClient.responseMock, atLeast(100)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+
     }
 
 }

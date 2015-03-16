@@ -19,6 +19,9 @@ import org.apache.logging.log4j.ThreadContext;
 
 import java.util.Properties;
 
+import static cc.blynk.common.enums.Response.MESSAGE_QUOTA_LIMIT_EXCEEDED;
+import static cc.blynk.common.model.messages.MessageFactory.produce;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -32,6 +35,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
     protected final SessionsHolder sessionsHolder;
     private final TypeParameterMatcher matcher;
     private volatile int USER_QUOTA_LIMIT;
+    private volatile int USER_QUOTA_LIMIT_WARN_PERIOD;
 
     public BaseSimpleChannelInboundHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         this.props = props;
@@ -53,11 +57,15 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                 if (user == null) {
                     throw new UserNotAuthenticated("User not logged.", imsg.id);
                 }
+                log.warn("rate : {}, count : {}", user.getQuotaMeter().getOneMinuteRate(), user.getQuotaMeter().getCount());
                 if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
-                    //throw new UserQuotaLimitExceededException("Quota limit exceeded.", imsg.id);
-                    //this is special case. discard request in case of high request rate.
-                    //todo avoid printing this every time???
-                    log.warn("User '{}' had exceeded {} rec/sec limit.", user.getName(), USER_QUOTA_LIMIT);
+                    long now = System.currentTimeMillis();
+                    //once a minute sending user response message in case limit is exceeded constantly
+                    if (user.getLastQuotaExceededTime() + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
+                        user.setLastQuotaExceededTime(now);
+                        log.warn("User '{}' had exceeded {} rec/sec limit.", user.getName(), USER_QUOTA_LIMIT);
+                        ctx.writeAndFlush(produce(imsg.id, MESSAGE_QUOTA_LIMIT_EXCEEDED));
+                    }
                     return;
                 }
                 user.incrStat(imsg.command);
@@ -99,5 +107,6 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
      */
     public void updateProperties(ServerProperties props) {
         this.USER_QUOTA_LIMIT = props.getIntProperty("user.message.quota.limit");
+        this.USER_QUOTA_LIMIT_WARN_PERIOD = props.getIntProperty("user.message.quota.limit.exceeded.warning.period");
     }
 }
