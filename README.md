@@ -87,16 +87,17 @@ Response message structure:
 	+------------------------------------------------+
 
     200 - message was successfully processed/passed to the server
-    
+
+    1 - too many requests.
     2 - command is badly formed, check syntax and passed params
     3 - user is not registered
     4 - user with this name has been registered already
     5 - user haven’t made login command
     6 - user is not allowed to perform this operation (most probably is not logged or socket has been closed)
     7 - arduino board not in network
-    8 - command is not supported
+    8 - todo
     9 - token is not valid
-    10 - server error
+    10 - todo
     11 - user is already logged in. Happens in cases when same user tries to login for more than one time.
     12 - tweet exception, exception occurred during posting request to Twitter could be in case messages are the same in a row;
     13 - tweet body invalid exception; body is empty or larger than 140 chars;

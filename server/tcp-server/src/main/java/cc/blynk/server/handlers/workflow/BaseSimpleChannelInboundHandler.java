@@ -19,7 +19,7 @@ import org.apache.logging.log4j.ThreadContext;
 
 import java.util.Properties;
 
-import static cc.blynk.common.enums.Response.MESSAGE_QUOTA_LIMIT_EXCEEDED;
+import static cc.blynk.common.enums.Response.TOO_MANY_REQUESTS_EXCEPTION;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
@@ -64,7 +64,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                     if (user.getLastQuotaExceededTime() + USER_QUOTA_LIMIT_WARN_PERIOD < now) {
                         user.setLastQuotaExceededTime(now);
                         log.warn("User '{}' had exceeded {} rec/sec limit.", user.getName(), USER_QUOTA_LIMIT);
-                        ctx.writeAndFlush(produce(imsg.id, MESSAGE_QUOTA_LIMIT_EXCEEDED));
+                        ctx.writeAndFlush(produce(imsg.id, TOO_MANY_REQUESTS_EXCEPTION));
                     }
                     return;
                 }
