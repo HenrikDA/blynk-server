@@ -60,6 +60,8 @@ public abstract class BaseServer implements Runnable {
     public abstract ChannelInitializer<SocketChannel> getChannelInitializer();
 
     public void stop() {
-        channel.close().awaitUninterruptibly();
+        if (channel != null) {
+            channel.close().awaitUninterruptibly();
+        }
     }
 }
