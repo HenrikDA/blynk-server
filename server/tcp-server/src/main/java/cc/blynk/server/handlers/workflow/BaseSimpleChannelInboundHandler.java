@@ -57,7 +57,7 @@ public abstract class BaseSimpleChannelInboundHandler<I extends MessageBase> ext
                 if (user == null) {
                     throw new UserNotAuthenticated("User not logged.", imsg.id);
                 }
-                log.warn("rate : {}, count : {}", user.getQuotaMeter().getOneMinuteRate(), user.getQuotaMeter().getCount());
+
                 if (user.getQuotaMeter().getOneMinuteRate() > USER_QUOTA_LIMIT) {
                     long now = System.currentTimeMillis();
                     //once a minute sending user response message in case limit is exceeded constantly
