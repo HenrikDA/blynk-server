@@ -33,7 +33,7 @@ public interface DefaultExceptionHandler {
             case "Connection reset by peer" :
             case "No route to host" :
             case "Connection timed out" :
-                log.error("Client goes offline. Reason : {}", cause.getMessage());
+                log.debug("Client goes offline. Reason : {}", cause.getMessage());
                 break;
             default :
                 log.error("Unexpected error!!!", cause);
