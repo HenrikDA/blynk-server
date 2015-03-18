@@ -9,22 +9,21 @@ import cc.blynk.server.utils.EMailValidator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.ssl.NotSslRecordException;
 
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
- * The Blynk Project.
- * Created by Dmitriy Dumanskiy.
- * Created on 2/1/2015.
- *
  * Process register message.
- * Divides input sting by spaces on 2 parts:
+ * Divides input string by spaces on 2 parts:
  * "username" "password".
  * Checks if user not registered yet. If not - registering.
  *
  * For instance, incoming register message may be : "user@mail.ua my_password"
+ *
+ * The Blynk Project.
+ * Created by Dmitriy Dumanskiy.
+ * Created on 2/1/2015.
  */
 @ChannelHandler.Sharable
 public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage> implements DefaultExceptionHandler {
@@ -51,7 +50,6 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
         }
 
         String userName = messageParts[0].toLowerCase();
-        //TODO encryption, SSL sockets.
         String pass = messageParts[1];
         log.info("Trying register user : {}", userName);
 
@@ -76,12 +74,7 @@ public class RegisterHandler extends SimpleChannelInboundHandler<RegisterMessage
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        if (cause instanceof NotSslRecordException) {
-            log.error("Not secure connection detected. Reason {}.", cause.getMessage());
-            ctx.close();
-        } else {
-            handleGeneralException(ctx, cause);
-        }
+        handleGeneralException(ctx, cause);
     }
 
 }

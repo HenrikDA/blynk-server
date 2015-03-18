@@ -10,6 +10,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.ReplayingDecoder;
+import io.netty.handler.ssl.NotSslRecordException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,6 +66,9 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements D
         //todo test for that case
         if (cause instanceof DecoderException && cause.getCause() instanceof UnsupportedCommandException) {
             log.error("Input command is invalid. Closing socket.", cause.getMessage());
+            ctx.close();
+        } else if (cause instanceof NotSslRecordException) {
+            log.error("Not secure connection attempt detected. {}.", cause.getMessage());
             ctx.close();
         } else {
             handleGeneralException(ctx, cause);

@@ -21,17 +21,22 @@ import java.util.Random;
  */
 public class TestAppClient extends AppClient {
 
-    public final SimpleClientHandler responseMock;
-    private ChannelPipeline pipeline;
+    public final SimpleClientHandler responseMock = Mockito.mock(SimpleClientHandler.class);
+    private int msgId = 0;
 
-    private int msgId;
+    private ChannelPipeline pipeline;
+    private boolean disableAppSsl;
 
     public TestAppClient(String host, int port) {
         super(host, port, Mockito.mock(Random.class), false);
         Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
+        this.disableAppSsl = false;
+    }
 
-        this.responseMock = Mockito.mock(SimpleClientHandler.class);
-        this.msgId = 0;
+    public TestAppClient(String host, int port, boolean disableAppSsl) {
+        super(host, port, Mockito.mock(Random.class), disableAppSsl);
+        Mockito.when(random.nextInt(Short.MAX_VALUE)).thenReturn(1);
+        this.disableAppSsl = disableAppSsl;
     }
 
     @Override
@@ -61,7 +66,10 @@ public class TestAppClient extends AppClient {
                 ChannelPipeline pipeline = ch.pipeline();
                 TestAppClient.this.pipeline = pipeline;
 
-                pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+                if (!disableAppSsl) {
+                    pipeline.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+                }
+
                 pipeline.addLast(new ReplayingMessageDecoder());
                 pipeline.addLast(new DeviceMessageEncoder());
                 pipeline.addLast(responseMock);

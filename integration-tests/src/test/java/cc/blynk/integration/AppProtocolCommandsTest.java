@@ -153,6 +153,23 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         makeCommands("login dmitriy@mail.ua 1", "ping").check(OK).check(produce(1, DEVICE_NOT_IN_NETWORK));
     }
 
+    @Test
+    public void testNotSslRecordException() throws Exception {
+        TestAppClient appClient = new TestAppClient(host, appPort, true);
+
+        //todo mock exception response
+        OngoingStubbing<String> ongoingStubbing = when(bufferedReader.readLine());
+        ongoingStubbing = ongoingStubbing.thenReturn("register dmitriy@mail.ua 1");
+        ongoingStubbing.thenAnswer(invocation -> {
+            sleep(400);
+            return "quit";
+        });
+
+        appClient.start(bufferedReader);
+
+        verify(appClient.responseMock, times(0)).channelRead(any(), any());
+    }
+
     /**
      * 1) Creates client socket;
      * 2) Sends commands;
