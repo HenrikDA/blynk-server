@@ -14,6 +14,7 @@ import io.netty.handler.ssl.NotSslRecordException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.net.ssl.SSLException;
 import java.util.List;
 
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -67,8 +68,12 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements D
         if (cause instanceof DecoderException && cause.getCause() instanceof UnsupportedCommandException) {
             log.error("Input command is invalid. Closing socket.", cause.getMessage());
             ctx.close();
-        } else if (cause instanceof NotSslRecordException) {
-            log.error("Not secure connection attempt detected. {}.", cause.getMessage());
+        } else if (cause instanceof SSLException) {
+            if (cause instanceof NotSslRecordException) {
+                log.error("Not secure connection attempt detected. {}.", cause.getMessage());
+            } else {
+                log.error("SSL exception. {}.", cause.getMessage());
+            }
             ctx.close();
         } else {
             handleGeneralException(ctx, cause);
