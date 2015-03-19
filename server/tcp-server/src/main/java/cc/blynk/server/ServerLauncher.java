@@ -41,9 +41,9 @@ import java.util.Properties;
  * Created by Dmitriy Dumanskiy.
  * Created on 2/16/2015.
  */
-public class Launcher {
+public class ServerLauncher {
 
-    private final static Logger log = LogManager.getLogger(Launcher.class);
+    private final static Logger log = LogManager.getLogger(ServerLauncher.class);
 
     private final static Options options = new Options();
 
@@ -59,7 +59,7 @@ public class Launcher {
         //configurable folder for logs via property.
         System.setProperty("logs.folder", serverProperties.getProperty("logs.folder"));
 
-        new Launcher().launch(args, serverProperties);
+        new ServerLauncher().launch(args, serverProperties);
     }
 
     public void launch(String[] args, ServerProperties serverProperties) throws Exception {
