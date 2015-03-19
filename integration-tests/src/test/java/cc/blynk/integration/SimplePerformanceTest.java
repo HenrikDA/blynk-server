@@ -2,6 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.integration.model.ClientPair;
 import cc.blynk.integration.model.SimpleClientHandler;
+import cc.blynk.integration.model.TestAppClient;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.mockito.Mockito.*;
+
 /**
  * The Blynk Project.
  * Created by Dmitriy Dumanskiy.
@@ -24,6 +27,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SimplePerformanceTest extends IntegrationBase {
 
     final AtomicInteger counter = new AtomicInteger();
+
+    @Test
+    @Ignore
+    public void emulateSlider() throws Exception {
+        TestAppClient appClient = new TestAppClient("localhost", 8443);
+        appClient.start(null);
+
+        appClient.send("login dima@dima.ua 1");
+
+        verify(appClient.responseMock, timeout(500)).channelRead(any(), any());
+
+        for (int i = 0; i < 255; i++) {
+            appClient.send("hardware aw 9 " + i);
+            sleep(5);
+        }
+    }
 
     @Test
     @Ignore
