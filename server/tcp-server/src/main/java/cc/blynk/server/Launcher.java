@@ -43,7 +43,16 @@ import java.util.Properties;
  */
 public class Launcher {
 
-    private final Logger log = LogManager.getLogger(Launcher.class);
+    private final static Logger log = LogManager.getLogger(Launcher.class);
+
+    private final static Options options = new Options();
+
+    static {
+        options.addOption("hardPort", true, "Hardware server port.")
+               .addOption("appPort", true, "Application server port.")
+               .addOption("workerThreads", true, "Server worker threads.")
+               .addOption("disableAppSsl", false, "Disables SSL for app mode.");
+    }
 
     public static void main(String[] args) throws Exception {
         ServerProperties serverProperties = new ServerProperties();
@@ -112,23 +121,19 @@ public class Launcher {
     }
 
     private void processArguments(String[] args, Properties serverProperties) throws ParseException {
-        Options options = new Options();
-        options.addOption("port", true, "Server port.");
-        options.addOption("sslPort", true, "Server SSL port.");
-        options.addOption("workerThreads", true, "Server worker threads.");
         CommandLine cmd = new BasicParser().parse(options, args);
 
-        String portString = cmd.getOptionValue("port");
-        String sslPortString = cmd.getOptionValue("sslPort");
+        String hardPort = cmd.getOptionValue("hardPort");
+        String appPort = cmd.getOptionValue("appPort");
         String workerThreadsString = cmd.getOptionValue("workerThreads");
 
-        if (portString != null) {
-            ParseUtil.parseInt(portString);
-            serverProperties.put("server.default.port", portString);
+        if (hardPort != null) {
+            ParseUtil.parseInt(hardPort);
+            serverProperties.put("server.default.port", hardPort);
         }
-        if (sslPortString != null) {
-            ParseUtil.parseInt(sslPortString);
-            serverProperties.put("server.ssl.port", sslPortString);
+        if (appPort != null) {
+            ParseUtil.parseInt(appPort);
+            serverProperties.put("server.ssl.port", appPort);
         }
         if (workerThreadsString != null) {
             ParseUtil.parseInt(workerThreadsString);
