@@ -1,3 +1,7 @@
+# TODO
+Describe Properties in config
+Hardware command body forming rules
+
 # Blynk server
 Is Netty based Java server responsible for message forwarding between mobile application and any hardware (e.g. Arduino, Raspberry Pi for now).
 Please read more detailed description [here](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
@@ -229,6 +233,7 @@ Init command is 'hardware' command that sets all pin modes. Example of init comm
     	hardware pm 1 in 13 out 9 out 8 in
 
 // TODO: take description about pin modes from Blynk Arduino library readme
+// TODO Describe separation with Zeroes in pinmode command
 
 In the example above, you set pin 1 and pin 8 to 'input’ PIN_MODE. This means this pins will read values from hardware (graph, display, etc).
 Pins 13 and 9 have 'output’ PIN_MODE. This means that these pins will we writable (button, slider).
@@ -275,6 +280,7 @@ Registered users are stored locally in TMP dir of your system in file "user.db".
 
 
 ## Local server setup
+TODO
 
 ### Behind wifi router
 In case you need to run Blynk server behind wifi-router and want it to be accessible from internet you have to add port-forwarding rule
