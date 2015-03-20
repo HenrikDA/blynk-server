@@ -24,6 +24,7 @@ public class JsonParsingTest {
         assertNotNull(userProfile);
         assertNotNull(userProfile.getDashBoards());
         assertEquals(userProfile.getDashBoards().length, 1);
+        assertEquals(Integer.valueOf(1), userProfile.getActiveDashId());
 
         DashBoard dashBoard = userProfile.getDashBoards()[0];
 
@@ -31,7 +32,6 @@ public class JsonParsingTest {
 
         assertEquals(1, dashBoard.getId());
         assertEquals("My Dashboard", dashBoard.getName());
-        assertEquals(true, dashBoard.getIsActive());
         assertNotNull(dashBoard.getWidgets());
         assertEquals(dashBoard.getWidgets().length, 8);
         assertNotNull(dashBoard.getSettings());

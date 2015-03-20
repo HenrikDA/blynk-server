@@ -1,10 +1,10 @@
 {
+    "activeDashId" : 1,
     "dashBoards" :
         [
             {
              "id":1,
              "name":"My Dashboard",
-             "isActive":true,
              "widgets"  : [
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"BUTTON",         "pinType":"DIGITAL", "pin":1, "value":"1"},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TOGGLE_BUTTON",  "pinType":"DIGITAL", "pin":2, "value":"1", "state":"ON"},

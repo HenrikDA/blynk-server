@@ -24,6 +24,8 @@ class AppHandlersHolder {
     private final GetTokenHandler getTokenHandler;
     private final LoadProfileHandler loadProfileHandler;
     private final SaveProfileHandler saveProfileHandler;
+    private final ActivateDashboardHandler activateDashboardHandler;
+    private final DeActivateDashboardHandler deActivateDashboardHandler;
     private final HardwareHandler hardwareHandler;
     private final PingHandler pingHandler;
 
@@ -35,6 +37,8 @@ class AppHandlersHolder {
         this.saveProfileHandler = new SaveProfileHandler(props, fileManager, userRegistry, sessionsHolder);
         this.hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
         this.pingHandler = new PingHandler(props, fileManager, userRegistry, sessionsHolder);
+        this.activateDashboardHandler = new ActivateDashboardHandler(props, fileManager, userRegistry, sessionsHolder);
+        this.deActivateDashboardHandler = new DeActivateDashboardHandler(props, fileManager, userRegistry, sessionsHolder);
     }
 
     public List<BaseSimpleChannelInboundHandler> getBaseHandlers() {
@@ -45,6 +49,8 @@ class AppHandlersHolder {
                add(saveProfileHandler);
                add(hardwareHandler);
                add(pingHandler);
+               add(activateDashboardHandler);
+               add(deActivateDashboardHandler);
             }
         };
     }
@@ -59,6 +65,8 @@ class AppHandlersHolder {
                add(saveProfileHandler);
                add(hardwareHandler);
                add(pingHandler);
+               add(activateDashboardHandler);
+               add(deActivateDashboardHandler);
             }
         };
     }

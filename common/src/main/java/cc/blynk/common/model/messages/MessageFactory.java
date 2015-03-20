@@ -33,6 +33,10 @@ public class MessageFactory {
                 return new LoginMessage(messageId, body);
             case REGISTER :
                 return new RegisterMessage(messageId, body);
+            case ACTIVATE_DASHBOARD :
+                return new ActivateDashboardMessage(messageId, body);
+            case DEACTIVATE_DASHBOARD :
+                return new DeActivateDashboardMessage(messageId, body);
             case TWEET :
                 return new TweetMessage(messageId, body);
 

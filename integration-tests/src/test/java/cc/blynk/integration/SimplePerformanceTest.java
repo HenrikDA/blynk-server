@@ -29,6 +29,19 @@ public class SimplePerformanceTest extends IntegrationBase {
     final AtomicInteger counter = new AtomicInteger();
 
     @Test
+    public void emulateSlider2() throws Exception {
+        TestAppClient appClient = new TestAppClient("cloud.blynk.cc", 8443);
+        appClient.start(null);
+
+        appClient.send("register dima1@dima.ua 1")
+                 .send("login dima1@dima.ua 1")
+                 .send("saveProfile {\"dashBoards\":[{\"id\":1,\"isActive\":false,\"widgets\":[],\"settings\":{\"boardType\":\"Arduino UNO\"}}]}}");
+
+
+        verify(appClient.responseMock, timeout(500).times(3)).channelRead(any(), any());
+    }
+
+    @Test
     @Ignore
     public void emulateSlider() throws Exception {
         TestAppClient appClient = new TestAppClient("localhost", 8443);

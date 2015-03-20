@@ -103,7 +103,6 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
-    //all commands together cause all operations requires register and then login =(.
     public void testProfileWithManyDashes() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
@@ -119,6 +118,8 @@ public class AppProtocolCommandsTest extends IntegrationBase {
         makeCommands("loadProfile").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("saveProfile {}").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("getToken").check(produce(1, USER_NOT_AUTHENTICATED));
+        makeCommands("activate 1").check(produce(1, USER_NOT_AUTHENTICATED));
+        makeCommands("deactivate").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("hardware 1 1").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("ping").check(produce(1, USER_NOT_AUTHENTICATED));
     }
@@ -131,10 +132,48 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
-    public void testHardwareNotInNetwork() throws Exception {
+    public void testActivateWrongFormat() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "hardware 1 1").check(OK).check(produce(1, DEVICE_NOT_IN_NETWORK));
+        makeCommands("login dmitriy@mail.ua 1", "activate ").check(produce(1, ILLEGAL_COMMAND));
+    }
+
+    @Test
+    public void testActivateWorks() throws Exception {
+        String userProfileString = readTestUserProfile();
+
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
+
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate 1").check(3, OK);
+    }
+
+    @Test
+    public void testActivateWrongDashId() throws Exception {
+        String userProfileString = readTestUserProfile();
+
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
+
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate 2").check(2, OK).check(produce(1, ILLEGAL_COMMAND));
+    }
+
+
+    @Test
+    public void testActivateBadId() throws Exception {
+        String userProfileString = readTestUserProfile();
+
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
+
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate xxx").check(2, OK).check(produce(1, ILLEGAL_COMMAND));
+    }
+
+    @Test
+    public void testHardwareNotInNetwork() throws Exception {
+        String userProfileString = readTestUserProfile();
+
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
+
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString, "activate 1", "hardware 1 1")
+                .check(3, OK).check(produce(1, DEVICE_NOT_IN_NETWORK));
     }
 
     @Test

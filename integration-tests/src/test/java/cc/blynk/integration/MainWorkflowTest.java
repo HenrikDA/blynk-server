@@ -137,6 +137,36 @@ public class MainWorkflowTest extends IntegrationBase {
         assertTrue(hardMessage.body.startsWith(body.replaceAll(" ", "\0")));
     }
 
+
+    @Test
+    public void testActivateWorkflow() throws Exception {
+        ClientPair clientPair = initAppAndHardPair();
+
+        clientPair.appClient.send("activate 2");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, ILLEGAL_COMMAND)));
+
+        clientPair.appClient.send("deactivate");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
+
+        clientPair.appClient.send("hardware ar 1 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ILLEGAL_COMMAND)));
+
+        clientPair.appClient.send("activate 1");
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
+
+        clientPair.appClient.send("hardware ar 1 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(5, HARDWARE_COMMAND, "ar 1 1".replaceAll(" ", "\0"))));
+
+        String userProfileWithGraph = readTestUserProfile();
+
+        clientPair.appClient.send("saveProfile " + userProfileWithGraph);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(6, OK)));
+
+
+        clientPair.appClient.send("hardware ar 1 1");
+        verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(7, HARDWARE_COMMAND, "ar 1 1".replaceAll(" ", "\0"))));
+    }
+
     @Test
     public void testAppSendWriteHardCommandForGraphAndBack() throws Exception {
         ClientPair clientPair = initAppAndHardPair();

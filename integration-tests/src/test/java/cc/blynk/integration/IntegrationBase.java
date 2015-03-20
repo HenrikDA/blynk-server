@@ -99,13 +99,14 @@ public abstract class IntegrationBase {
         appClient.send("register " + user)
                 .send("login " + user)
                 .send("saveProfile " + userProfileString)
+                .send("activate 1")
                 .send("getToken 1");
 
         ArgumentCaptor<Object> objectArgumentCaptor = ArgumentCaptor.forClass(Object.class);
-        verify(appClient.responseMock, timeout(2000).times(4)).channelRead(any(), objectArgumentCaptor.capture());
+        verify(appClient.responseMock, timeout(2000).times(5)).channelRead(any(), objectArgumentCaptor.capture());
 
         List<Object> arguments = objectArgumentCaptor.getAllValues();
-        Message getTokenMessage = (Message) arguments.get(3);
+        Message getTokenMessage = (Message) arguments.get(4);
         String token = getTokenMessage.body;
 
         hardClient.send("login " + token);

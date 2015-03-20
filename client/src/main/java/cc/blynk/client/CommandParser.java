@@ -25,6 +25,10 @@ public class CommandParser {
                 return GET_TOKEN;
             case "login" :
                 return LOGIN;
+            case "activate" :
+                return ACTIVATE_DASHBOARD;
+            case "deactivate" :
+                return DEACTIVATE_DASHBOARD;
             case "register" :
                 return REGISTER;
             case "tweet" :

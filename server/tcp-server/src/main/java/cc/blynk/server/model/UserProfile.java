@@ -1,5 +1,6 @@
 package cc.blynk.server.model;
 
+import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.*;
@@ -16,6 +17,22 @@ public class UserProfile {
     private TwitterAccessToken twitterAccessToken;
 
     private Map<Integer, Set<Byte>> graphPins;
+
+    //@JsonIgnore
+    private transient Integer activeDashId;
+
+    public void validateDashId(int dashBoardId, int msgId) {
+        if (dashBoards == null) {
+            throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
+        }
+        for (DashBoard dashBoard : dashBoards) {
+            if (dashBoard.getId() == dashBoardId) {
+                return;
+            }
+        }
+
+        throw new IllegalCommandException(String.format("Requested token for non-existing '%d' dash id.", dashBoardId), msgId);
+    }
 
     public DashBoard[] getDashBoards() {
         return dashBoards;
@@ -70,6 +87,14 @@ public class UserProfile {
 
     public void setTwitterAccessToken(TwitterAccessToken twitterAccessToken) {
         this.twitterAccessToken = twitterAccessToken;
+    }
+
+    public Integer getActiveDashId() {
+        return activeDashId;
+    }
+
+    public void setActiveDashId(Integer activeDashId) {
+        this.activeDashId = activeDashId;
     }
 
     @Override

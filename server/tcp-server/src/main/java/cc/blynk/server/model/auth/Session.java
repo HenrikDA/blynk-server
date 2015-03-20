@@ -29,8 +29,6 @@ public class Session {
     private final Set<Channel> appChannels = new ConcurrentSet<>();
     private final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
-    //todo for now - simplest possible implementation
-    //todo expect right n
     public static List<ChannelFuture> sendMessageTo(MessageBase message, Set<Channel> channels) {
         if (channels.size() == 0) {
             throw new DeviceNotInNetworkException("No device in session.", message.id);
@@ -39,6 +37,22 @@ public class Session {
         for (Channel channel : channels) {
             log.trace("Sending {} to {}", message, channel);
             futureList.add(channel.writeAndFlush(message));
+        }
+        return futureList;
+    }
+
+    public List<ChannelFuture> sendMessageToHardware(Integer activeDashId, MessageBase message) {
+        if (hardwareChannels.size() == 0) {
+            throw new DeviceNotInNetworkException("No device in session.", message.id);
+        }
+
+        List<ChannelFuture> futureList = new ArrayList<>();
+        for (Channel channel : hardwareChannels) {
+            Integer dashId = ((ChannelState) channel).dashId;
+            if (dashId.equals(activeDashId)) {
+                log.trace("Sending {} to {}", message, channel);
+                futureList.add(channel.writeAndFlush(message));
+            }
         }
         return futureList;
     }

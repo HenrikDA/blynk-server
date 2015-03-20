@@ -3,6 +3,7 @@ package cc.blynk.server.handlers.workflow;
 import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.*;
+import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.auth.nio.ChannelState;
@@ -42,7 +43,11 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
             String body = storage.store(user, channelState.dashId, message.body, message.id);
             futures = Session.sendMessageTo(message.updateMessageBody(body), session.getAppChannels());
         } else {
-            futures = Session.sendMessageTo(message, session.getHardwareChannels());
+            if (user.getUserProfile().getActiveDashId() == null) {
+                throw new IllegalCommandException("No active dashboard.", message.id);
+            }
+
+            futures = session.sendMessageToHardware(user.getUserProfile().getActiveDashId(), message);
         }
 
     }

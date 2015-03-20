@@ -1,15 +1,16 @@
 package cc.blynk.server.handlers.workflow;
 
-import cc.blynk.common.model.messages.protocol.appllication.GetTokenMessage;
+import cc.blynk.common.model.messages.protocol.appllication.ActivateDashboardMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.FileManager;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
-import cc.blynk.server.exceptions.NotAllowedException;
+import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.auth.User;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 
+import static cc.blynk.common.enums.Response.OK;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 
 /**
@@ -19,27 +20,28 @@ import static cc.blynk.common.model.messages.MessageFactory.produce;
  *
  */
 @ChannelHandler.Sharable
-public class GetTokenHandler extends BaseSimpleChannelInboundHandler<GetTokenMessage> {
+public class ActivateDashboardHandler extends BaseSimpleChannelInboundHandler<ActivateDashboardMessage> {
 
-    public GetTokenHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
+    public ActivateDashboardHandler(ServerProperties props, FileManager fileManager, UserRegistry userRegistry, SessionsHolder sessionsHolder) {
         super(props, fileManager, userRegistry, sessionsHolder);
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, User user, GetTokenMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, User user, ActivateDashboardMessage message) throws Exception {
         String dashBoardIdString = message.body;
 
         int dashBoardId;
         try {
             dashBoardId = Integer.parseInt(dashBoardIdString);
         } catch (NumberFormatException ex) {
-            throw new NotAllowedException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
+            throw new IllegalCommandException(String.format("Dash board id '%s' not valid.", dashBoardIdString), message.id);
         }
 
+        log.debug("Activating dash {} for user {}", dashBoardIdString, user.getName());
         user.getUserProfile().validateDashId(dashBoardId, message.id);
+        user.getUserProfile().setActiveDashId(dashBoardId);
 
-        String token = userRegistry.getToken(user, dashBoardId);
-
-        ctx.writeAndFlush(produce(message.id, message.command, token));
+        ctx.writeAndFlush(produce(message.id, OK));
     }
+
 }

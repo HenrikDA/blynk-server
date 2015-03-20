@@ -86,6 +86,8 @@ public class User implements Serializable {
     }
 
     public void setUserProfile(UserProfile userProfile) {
+        //do not accept activeDashId from user, it is calculated field.
+        userProfile.setActiveDashId(this.userProfile.getActiveDashId());
         this.userProfile = userProfile;
         this.lastModifiedTs = System.currentTimeMillis();
     }

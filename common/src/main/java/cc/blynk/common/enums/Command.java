@@ -20,8 +20,8 @@ public final class Command {
     public static final short LOAD_PROFILE = 4;
     public static final short GET_TOKEN = 5;
     public static final short PING = 6;
-    public static final short GRAPH_GET = 7;
-    public static final short GRAPH_LOAD = 8;
+    public static final short ACTIVATE_DASHBOARD = 7;
+    public static final short DEACTIVATE_DASHBOARD = 8;
     public static final short TWEET = 12;
     //------------------------------------------
 

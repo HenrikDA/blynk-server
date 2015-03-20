@@ -15,8 +15,6 @@ public class DashBoard {
 
     private String name;
 
-    private boolean isActive;
-
     private Long timestamp;
 
     private Widget[] widgets;
@@ -69,14 +67,6 @@ public class DashBoard {
         this.name = name;
     }
 
-    public boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(boolean active) {
-        isActive = active;
-    }
-
     public Widget[] getWidgets() {
         return widgets;
     }
@@ -109,7 +99,6 @@ public class DashBoard {
         DashBoard dashBoard = (DashBoard) o;
 
         if (id != dashBoard.id) return false;
-        if (isActive != dashBoard.isActive) return false;
         if (name != null ? !name.equals(dashBoard.name) : dashBoard.name != null) return false;
         if (settings != null ? !settings.equals(dashBoard.settings) : dashBoard.settings != null) return false;
         if (!Arrays.equals(widgets, dashBoard.widgets)) return false;
@@ -121,7 +110,6 @@ public class DashBoard {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (isActive ? 1 : 0);
         result = 31 * result + (widgets != null ? Arrays.hashCode(widgets) : 0);
         result = 31 * result + (settings != null ? settings.hashCode() : 0);
         return result;
