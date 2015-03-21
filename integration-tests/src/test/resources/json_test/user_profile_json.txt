@@ -6,8 +6,8 @@
              "name":"My Dashboard",
              "widgets"  : [
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"BUTTON",         "pinType":"DIGITAL", "pin":1, "value":"1"},
-                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TOGGLE_BUTTON",  "pinType":"DIGITAL", "pin":2, "value":"1", "state":"ON"},
-                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TOGGLE_BUTTON",  "pinType":"ANALOG", "pin":3, "value":"0", "state":"OFF"},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"SLIDER_LARGE",  "pinType":"DIGITAL", "pin":2, "value":"1", "state":"ON"},
+                {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"SLIDER_LARGE",  "pinType":"ANALOG", "pin":3, "value":"0", "state":"OFF"},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"SLIDER",         "pinType":"VIRTUAL", "pin":4, "value":"244" },
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"TIMER",          "pinType":"DIGITAL", "pin":5, "value":"1", "startTime":0},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"LED",            "pinType":"DIGITAL", "pin":6},

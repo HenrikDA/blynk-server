@@ -6,7 +6,7 @@ import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.others.Timer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,13 +58,13 @@ public class TimerWorker implements Runnable {
 
         for (User user : userRegistry.getUsers().values()) {
             if (user.getUserProfile().getDashBoards() != null) {
-                for (Widget timer : user.getUserProfile().getDashboardTimerWidgets()) {
+                for (Timer timer : user.getUserProfile().getDashboardTimerWidgets()) {
                     counter++;
-                    if (timerTick(curTime, timer.getStartTime())) {
+                    if (timerTick(curTime, timer.startTime)) {
                         Session session = sessionsHolder.getUserSession().get(user);
                         if (session != null) {
                             try {
-                                session.sendMessageToHardware(new HardwareMessage(0, timer.getValue()));
+                                session.sendMessageToHardware(new HardwareMessage(0, timer.value));
                             } catch (DeviceNotInNetworkException e) {
                                 log.warn("Timer send for user {} failed. No Device in Network.", user.getName());
                             }

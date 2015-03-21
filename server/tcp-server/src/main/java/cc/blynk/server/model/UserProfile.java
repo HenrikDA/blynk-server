@@ -1,10 +1,11 @@
 package cc.blynk.server.model;
 
 import cc.blynk.server.exceptions.IllegalCommandException;
-import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.*;
+
 
 /**
  * User: ddumanskiy
@@ -43,12 +44,12 @@ public class UserProfile {
         this.dashBoards = dashBoards;
     }
 
-    public Set<Widget> getDashboardTimerWidgets() {
+    public Set<Timer> getDashboardTimerWidgets() {
         if (dashBoards == null || dashBoards.length == 0) {
             return Collections.emptySet();
         }
 
-        Set<Widget> timers = new HashSet<>();
+        Set<Timer> timers = new HashSet<>();
         for (DashBoard dashBoard : dashBoards) {
             timers.addAll(dashBoard.getTimerWidgets());
         }

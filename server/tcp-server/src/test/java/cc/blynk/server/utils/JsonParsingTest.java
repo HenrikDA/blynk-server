@@ -3,6 +3,7 @@ package cc.blynk.server.utils;
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.controls.Button;
 import org.junit.Test;
 
 import java.io.InputStream;
@@ -16,6 +17,8 @@ import static org.junit.Assert.*;
  */
 public class JsonParsingTest {
 
+    //TODO Tests for all widget types!!!
+
     @Test
     public void testParseUserProfile() {
         InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_json.txt");
@@ -24,7 +27,9 @@ public class JsonParsingTest {
         assertNotNull(userProfile);
         assertNotNull(userProfile.getDashBoards());
         assertEquals(userProfile.getDashBoards().length, 1);
-        assertEquals(Integer.valueOf(1), userProfile.getActiveDashId());
+
+        //this property shoudn't be parsed
+        assertNull(userProfile.getActiveDashId());
 
         DashBoard dashBoard = userProfile.getDashBoards()[0];
 
@@ -39,10 +44,10 @@ public class JsonParsingTest {
 
         for (Widget widget : dashBoard.getWidgets()) {
             assertNotNull(widget);
-            assertEquals(1, widget.getX());
-            assertEquals(1, widget.getY());
-            assertEquals(1, widget.getId());
-            assertEquals("Some Text", widget.getLabel());
+            assertEquals(1, widget.x);
+            assertEquals(1, widget.y);
+            assertEquals(1, widget.id);
+            assertEquals("Some Text", widget.label);
         }
     }
 
@@ -77,5 +82,18 @@ public class JsonParsingTest {
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
+    }
+
+    @Test
+    public void correctSerializedObject() {
+        Button button = new Button();
+        button.id = 1;
+        button.label = "MyButton";
+        button.x = 2;
+        button.y = 2;
+
+        String result = JsonParser.toJson(button);
+
+        assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"label\":\"MyButton\"}", result);
     }
 }

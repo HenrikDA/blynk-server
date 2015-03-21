@@ -1,7 +1,8 @@
 package cc.blynk.server.model;
 
-import cc.blynk.server.model.enums.WidgetType;
 import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.others.Timer;
+import cc.blynk.server.model.widgets.outputs.Graph;
 
 import java.util.*;
 
@@ -22,15 +23,15 @@ public class DashBoard {
 
     private Map<String, String> settings;
 
-    public Set<Widget> getTimerWidgets() {
+    public Set<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
             return Collections.emptySet();
         }
 
-        Set<Widget> timerWidgets = new HashSet<>();
+        Set<Timer> timerWidgets = new HashSet<>();
         for (Widget widget : widgets) {
-            if (widget.getType() == WidgetType.TIMER) {
-                timerWidgets.add(widget);
+            if (widget instanceof Timer) {
+                timerWidgets.add((Timer) widget);
             }
         }
 
@@ -44,8 +45,8 @@ public class DashBoard {
 
         Set<Byte> graphPins = new HashSet<>();
         for (Widget widget : widgets) {
-            if (widget.getType() == WidgetType.GRAPH) {
-                graphPins.add(widget.getPin());
+            if (widget instanceof Graph) {
+                graphPins.add(widget.pin);
             }
         }
 

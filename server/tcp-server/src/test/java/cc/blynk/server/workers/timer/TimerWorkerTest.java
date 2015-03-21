@@ -6,7 +6,7 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
-import cc.blynk.server.model.widgets.Widget;
+import cc.blynk.server.model.widgets.others.Timer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,8 +51,8 @@ public class TimerWorkerTest {
 
     private ConcurrentHashMap<User, Session> userSession = new ConcurrentHashMap<>();
 
-    private Set<Widget> timers = new HashSet<>();
-    private Widget w = new Widget();
+    private Set<Timer> timers = new HashSet<>();
+    private Timer w = new Timer();
 
     @Before
     public void init() {
@@ -70,7 +70,7 @@ public class TimerWorkerTest {
 
         LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("UTC"));
         long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
-        w.setStartTime(curTime);
+        w.startTime = curTime;
 
         int userCount = 1000;
         for (int i = 0; i < userCount; i++) {

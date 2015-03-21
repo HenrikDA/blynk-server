@@ -9,7 +9,6 @@ public enum WidgetType {
 
     //controls
     BUTTON,
-    TOGGLE_BUTTON,
     SLIDER,
     SLIDER_LARGE,
     KNOB,
