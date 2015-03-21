@@ -2,7 +2,7 @@ package cc.blynk.server.utils;
 
 import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.UserProfile;
-import cc.blynk.server.model.Widget;
+import cc.blynk.server.model.widgets.Widget;
 import org.junit.Test;
 
 import java.io.InputStream;

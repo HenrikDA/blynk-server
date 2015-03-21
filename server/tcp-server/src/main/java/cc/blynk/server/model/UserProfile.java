@@ -1,6 +1,7 @@
 package cc.blynk.server.model;
 
 import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.utils.JsonParser;
 
 import java.util.*;

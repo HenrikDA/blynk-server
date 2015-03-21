@@ -4,9 +4,9 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.dao.SessionsHolder;
 import cc.blynk.server.dao.UserRegistry;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
-import cc.blynk.server.model.Widget;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
+import cc.blynk.server.model.widgets.Widget;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

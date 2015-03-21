@@ -1,6 +1,7 @@
 package cc.blynk.server.model;
 
 import cc.blynk.server.model.enums.WidgetType;
+import cc.blynk.server.model.widgets.Widget;
 
 import java.util.*;
 
