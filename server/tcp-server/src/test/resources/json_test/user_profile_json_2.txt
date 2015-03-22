@@ -2,9 +2,7 @@
    "dashBoards":[
       {
          "id":1,
-         "settings":{
-            "boardType":"Uno"
-         },
+         "boardType":"UNO",
          "widgets":[
             {
                "x":0,

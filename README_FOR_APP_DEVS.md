@@ -110,10 +110,10 @@ Response message structure:
 			{
 			 "id":1, "name":"My Dashboard", "isActive":true, "timestamp":333333,
 			 "widgets"  : [...], 
-			 "settings" : {"boardType":"UNO", ..., "someParam":"someValue"}
+			 "boardType":"UNO"
 			}
 		],
-		"twitterAccessToken" : {
+		"twitter" : {
 		    "token" : "USER_TOKEN",
 		    "tokenSecret" : "USER_SECRET"
 		}

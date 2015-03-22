@@ -18,7 +18,7 @@
             }
         ],
     "graphPins":{"1":[8]},
-    "twitterAccessToken" : {
+    "twitter" : {
         "token" : "123",
         "tokenSecret" : "123"
     }

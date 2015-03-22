@@ -4,7 +4,10 @@ import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.model.widgets.outputs.Graph;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: ddumanskiy
@@ -21,7 +24,7 @@ public class DashBoard {
 
     private Widget[] widgets;
 
-    private Map<String, String> settings;
+    private String boardType;
 
     public Set<Timer> getTimerWidgets() {
         if (widgets == null || widgets.length == 0) {
@@ -77,12 +80,12 @@ public class DashBoard {
         this.widgets = widgets;
     }
 
-    public Map<String, String> getSettings() {
-        return settings;
+    public String getBoardType() {
+        return boardType;
     }
 
-    public void setSettings(Map<String, String> settings) {
-        this.settings = settings;
+    public void setBoardType(String boardType) {
+        this.boardType = boardType;
     }
 
     public Long getTimestamp() {
@@ -102,7 +105,6 @@ public class DashBoard {
 
         if (id != dashBoard.id) return false;
         if (name != null ? !name.equals(dashBoard.name) : dashBoard.name != null) return false;
-        if (settings != null ? !settings.equals(dashBoard.settings) : dashBoard.settings != null) return false;
         if (!Arrays.equals(widgets, dashBoard.widgets)) return false;
 
         return true;
@@ -113,7 +115,6 @@ public class DashBoard {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (widgets != null ? Arrays.hashCode(widgets) : 0);
-        result = 31 * result + (settings != null ? settings.hashCode() : 0);
         return result;
     }
 }

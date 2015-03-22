@@ -39,8 +39,8 @@ public class JsonParsingTest {
         assertEquals("My Dashboard", dashBoard.getName());
         assertNotNull(dashBoard.getWidgets());
         assertEquals(dashBoard.getWidgets().length, 8);
-        assertNotNull(dashBoard.getSettings());
-        assertEquals(dashBoard.getSettings().size(), 2);
+        assertNotNull(dashBoard.getBoardType());
+        assertEquals("UNO", dashBoard.getBoardType());
 
         for (Widget widget : dashBoard.getWidgets()) {
             assertNotNull(widget);

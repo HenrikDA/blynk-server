@@ -16,7 +16,7 @@ public class UserProfile {
 
     private DashBoard[] dashBoards;
 
-    private TwitterAccessToken twitterAccessToken;
+    private TwitterAccessToken twitter;
 
     private Map<Integer, Set<Byte>> graphPins;
 
@@ -83,12 +83,12 @@ public class UserProfile {
         this.graphPins = graphPins;
     }
 
-    public TwitterAccessToken getTwitterAccessToken() {
-        return twitterAccessToken;
+    public TwitterAccessToken getTwitter() {
+        return twitter;
     }
 
-    public void setTwitterAccessToken(TwitterAccessToken twitterAccessToken) {
-        this.twitterAccessToken = twitterAccessToken;
+    public void setTwitter(TwitterAccessToken twitter) {
+        this.twitter = twitter;
     }
 
     public Integer getActiveDashId() {

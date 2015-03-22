@@ -14,7 +14,7 @@
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"LED",            "pinType":"DIGITAL", "pin":6},
                 {"id":1, "x":1, "y":1, "dashBoardId":1, "label":"Some Text", "type":"DIGIT4_DISPLAY", "pinType":"DIGITAL", "pin":7}
              ],
-             "settings" : {"boardType":"UNO", "someParam":"someValue"}
+             "boardType":"UNO"
             }
         ]
 }
