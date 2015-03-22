@@ -37,8 +37,11 @@ By default mobile application uses 8443 port and is based on SSL/TLS sockets. De
 
 + Save profile with simple dashboard
 
-        saveProfile {"dashBoards":[{"id":1, "name":"My Dashboard", "isActive":true}]}
+        saveProfile {"dashBoards":[{"id":1, "name":"My Dashboard", "boardType":"UNO"}]}
 
++ Activate dashboard
+
+        activate 1
 
 + Get the token for hardware (e.g Arduino)
 
