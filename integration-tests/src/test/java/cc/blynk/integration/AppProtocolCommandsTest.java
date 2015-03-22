@@ -186,10 +186,10 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
     @Test
     //all commands together cause all operations requires register and then login =(.
-    public void testPingDeviceNotInNetwork() throws Exception {
+    public void testPingOk() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
-        makeCommands("login dmitriy@mail.ua 1", "ping").check(OK).check(produce(1, DEVICE_NOT_IN_NETWORK));
+        makeCommands("login dmitriy@mail.ua 1", "ping").check(2, OK);
     }
 
     @Test
