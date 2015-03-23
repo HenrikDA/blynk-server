@@ -6,6 +6,8 @@ import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The Blynk Project.
@@ -14,14 +16,18 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class DeviceMessageEncoder extends MessageToByteEncoder<MessageBase> {
 
-    @Override
-    protected void encode(ChannelHandlerContext ctx, MessageBase messageBase, ByteBuf out) throws Exception {
-        out.writeByte(messageBase.command);
-        out.writeShort(messageBase.id);
-        out.writeShort(messageBase.length);
+    protected static final Logger log = LogManager.getLogger(DeviceMessageEncoder.class);
 
-        if (messageBase.length > 0 && messageBase instanceof Message) {
-            out.writeBytes(((Message) messageBase).body.getBytes(Config.DEFAULT_CHARSET));
+    @Override
+    protected void encode(ChannelHandlerContext ctx, MessageBase message, ByteBuf out) throws Exception {
+        out.writeByte(message.command);
+        out.writeShort(message.id);
+        out.writeShort(message.length);
+
+        if (message.length > 0 && message instanceof Message) {
+            out.writeBytes(((Message) message).body.getBytes(Config.DEFAULT_CHARSET));
         }
+
+        log.trace("Out {}", message);
     }
 }
