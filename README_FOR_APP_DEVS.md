@@ -95,14 +95,12 @@ Response message structure:
     4 - user with this name has been registered already
     5 - user haven’t made login command
     6 - user is not allowed to perform this operation (most probably is not logged or socket has been closed)
-    7 - arduino board not in network
-    8 - todo
-    9 - token is not valid
-    10 - todo
+    7 - hardware is offline
+    9 - token is invalid
     11 - user is already logged in. Happens in cases when same user tries to login for more than one time.
     12 - tweet exception, exception occurred during posting request to Twitter could be in case messages are the same in a row;
     13 - tweet body invalid exception; body is empty or larger than 140 chars;
-    14 - user has no access token.
+    14 - user has no twitter access token provided.
     500 - server error. something went wrong on server
 
 ## User Profile JSON structure
