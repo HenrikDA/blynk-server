@@ -1,7 +1,6 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -30,8 +29,6 @@ public class PropertiesChangeWatcherWorkerTest {
     private PropertiesChangeWatcherWorker propertiesChangeWatcherWorker;
 
     @Test(expected = RuntimeException.class)
-    @Ignore("some problem with codeship envirnoment, it fails this test")
-    //todo fix
     public void testPropertiesChanged() throws IOException {
         Path tmpFile = Files.createTempFile("", "");
 
@@ -53,7 +50,7 @@ public class PropertiesChangeWatcherWorkerTest {
         @Override
         public void run() {
             try (OutputStream outputStream = Files.newOutputStream(tmpFilePath)) {
-                Thread.sleep(200);
+                Thread.sleep(100);
                 outputStream.write(new byte[1]);
             } catch (Exception e) {
                 e.printStackTrace();
