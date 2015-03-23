@@ -2,6 +2,7 @@ package cc.blynk.integration;
 
 import cc.blynk.common.model.messages.Message;
 import cc.blynk.integration.model.ClientPair;
+import cc.blynk.integration.model.TestHardClient;
 import cc.blynk.server.core.application.AppServer;
 import cc.blynk.server.core.hardware.HardwareServer;
 import org.apache.commons.io.FileUtils;
@@ -188,6 +189,22 @@ public class MainWorkflowTest extends IntegrationBase {
         assertTrue(hardMessage.body.startsWith(body.replaceAll(" ", "\0")));
     }
 
+    @Test
+    //todo more tests for that
+    public void testSendPinModeCommandWhenHardwareGoesOnline() throws Exception {
+        ClientPair clientPair = initAppAndHardPair();
+        clientPair.hardwareClient.stop();
+
+        String body = "pm 13 in";
+        clientPair.appClient.send("hardware " + body);
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, DEVICE_NOT_IN_NETWORK)));
+
+        TestHardClient hardClient = new TestHardClient(host, hardPort);
+        hardClient.start(null);
+        hardClient.send("login " + clientPair.token);
+        verify(hardClient.responseMock, timeout(2000)).channelRead(any(), eq(produce(1, OK)));
+        verify(hardClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, body.replaceAll(" ", "\0"))));
+    }
 
     @Test
     public void testConnectAppAndHardwareAndSendCommands() throws Exception {

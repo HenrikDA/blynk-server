@@ -46,16 +46,11 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
             throw new IllegalCommandException("Wrong income message format.", message.id);
         }
 
-        hardwareLogin(ctx, message.id, messageParts[0]);
-
-        ctx.writeAndFlush(produce(message.id, OK));
-    }
-
-    private void hardwareLogin(ChannelHandlerContext ctx, int messageId, String token) {
+        String token = messageParts[0];
         User user = userRegistry.getUserByToken(token);
 
         if (user == null) {
-            throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), messageId);
+            throw new InvalidTokenException(String.format("Hardware token is invalid. Token '%s', %s", token, ctx.channel()), message.id);
         }
 
         Integer dashId = UserRegistry.getDashIdByToken(user, token);
@@ -65,9 +60,17 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
         channelState.isHardwareChannel = true;
         channelState.user = user;
 
-        sessionsHolder.addChannelToGroup(user, channelState, messageId);
+        sessionsHolder.addChannelToGroup(user, channelState, message.id);
 
         log.info("Adding hardware channel with id {} to userGroup {}.", ctx.channel(), user.getName());
+
+        ctx.writeAndFlush(produce(message.id, OK));
+
+        //send Pin Mode command in case channel connected to active dashboard with Pin Mode command that
+        //was sent previously
+        if (dashId.equals(user.getUserProfile().getActiveDashId()) && user.getUserProfile().getPinModeMessage() != null) {
+            ctx.writeAndFlush(user.getUserProfile().getPinModeMessage());
+        }
     }
 
     @Override

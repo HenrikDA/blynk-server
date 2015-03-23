@@ -115,7 +115,7 @@ public abstract class IntegrationBase {
         appClient.reset();
         hardClient.reset();
 
-        return new ClientPair(appClient, hardClient);
+        return new ClientPair(appClient, hardClient, token);
     }
 
     public void initServerStructures() {

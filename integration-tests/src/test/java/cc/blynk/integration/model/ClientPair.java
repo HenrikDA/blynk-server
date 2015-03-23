@@ -11,8 +11,11 @@ public class ClientPair {
 
     public TestHardClient hardwareClient;
 
-    public ClientPair(TestAppClient appClient, TestHardClient hardwareClient) {
+    public String token;
+
+    public ClientPair(TestAppClient appClient, TestHardClient hardwareClient, String token) {
         this.appClient = appClient;
         this.hardwareClient = hardwareClient;
+        this.token = token;
     }
 }

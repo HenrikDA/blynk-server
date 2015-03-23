@@ -1,5 +1,6 @@
 package cc.blynk.server.model;
 
+import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.server.exceptions.IllegalCommandException;
 import cc.blynk.server.model.widgets.others.Timer;
 import cc.blynk.server.utils.JsonParser;
@@ -20,8 +21,18 @@ public class UserProfile {
 
     private Map<Integer, Set<Byte>> graphPins;
 
-    //@JsonIgnore
     private transient Integer activeDashId;
+    /**
+     * Specific property used for improving user experience on mobile application.
+     * In case user activated dashboard before hardware connected to server, user have to
+     * deactivate and activate dashboard again in order to setup PIN MODES (OUT, IN).
+     * With this property problem resolved by server side. Command for setting Pin Modes
+     * is remembered and when hardware goes online - server sends Pin Modes command to hardware
+     * without requiring user to activate/deactivate dashboard again.
+     */
+    private transient boolean isJustActivated;
+    private transient HardwareMessage pinModeMessage;
+
 
     public void validateDashId(int dashBoardId, int msgId) {
         if (dashBoards == null) {
@@ -97,6 +108,23 @@ public class UserProfile {
 
     public void setActiveDashId(Integer activeDashId) {
         this.activeDashId = activeDashId;
+        this.isJustActivated = true;
+    }
+
+    public boolean isJustActivated() {
+        return isJustActivated;
+    }
+
+    public void setJustActivated(boolean isJustActivated) {
+        this.isJustActivated = isJustActivated;
+    }
+
+    public HardwareMessage getPinModeMessage() {
+        return pinModeMessage;
+    }
+
+    public void setPinModeMessage(HardwareMessage pinModeMessage) {
+        this.pinModeMessage = pinModeMessage;
     }
 
     @Override

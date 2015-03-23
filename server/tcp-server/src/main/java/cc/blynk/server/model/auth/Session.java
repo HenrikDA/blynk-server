@@ -26,8 +26,8 @@ public class Session {
 
     private static final Logger log = LogManager.getLogger(Session.class);
 
-    private final Set<Channel> appChannels = new ConcurrentSet<>();
-    private final Set<Channel> hardwareChannels = new ConcurrentSet<>();
+    public final Set<Channel> appChannels = new ConcurrentSet<>();
+    public final Set<Channel> hardwareChannels = new ConcurrentSet<>();
 
     public static List<ChannelFuture> sendMessageTo(MessageBase message, Set<Channel> channels) {
         if (channels.size() == 0) {
@@ -42,10 +42,6 @@ public class Session {
     }
 
     public List<ChannelFuture> sendMessageToHardware(Integer activeDashId, MessageBase message) {
-        if (hardwareChannels.size() == 0) {
-            throw new DeviceNotInNetworkException("No device in session.", message.id);
-        }
-
         List<ChannelFuture> futureList = new ArrayList<>();
         for (Channel channel : hardwareChannels) {
             Integer dashId = ((ChannelState) channel).dashId;
@@ -72,14 +68,6 @@ public class Session {
             throw new UserAlreadyLoggedIn("User already logged. Client problem. CHECK!", msgId);
         }
         channelSet.add(channel);
-    }
-
-    public Set<Channel> getAppChannels() {
-        return appChannels;
-    }
-
-    public Set<Channel> getHardwareChannels() {
-        return hardwareChannels;
     }
 
     public List<ChannelFuture> sendMessageToHardware(MessageBase message) {
