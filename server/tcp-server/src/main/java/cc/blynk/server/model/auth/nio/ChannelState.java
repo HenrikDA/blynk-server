@@ -15,6 +15,9 @@ public class ChannelState extends NioSocketChannel {
 
     public boolean isHardwareChannel;
 
+    /**
+     * Used for hardware channels in order to have quick access to dashId of dashboard connect to this hardware channel.
+     */
     public Integer dashId;
 
     public User user;
