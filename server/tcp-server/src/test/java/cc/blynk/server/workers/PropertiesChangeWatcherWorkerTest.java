@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 
 /**
  * The Blynk Project.
@@ -20,42 +20,35 @@ import static org.mockito.Mockito.doThrow;
  * Created on 2/26/2015.
  */
 @RunWith(MockitoJUnitRunner.class)
-//todo this is ugly test but I don't have time to make it better/simpler/easier
 public class PropertiesChangeWatcherWorkerTest {
 
     @Mock
     private BaseSimpleChannelInboundHandler fakeHandler;
 
-    private PropertiesChangeWatcherWorker propertiesChangeWatcherWorker;
-
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testPropertiesChanged() throws IOException {
-        Path tmpFile = Files.createTempFile("", "");
+        Path tempDir = Files.createTempDirectory("tmp");
+        Path tmpFile = Files.createFile(Paths.get(tempDir.toString(), "temp.txt"));
 
-        doThrow(new RuntimeException()).when(fakeHandler).updateProperties(any());
 
-        System.setProperty("user.dir", System.getProperty("java.io.tmpdir"));
-        propertiesChangeWatcherWorker = new PropertiesChangeWatcherWorker(tmpFile.getFileName().toString(), fakeHandler);
-        new Thread(new TmpFileChanger(tmpFile)).start();
-        propertiesChangeWatcherWorker.run();
+        System.setProperty("user.dir", tempDir.toString());
+        new Thread( new PropertiesChangeWatcherWorker(tmpFile.getFileName().toString(), fakeHandler)).start();
 
-    }
 
-    private class TmpFileChanger implements Runnable {
-        private Path tmpFilePath;
-        private TmpFileChanger(Path tmpFilePath) {
-            this.tmpFilePath = tmpFilePath;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
         }
 
-        @Override
-        public void run() {
-            try (OutputStream outputStream = Files.newOutputStream(tmpFilePath)) {
-                Thread.sleep(100);
-                outputStream.write(new byte[1]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try (OutputStream outputStream = Files.newOutputStream(tmpFile)) {
+            outputStream.write(new byte[1]);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        //todo find out why it called 2 times
+        verify(fakeHandler, timeout(5000).atLeastOnce()).updateProperties(any());
+
     }
 
 }
