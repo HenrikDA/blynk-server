@@ -29,7 +29,7 @@ Scheme:
 	                                          |        3 bytes         |
     	                                      +------------------------+
 
-So message is always "1 byte + 2 bytes + 2 bytes + messageBody.length".
+So, message is always "1 byte + 2 bytes + 2 bytes + messageBody.length".
 
 ### Command field
 Unsigned byte.
@@ -37,13 +37,13 @@ This is 1 byte field responsible for storing [command code](https://bitbucket.or
 
 ### Message Id field
 Unsigned short.
-Is 2 bytes field for defining unique message identifier. It’s used in order to distinguish how to manage responses from hardware on mobile client. Message ID field should be generated on client’s side.
+Message Id field is a 2 bytes field for defining unique message identifier. It’s used in order to distinguish how to manage responses from hardware on mobile client. Message ID field should be generated on client’s side.
 Any ‘read’ protocol command should always have same messageId for the same widget. Let's say, you have a Graph_1 widget which is configured to read data from the analog pin.
 After you reconfigured Graph_1 to read another pin, load command will still look the same, and messageID will be an ID of the widget to display results at.
 
 ### Length field
 Unsigned short.
-Is 2 bytes field for defining body length. Could be 0 if body is empty or missing.
+Length field is a 2 bytes field for defining body length. Could be 0 if body is empty or missing.
 
 
 
@@ -70,7 +70,7 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
 
 
 ## Response Codes
-For every command client sends to the server it will receive a response back.
+Client sends commands to the server and gets response for every command sent.
 For commands (register, login, saveProfile, hardware) that doesn't request any data back - 'response' (command field 0x00) message is returned.
 For commands (loadProfile, getToken, ping) that request data back - message will be returned with same command code. In case you sent 'loadProfile' you will receive 'loadProfile' command back with filled body.
 
@@ -93,7 +93,7 @@ Response message structure:
     2 - command is badly formed, check syntax and passed params
     3 - user is not registered
     4 - user with this name has been registered already
-    5 - user haven’t made login command
+    5 - user hasn’t made login command
     6 - user is not allowed to perform this operation (most probably is not logged or socket has been closed)
     7 - hardware is offline
     9 - token is invalid
