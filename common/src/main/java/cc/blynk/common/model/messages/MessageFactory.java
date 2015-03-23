@@ -27,18 +27,20 @@ public class MessageFactory {
                 return new SaveProfileMessage(messageId, body);
             case LOAD_PROFILE :
                 return new LoadProfileMessage(messageId, body);
-            case GET_TOKEN :
-                return new GetTokenMessage(messageId, body);
-            case LOGIN :
-                return new LoginMessage(messageId, body);
-            case REGISTER :
-                return new RegisterMessage(messageId, body);
             case ACTIVATE_DASHBOARD :
                 return new ActivateDashboardMessage(messageId, body);
             case DEACTIVATE_DASHBOARD :
                 return new DeActivateDashboardMessage(messageId, body);
+            case GET_TOKEN :
+                return new GetTokenMessage(messageId, body);
+            case REFRESH_TOKEN :
+                return new RefreshTokenMessage(messageId, body);
+            case LOGIN :
+                return new LoginMessage(messageId, body);
             case TWEET :
                 return new TweetMessage(messageId, body);
+            case REGISTER :
+                return new RegisterMessage(messageId, body);
 
             default: throw new UnsupportedCommandException(String.format("Command with code %d not supported message.", command), messageId);
         }

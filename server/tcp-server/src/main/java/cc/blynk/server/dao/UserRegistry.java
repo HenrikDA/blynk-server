@@ -25,10 +25,6 @@ public class UserRegistry {
         this.users = users;
     }
 
-    private static String generateNewToken() {
-        return UUID.randomUUID().toString().replace("-", "");
-    }
-
     public static Integer getDashIdByToken(User user, String token) {
         for (Map.Entry<Integer, String> dashToken : user.getDashTokens().entrySet()) {
             if (dashToken.getValue().equals(token)) {
@@ -36,6 +32,10 @@ public class UserRegistry {
             }
         }
         throw new RuntimeException("Error getting dashId for user. FIX/");
+    }
+
+    private static String generateNewToken() {
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
     public boolean isUserExists(String name) {
@@ -70,12 +70,19 @@ public class UserRegistry {
         if (token == null) {
             log.info("Token for user {} and dashId {} not generated yet.", user.getName(), dashboardId);
             token = generateNewToken();
-            log.info("Generated token for user {} and dashId {} is {}.", user.getName(), dashboardId, token);
             user.putToken(dashboardId, token);
+            log.info("Generated token for user {} and dashId {} is {}.", user.getName(), dashboardId, token);
         } else {
             log.info("Token for user {} and dashId {} generated already. Token {}", user.getName(), dashboardId, token);
         }
 
+        return token;
+    }
+
+    public String refreshToken(User user, Integer dashboardId) {
+        String token = generateNewToken();
+        user.putToken(dashboardId, token);
+        log.info("Refreshed token for user {} and dashId {} is {}.", user.getName(), dashboardId, token);
         return token;
     }
 

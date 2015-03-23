@@ -22,6 +22,7 @@ class AppHandlersHolder {
     private final RegisterHandler registerHandler;
     private final AppLoginHandler appLoginHandler;
     private final GetTokenHandler getTokenHandler;
+    private final RefreshTokenHandler refreshTokenHandler;
     private final LoadProfileHandler loadProfileHandler;
     private final SaveProfileHandler saveProfileHandler;
     private final ActivateDashboardHandler activateDashboardHandler;
@@ -33,6 +34,7 @@ class AppHandlersHolder {
         this.registerHandler = new RegisterHandler(fileManager, userRegistry, sessionsHolder);
         this.appLoginHandler = new AppLoginHandler(fileManager, userRegistry, sessionsHolder);
         this.getTokenHandler = new GetTokenHandler(props, fileManager, userRegistry, sessionsHolder);
+        this.refreshTokenHandler = new RefreshTokenHandler(props, fileManager, userRegistry, sessionsHolder);
         this.loadProfileHandler = new LoadProfileHandler(props, fileManager, userRegistry, sessionsHolder);
         this.saveProfileHandler = new SaveProfileHandler(props, fileManager, userRegistry, sessionsHolder);
         this.hardwareHandler = new HardwareHandler(props, fileManager, userRegistry, sessionsHolder);
@@ -45,6 +47,7 @@ class AppHandlersHolder {
         return new ArrayList<BaseSimpleChannelInboundHandler>() {
            {
                add(getTokenHandler);
+               add(refreshTokenHandler);
                add(loadProfileHandler);
                add(saveProfileHandler);
                add(hardwareHandler);
@@ -61,6 +64,7 @@ class AppHandlersHolder {
                add(registerHandler);
                add(appLoginHandler);
                add(getTokenHandler);
+               add(refreshTokenHandler);
                add(loadProfileHandler);
                add(saveProfileHandler);
                add(hardwareHandler);

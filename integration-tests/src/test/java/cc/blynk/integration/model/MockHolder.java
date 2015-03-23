@@ -33,6 +33,11 @@ public class MockHolder {
         return this;
     }
 
+    public MockHolder check(int times, MessageBase responseMessage) throws Exception {
+        verify(mock, times(times)).channelRead(any(), eq(responseMessage));
+        return this;
+    }
+
 }
 
 

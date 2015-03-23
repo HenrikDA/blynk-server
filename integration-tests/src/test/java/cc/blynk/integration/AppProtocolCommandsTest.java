@@ -12,8 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.OngoingStubbing;
 
-import static cc.blynk.common.enums.Command.GET_TOKEN;
-import static cc.blynk.common.enums.Command.LOAD_PROFILE;
+import static cc.blynk.common.enums.Command.*;
 import static cc.blynk.common.enums.Response.*;
 import static cc.blynk.common.model.messages.MessageFactory.produce;
 import static org.mockito.Matchers.any;
@@ -103,6 +102,20 @@ public class AppProtocolCommandsTest extends IntegrationBase {
     }
 
     @Test
+    public void testRefreshToken() throws Exception {
+        makeCommands("register dmitriy@mail.ua 1").check(OK);
+
+        String userProfileString = readTestUserProfile();
+
+        makeCommands("login dmitriy@mail.ua 1", "saveProfile " + userProfileString).check(2, OK);
+
+        makeCommands("login dmitriy@mail.ua 1", "refreshToken 1", "refreshToken 1")
+                .check(OK)
+                .check(2, produce(1, REFRESH_TOKEN, "12345678901234567890123456789012"));
+    }
+
+
+    @Test
     public void testProfileWithManyDashes() throws Exception {
         makeCommands("register dmitriy@mail.ua 1").check(OK);
 
@@ -117,6 +130,7 @@ public class AppProtocolCommandsTest extends IntegrationBase {
 
         makeCommands("loadProfile").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("saveProfile {}").check(produce(1, USER_NOT_AUTHENTICATED));
+        makeCommands("refreshToken").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("getToken").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("activate 1").check(produce(1, USER_NOT_AUTHENTICATED));
         makeCommands("deactivate").check(produce(1, USER_NOT_AUTHENTICATED));

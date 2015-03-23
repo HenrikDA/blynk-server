@@ -23,6 +23,8 @@ public class CommandParser {
                 return SAVE_PROFILE;
             case "gettoken" :
                 return GET_TOKEN;
+            case "refreshtoken" :
+                return REFRESH_TOKEN;
             case "login" :
                 return LOGIN;
             case "activate" :

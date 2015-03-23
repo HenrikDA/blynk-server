@@ -22,6 +22,7 @@ public final class Command {
     public static final short PING = 6;
     public static final short ACTIVATE_DASHBOARD = 7;
     public static final short DEACTIVATE_DASHBOARD = 8;
+    public static final short REFRESH_TOKEN = 9;
     public static final short TWEET = 12;
     //------------------------------------------
 

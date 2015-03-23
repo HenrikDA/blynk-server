@@ -29,6 +29,7 @@ public class GlobalStats {
 
         this.specificCounters = new HashMap<>();
         specificCounters.put(GetTokenMessage.class, new LongAdder());
+        specificCounters.put(RefreshTokenMessage.class, new LongAdder());
         specificCounters.put(HardwareMessage.class, new LongAdder());
         specificCounters.put(LoadProfileMessage.class, new LongAdder());
         specificCounters.put(LoginMessage.class, new LongAdder());
