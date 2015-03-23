@@ -18,4 +18,9 @@ public class ClientPair {
         this.hardwareClient = hardwareClient;
         this.token = token;
     }
+
+    public void stop() {
+        appClient.stop();
+        hardwareClient.stop();
+    }
 }

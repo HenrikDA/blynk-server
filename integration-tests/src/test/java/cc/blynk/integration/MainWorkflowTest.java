@@ -34,6 +34,7 @@ public class MainWorkflowTest extends IntegrationBase {
 
     private AppServer appServer;
     private HardwareServer hardwareServer;
+    private ClientPair clientPair;
 
     @Before
     public void init() throws Exception {
@@ -49,29 +50,30 @@ public class MainWorkflowTest extends IntegrationBase {
         //todo improve this
         //wait util server starts.
         sleep(500);
+
+        clientPair = initAppAndHardPair();
     }
 
     @After
     public void shutdown() {
         appServer.stop();
         hardwareServer.stop();
+        clientPair.stop();
     }
 
     @Test
     public void testConnectAppAndHardware() throws Exception {
-        initAppAndHardPair();
+
     }
 
     @Test
     public void testPingCommandWorks() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
     }
 
     @Test
     public void testPingCommandOk() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
         clientPair.appClient.send("ping");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
 
@@ -84,7 +86,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testTweetException() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
         String userProfile = readTestUserProfile();
         clientPair.appClient.send("saveProfile " + userProfile);
         clientPair.hardwareClient.send("tweet 123");
@@ -94,7 +95,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testAppSendAnyHardCommandAndBack() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
         clientPair.appClient.send("hardware 1 1");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "1 1".replaceAll(" ", "\0"))));
 
@@ -113,7 +113,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testAppSendWriteHardCommandNotGraphAndBack() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
         clientPair.appClient.send("hardware ar 11");
         verify(clientPair.hardwareClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, HARDWARE_COMMAND, "ar 11".replaceAll(" ", "\0"))));
 
@@ -134,8 +133,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testActivateWorkflow() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
-
         clientPair.appClient.send("activate 2");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, ILLEGAL_COMMAND)));
 
@@ -163,7 +160,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testAppSendWriteHardCommandForGraphAndBack() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
         String userProfileWithGraph = readTestUserProfile();
         clientPair.appClient.send("saveProfile " + userProfileWithGraph);
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(1, OK)));
@@ -192,7 +188,6 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     //todo more tests for that
     public void testSendPinModeCommandWhenHardwareGoesOnline() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
         clientPair.hardwareClient.stop();
 
         String body = "pm 13 in";
@@ -208,8 +203,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testConnectAppAndHardwareAndSendCommands() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
-
         for (int i = 0; i < 100; i++) {
             clientPair.appClient.send("hardware 1 1");
         }
@@ -219,8 +212,6 @@ public class MainWorkflowTest extends IntegrationBase {
 
     @Test
     public void testTryReachQuotaLimit() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
-
         String body = "ar 100 100";
 
         //within 1 second sending more messages than default limit 100.
@@ -248,8 +239,6 @@ public class MainWorkflowTest extends IntegrationBase {
     @Test
     @Ignore("hard to test this case...")
     public void testTryReachQuotaLimitAndWarningExceededLimit() throws Exception {
-        ClientPair clientPair = initAppAndHardPair();
-
         String body = "ar 100 100";
 
         //within 1 second sending more messages than default limit 100.
