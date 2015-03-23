@@ -42,11 +42,11 @@ public class HardwareLoginHandler extends SimpleChannelInboundHandler<LoginMessa
     protected void channelRead0(ChannelHandlerContext ctx, LoginMessage message) throws Exception {
         String[] messageParts = message.body.split(" ", 2);
 
-        if (messageParts.length == 1) {
-            hardwareLogin(ctx, message.id, messageParts[0]);
-        } else {
-           throw new IllegalCommandException("Wrong income message format.", message.id);
+        if (messageParts.length != 1) {
+            throw new IllegalCommandException("Wrong income message format.", message.id);
         }
+
+        hardwareLogin(ctx, message.id, messageParts[0]);
 
         ctx.writeAndFlush(produce(message.id, OK));
     }
