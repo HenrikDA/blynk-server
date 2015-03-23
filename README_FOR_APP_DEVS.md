@@ -69,6 +69,7 @@ Length field is a 2 bytes field for defining body length. Could be 0 if body is 
 //todo
 
 
+
 ## Response Codes
 Client sends commands to the server and gets response for every command sent.
 For commands (register, login, saveProfile, hardware) that doesn't request any data back - 'response' (command field 0x00) message is returned.
