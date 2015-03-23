@@ -60,6 +60,7 @@ Is 2 bytes field for defining body length. Could be 0 if body is empty or missin
         6 - ping; Sends request from client to server, then from server to hardware, than back to server and back to the client.
         7 - activate dashboard. "activate DASH_ID";
         8 - deactivate dashboard. "deactivate";
+        9 - refresh token. Generates new token for dashboard; "refreshToken DASH_ID".
         12 - tweet; Sends tweet request from hardware to server. 140 chars max. 
         20 - hardware; Command for hardware. Every Widget forms it's own body message for hardware command.
 
