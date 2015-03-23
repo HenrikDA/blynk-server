@@ -1,6 +1,7 @@
 package cc.blynk.server.workers;
 
 import cc.blynk.server.handlers.workflow.BaseSimpleChannelInboundHandler;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -26,6 +27,7 @@ public class PropertiesChangeWatcherWorkerTest {
     private BaseSimpleChannelInboundHandler fakeHandler;
 
     @Test
+    @Ignore
     public void testPropertiesChanged() throws IOException {
         Path tempDir = Files.createTempDirectory("tmp");
         Path tmpFile = Files.createFile(Paths.get(tempDir.toString(), "temp.txt"));
