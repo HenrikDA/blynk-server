@@ -3,7 +3,7 @@ Is Netty based Java server responsible for message forwarding between mobile app
 Please read more detailed description [here](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
 
 # CI status
-[ ![Codeship Status for theblynk/blynk-server](https://codeship.com/projects/58524b50-9b60-0132-68a2-42ce92b0d790/status?branch=master)](https://codeship.com/projects/64160)
+[ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
 # Requirements
 Java 8 required. (OpenJDK, Oracle)
