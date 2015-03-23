@@ -9,8 +9,8 @@ Please read more detailed description [here](https://www.kickstarter.com/project
 Java 8 required. (OpenJDK, Oracle)
 
 # GETTING STARTED
-Right now server uses 2 ports. 1 port for hardware and another for mobile applications. This is done due to lack of security mechanism on Arduino.
-By default mobile application uses 8443 port and is based on SSL/TLS sockets. Default hardware port is 8442 and is based on plain TCP/IP sockets.
+Right now server uses 2 ports. 1 port is used for hardware and second one for the mobile applications. This is done due to the lack of security mechanism and low resources on microcontroller boards (e.g. Arduino UNO).
+By default, mobile application uses 8443 port and is based on SSL/TLS sockets. Default hardware port is 8442 and is based on plain TCP/IP sockets.
 
 ## Server
 
