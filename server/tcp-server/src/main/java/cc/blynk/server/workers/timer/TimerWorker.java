@@ -51,7 +51,9 @@ public class TimerWorker implements Runnable {
     @Override
     public void run() {
         log.debug("Starting timer...");
-        int counter = 0;
+        int allTimers = 0;
+        int tickedTimers = 0;
+        int onlineTimers = 0;
         LocalDateTime localDateTime = LocalDateTime.now(UTC);
 
         long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
@@ -59,10 +61,12 @@ public class TimerWorker implements Runnable {
         for (User user : userRegistry.getUsers().values()) {
             if (user.getUserProfile().getDashBoards() != null) {
                 for (Timer timer : user.getUserProfile().getDashboardTimerWidgets()) {
-                    counter++;
+                    allTimers++;
                     if (timerTick(curTime, timer.startTime)) {
+                        tickedTimers++;
                         Session session = sessionsHolder.getUserSession().get(user);
                         if (session != null) {
+                            onlineTimers++;
                             try {
                                 session.sendMessageToHardware(new HardwareMessage(0, timer.value));
                             } catch (DeviceNotInNetworkException e) {
@@ -73,7 +77,7 @@ public class TimerWorker implements Runnable {
                 }
             }
         }
-        log.debug("Timer finished. Processed {} timers.", counter);
+        log.debug("Timer finished. Processed {}/{}/{} timers.", onlineTimers, tickedTimers, allTimers);
     }
 
     protected boolean timerTick(long curTime, Long timerStart) {
