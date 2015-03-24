@@ -1,8 +1,7 @@
 # Blynk server
-Is Netty based Java server responsible for message forwarding between mobile application and any hardware (e.g. Arduino, Raspberry Pi for now).
+Is open-source Netty based Java server responsible for message forwarding between mobile application and any hardware (e.g. Arduino, Raspberry Pi for now).
 Please read more detailed description [here](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
 
-# CI status
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
 # Requirements
@@ -12,7 +11,7 @@ Java 8 required. (OpenJDK, Oracle)
 Right now server uses 2 ports. 1 port is used for hardware and second one for the mobile applications. This is done due to the lack of security mechanism and low resources on microcontroller boards (e.g. Arduino UNO).
 By default, mobile application uses 8443 port and is based on SSL/TLS sockets. Default hardware port is 8442 and is based on plain TCP/IP sockets.
 
-## Server
+## Quick local server setup
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
@@ -22,9 +21,57 @@ By default, mobile application uses 8443 port and is based on SSL/TLS sockets. D
 
         java -jar server-{PUT_LATEST_VERSION_HERE}.jar -hardPort 8442 -appPort 8443
 
+## Advanced local server setup
+For those of you, who wants more flexibility, you could extend server with more options by creating server.properties file in same folder as server.jar. Example could be found [here](https://github.com/blynkkk/blynk-server/blob/master/server/tcp-server/src/main/resources/server.properties).
+server.properties options:
+
++ Application port
+
+        server.ssl.port=8443
+
++ Hardware port
+
+        server.default.port=8442
+
++ User profiles folder. Folder in which all users profiles will be stored. By default System.getProperty("java.io.tmpdir")/blynk used. Will be created if not exists
+
+        data.folder=/tmp/blynk
+
++ Folder for all application logs. Will be created if not exists
+
+        logs.folder=./logs
+
++ Maximum allowed number of user dashboards. Could be changed without server restart. (Reloadable below).
+
+        user.dashboard.max.limit=10
+
++ 100 Req/sec rate limit per user. Reloadable
+
+        user.message.quota.limit=100
+
++ In case user exceeds quota limit - response error returned only once in specified period. In millis. Reloadable
+
+        user.message.quota.limit.exceeded.warning.period=60000
+
++ Maximum allowed user profile size. In kb's. Reloadable
+
+        user.profile.max.size=128
+
++ In-memory storage limit for storing *read* values from hardware
+
+        user.in.memory.storage.limit=1000
+
++ Period for flushing all user DB to disk. In millis.
+
+        profile.save.worker.period=60000
+
+### Behind wifi router
+In case you need to run Blynk server behind wifi-router and want it to be accessible from internet you have to add port-forwarding rule
+on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
+
 ## Client
 
-+ Run the application client
++ Emulate the application client
 
         java -jar client-${PUT_LATEST_VERSION_HERE}.jar -mode app -host localhost -port 8443
 
@@ -39,14 +86,14 @@ By default, mobile application uses 8443 port and is based on SSL/TLS sockets. D
 
         saveProfile {"dashBoards":[{"id":1, "name":"My Dashboard", "boardType":"UNO"}]}
 
-+ Activate dashboard
-
-        activate 1
 
 + Get the token for hardware (e.g Arduino)
 
         getToken 1
 
++ Activate dashboard
+
+        activate 1
 
 + You will get server response similar to this:
 
@@ -116,14 +163,6 @@ Hardware commands:
 
 Registered users are stored locally in TMP dir of your system in file "user.db". So after the restart you don't have to register again.
 
-
-## Local server setup
-TODO
-
-### Behind wifi router
-In case you need to run Blynk server behind wifi-router and want it to be accessible from internet you have to add port-forwarding rule
-on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server, 
-Im my router it look like this: {image here}
 
 ## Licensing
 [MIT license](https://bitbucket.org/theblynk/blynk-server/src/c1b06bca3183aba9ea9ed1fad37b856d25cd8a10/license.txt?at=master)
