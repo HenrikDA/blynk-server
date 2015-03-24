@@ -9,4 +9,8 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Digit4Display extends Widget {
 
+    public int min;
+
+    public int max;
+
 }
