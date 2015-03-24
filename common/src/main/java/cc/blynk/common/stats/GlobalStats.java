@@ -51,10 +51,13 @@ public class GlobalStats {
     }
 
     public void log() {
-        log.debug("1 min rate : {}", incomeMessages.getOneMinuteRate() < 0.01 ? 0 : String.format("%.2f", incomeMessages.getOneMinuteRate()));
-        for (Map.Entry<Class<?>, LongAdder> counterEntry : specificCounters.entrySet()) {
-            log.debug("{} : {}", counterEntry.getKey().getSimpleName(), counterEntry.getValue().sum());
+        //do not log low traffic. it is not interesting =).
+        if (incomeMessages.getOneMinuteRate() > 1) {
+            log.debug("1 min rate : {}", String.format("%.2f", incomeMessages.getOneMinuteRate()));
+            for (Map.Entry<Class<?>, LongAdder> counterEntry : specificCounters.entrySet()) {
+                log.debug("{} : {}", counterEntry.getKey().getSimpleName(), counterEntry.getValue().sum());
+            }
+            log.debug("--------------------------------------------------------------------------------------");
         }
-        log.debug("--------------------------------------------------------------------------------------");
     }
 }
