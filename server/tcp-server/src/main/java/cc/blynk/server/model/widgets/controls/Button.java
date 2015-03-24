@@ -9,4 +9,6 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Button extends Widget {
 
+    public boolean pushMode;
+
 }
