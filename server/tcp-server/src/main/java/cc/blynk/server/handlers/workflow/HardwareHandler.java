@@ -4,7 +4,7 @@ import cc.blynk.common.model.messages.protocol.HardwareMessage;
 import cc.blynk.common.utils.ServerProperties;
 import cc.blynk.server.dao.*;
 import cc.blynk.server.exceptions.DeviceNotInNetworkException;
-import cc.blynk.server.exceptions.IllegalCommandException;
+import cc.blynk.server.exceptions.NoActiveDashboardException;
 import cc.blynk.server.model.auth.Session;
 import cc.blynk.server.model.auth.User;
 import cc.blynk.server.model.auth.nio.ChannelState;
@@ -45,7 +45,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
             Session.sendMessageTo(message.updateMessageBody(body), session.appChannels);
         } else {
             if (user.getUserProfile().getActiveDashId() == null) {
-                throw new IllegalCommandException("No active dashboard.", message.id);
+                throw new NoActiveDashboardException("No active dashboard.", message.id);
             }
 
             if (session.hardwareChannels.size() == 0) {

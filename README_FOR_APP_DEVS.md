@@ -97,6 +97,7 @@ Response message structure:
     5 - user hasn’t made login command
     6 - user is not allowed to perform this operation (most probably is not logged or socket has been closed)
     7 - hardware is offline
+    8 - no active dashboard. User has to activated dashboard.
     9 - token is invalid
     11 - user is already logged in. Happens in cases when same user tries to login for more than one time.
     12 - tweet exception, exception occurred during posting request to Twitter could be in case messages are the same in a row;

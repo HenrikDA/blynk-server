@@ -19,6 +19,7 @@ public final class Response {
     public static final int USER_NOT_AUTHENTICATED = 5;
     public static final int NOT_ALLOWED = 6;
     public static final int DEVICE_NOT_IN_NETWORK = 7;
+    public static final int NO_ACTIVE_DASHBOARD = 8;
     public static final int INVALID_TOKEN = 9;
     public static final int USER_ALREADY_LOGGED_IN = 11;
     public static final int TWEET_EXCEPTION = 12;

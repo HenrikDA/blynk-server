@@ -140,7 +140,7 @@ public class MainWorkflowTest extends IntegrationBase {
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(2, OK)));
 
         clientPair.appClient.send("hardware ar 1 1");
-        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, ILLEGAL_COMMAND)));
+        verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(3, NO_ACTIVE_DASHBOARD)));
 
         clientPair.appClient.send("activate 1");
         verify(clientPair.appClient.responseMock, timeout(500)).channelRead(any(), eq(produce(4, OK)));
