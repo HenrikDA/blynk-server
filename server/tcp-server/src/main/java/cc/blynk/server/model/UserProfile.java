@@ -62,7 +62,10 @@ public class UserProfile {
 
         Set<Timer> timers = new HashSet<>();
         for (DashBoard dashBoard : dashBoards) {
-            timers.addAll(dashBoard.getTimerWidgets());
+            //processing only timers from active dashboard.
+            if (activeDashId != null && dashBoard.getId() == activeDashId) {
+                timers.addAll(dashBoard.getTimerWidgets());
+            }
         }
 
         return timers;
