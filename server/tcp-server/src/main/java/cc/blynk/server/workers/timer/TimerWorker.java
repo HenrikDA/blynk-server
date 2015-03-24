@@ -33,6 +33,10 @@ public class TimerWorker implements Runnable {
     private SessionsHolder sessionsHolder;
     private ZoneId UTC = ZoneId.of("UTC");
 
+    private int allTimers;
+    private int tickedTimers;
+    private int onlineTimers;
+
     protected TimerWorker() {
     }
 
@@ -51,9 +55,10 @@ public class TimerWorker implements Runnable {
     @Override
     public void run() {
         log.debug("Starting timer...");
-        int allTimers = 0;
-        int tickedTimers = 0;
-        int onlineTimers = 0;
+        allTimers = 0;
+        tickedTimers = 0;
+        onlineTimers = 0;
+
         LocalDateTime localDateTime = LocalDateTime.now(UTC);
 
         long curTime = localDateTime.getSecond() + localDateTime.getMinute() * 60 + localDateTime.getHour() * 3600;
@@ -62,22 +67,27 @@ public class TimerWorker implements Runnable {
             if (user.getUserProfile().getDashBoards() != null) {
                 for (Timer timer : user.getUserProfile().getDashboardTimerWidgets()) {
                     allTimers++;
-                    if (timerTick(curTime, timer.startTime)) {
-                        tickedTimers++;
-                        Session session = sessionsHolder.getUserSession().get(user);
-                        if (session != null) {
-                            onlineTimers++;
-                            try {
-                                session.sendMessageToHardware(new HardwareMessage(7777, timer.value));
-                            } catch (DeviceNotInNetworkException e) {
-                                log.warn("Timer send for user {} failed. No Device in Network.", user.getName());
-                            }
-                        }
-                    }
+                    sendMessageIfTicked(user, curTime, timer.startTime, timer.startValue);
+                    sendMessageIfTicked(user, curTime, timer.stopTime, timer.stopValue);
                 }
             }
         }
         log.debug("Timer finished. Processed {}/{}/{} timers.", onlineTimers, tickedTimers, allTimers);
+    }
+
+    private void sendMessageIfTicked(User user, long curTime, Long time, String value) {
+        if (timerTick(curTime, time)) {
+            tickedTimers++;
+            Session session = sessionsHolder.getUserSession().get(user);
+            if (session != null) {
+                onlineTimers++;
+                try {
+                    session.sendMessageToHardware(new HardwareMessage(7777, value));
+                } catch (DeviceNotInNetworkException e) {
+                    log.warn("Timer send for user {} failed. No Device in Network.", user.getName());
+                }
+            }
+        }
     }
 
     protected boolean timerTick(long curTime, Long timerStart) {

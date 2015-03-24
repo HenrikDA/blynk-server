@@ -33,8 +33,12 @@ public class DashBoard {
 
         Set<Timer> timerWidgets = new HashSet<>();
         for (Widget widget : widgets) {
-            if (widget instanceof Timer && widget.value != null && !widget.value.equals("")) {
-                timerWidgets.add((Timer) widget);
+            if (widget instanceof Timer) {
+                Timer timer = (Timer) widget;
+                if ((timer.startTime != null && timer.startValue != null && !timer.startValue.equals("")) ||
+                    (timer.stopTime != null && timer.stopValue != null && !timer.stopValue.equals(""))) {
+                    timerWidgets.add(timer);
+                }
             }
         }
 

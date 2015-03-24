@@ -9,10 +9,12 @@ import cc.blynk.server.model.widgets.Widget;
  */
 public class Timer extends Widget {
 
-    //for TIMER widget
-    //unix time
     public Long startTime;
-    //time to turn off timer
-    public Integer stopInterval;
+
+    public String startValue;
+
+    public Long stopTime;
+
+    public String stopValue;
 
 }
