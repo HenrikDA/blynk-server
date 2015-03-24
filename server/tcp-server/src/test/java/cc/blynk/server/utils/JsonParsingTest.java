@@ -91,9 +91,10 @@ public class JsonParsingTest {
         button.label = "MyButton";
         button.x = 2;
         button.y = 2;
+        button.pushMode = false;
 
         String result = JsonParser.toJson(button);
 
-        assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"label\":\"MyButton\"}", result);
+        assertEquals("{\"type\":\"BUTTON\",\"id\":1,\"x\":2,\"y\":2,\"label\":\"MyButton\",\"pushMode\":false}", result);
     }
 }
