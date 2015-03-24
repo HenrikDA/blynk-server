@@ -68,7 +68,7 @@ public class TimerWorker implements Runnable {
                         if (session != null) {
                             onlineTimers++;
                             try {
-                                session.sendMessageToHardware(new HardwareMessage(0, timer.value));
+                                session.sendMessageToHardware(new HardwareMessage(7777, timer.value));
                             } catch (DeviceNotInNetworkException e) {
                                 log.warn("Timer send for user {} failed. No Device in Network.", user.getName());
                             }
