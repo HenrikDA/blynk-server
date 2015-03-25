@@ -26,10 +26,6 @@ public final class JsonParser {
     //it is threadsafe
     private static ObjectMapper mapper = init();
 
-    public static void check() {
-
-    }
-
     private static ObjectMapper init() {
         return new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

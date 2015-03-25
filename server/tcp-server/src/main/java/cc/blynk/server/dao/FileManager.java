@@ -100,6 +100,7 @@ public class FileManager {
      * @return mapping between username and it's profile.
      */
     public Map<String, User> deserialize() {
+        log.debug("Starting reading user DB.");
         Finder finder = new Finder("u_*.user");
 
 
@@ -116,6 +117,8 @@ public class FileManager {
                 users.putIfAbsent(user.getName(), user);
             }
         }
+
+        log.debug("Reading user DB finished.");
 
         return users;
     }
