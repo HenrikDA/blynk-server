@@ -10,6 +10,7 @@ If you need more information, please follow these links:
 
 # Blynk server
 Blynk Server is an Open-Source Netty based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards (i.e. Arduino, Raspberry Pi. etc).
+Take latest build [here](https://github.com/blynkkk/blynk-server/tree/master/build).
 
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
@@ -76,6 +77,9 @@ server.properties options:
 
 ### Behind wifi router
 If you want to run Blynk server behind WiFi-router and want it to be accessible from the Internet, you have to add port-forwarding rule on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
+
+### Performance
+Currently server easly handles 40k req/sec hardware messages on VM with 2-cores of Intel(R) Xeon(R) CPU E5-2660 @ 2.20GHz. With high load - memory consumption could be up to 1 GB of RAM.
 
 ## App Client (emulates Smartphone App)
 
@@ -177,4 +181,4 @@ Registered users are stored locally in TMP dir of your system in "user.db" file.
 
 
 ## Licensing
-[MIT license](https://bitbucket.org/theblynk/blynk-server/src/c1b06bca3183aba9ea9ed1fad37b856d25cd8a10/license.txt?at=master)
+[MIT license](https://github.com/blynkkk/blynk-server/blob/master/license.txt)
