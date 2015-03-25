@@ -28,7 +28,7 @@ public class HardwareHandler extends BaseSimpleChannelInboundHandler<HardwareMes
     }
 
     private static boolean pinModeMessage(String body) {
-        return body != null && body.charAt(0) == 'p';
+        return body != null && body.length() > 0 && body.charAt(0) == 'p';
     }
 
     @Override
