@@ -69,9 +69,9 @@ server.properties options:
 In case you need to run Blynk server behind wifi-router and want it to be accessible from internet you have to add port-forwarding rule
 on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
 
-## Client
+## Client (Smartphone App Emulator)
 
-+ Emulate the application client
++ To emulate the Smartphone App client:
 
         java -jar client-${PUT_LATEST_VERSION_HERE}.jar -mode app -host localhost -port 8443
 
@@ -101,7 +101,9 @@ on your router. This is required in order to forward all of the requests that co
 
 Where `33bcbe756b994a6768494d55d1543c74` is your Auth Token.
 
-+ Start another client (simulates hardware (e.g Arduino)) and use received token to login
+## Client (Hardware Emulator)
+
++ Start another client (this one will simulate hardware (e.g Arduino)) and use received token to login
 
     	java -jar client-${PUT_LATEST_VERSION_HERE}.jar -mode hardware -host localhost -port 8442
     	login 33bcbe756b994a6768494d55d1543c74
@@ -111,6 +113,8 @@ You can run as many clients as you want.
 
 Clients with the same credentials and Auth Token are grouped into one Session and can send messages to each other.
 All client’s commands are human-friendly, so you don't have to remember the codes.
+
+## Hardware Commands
 
 Before sending to hardware any read/write commands, application must first send “init” command.
 Init command is 'hardware' command that sets all pin modes. Example of init command:
@@ -123,7 +127,7 @@ Init command is 'hardware' command that sets all pin modes. Example of init comm
 In the example above, you set pin 1 and pin 8 to 'input’ PIN_MODE. This means this pins will read values from hardware (graph, display, etc).
 Pins 13 and 9 have 'output’ PIN_MODE. This means that these pins will we writable (button, slider).
 
-Hardware commands:
+List of hardware commands:
 
 + Digital write:
 
