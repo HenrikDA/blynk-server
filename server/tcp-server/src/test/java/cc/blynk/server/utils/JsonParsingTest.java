@@ -4,9 +4,11 @@ import cc.blynk.server.model.DashBoard;
 import cc.blynk.server.model.UserProfile;
 import cc.blynk.server.model.widgets.Widget;
 import cc.blynk.server.model.widgets.controls.Button;
+import cc.blynk.server.model.widgets.others.Timer;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -82,6 +84,21 @@ public class JsonParsingTest {
 
         assertNotNull(userProfileString);
         assertTrue(userProfileString.contains("dashBoards"));
+    }
+
+    @Test
+    public void testUserProfileToJsonWithTimer() {
+        InputStream is = this.getClass().getResourceAsStream("/json_test/user_profile_with_timer.txt");
+
+        UserProfile userProfile = JsonParser.parseProfile(is);
+        String userProfileString = userProfile.toString();
+        userProfile.setActiveDashId(1);
+
+        assertNotNull(userProfileString);
+        assertTrue(userProfileString.contains("dashBoards"));
+        Set<Timer> timers = userProfile.getDashboardTimerWidgets();
+        assertNotNull(timers);
+        assertEquals(1, timers.size());
     }
 
     @Test
