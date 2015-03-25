@@ -70,6 +70,9 @@ server.properties options:
 In case you need to run Blynk server behind wifi-router and want it to be accessible from internet you have to add port-forwarding rule
 on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
 
+### Performance
+Currently server easly handles 40k req/sec hardware messages on VM with 2-cores of Intel(R) Xeon(R) CPU E5-2660 @ 2.20GHz. With high load - memory consumption could be up to 1 GB of RAM.
+
 ## Client (Smartphone App Emulator)
 
 + To emulate the Smartphone App client:
