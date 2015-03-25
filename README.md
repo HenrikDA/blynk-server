@@ -1,6 +1,15 @@
+# What is Blynk?
+Blynk is a platform with iOS and Android apps to control Arduino, Raspberry Pi and the likes over the Internet.  
+You can easily build graphic interfaces for all your projects by simply dragging and dropping widgets.
+If you need more information, please follow these links:
+* [Kickstarter](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
+* [Blynk downloads, docs, tutorials](http://www.blynk.cc)
+* [Blynk community](http://community.blynk.cc)
+* [Facebook](http://www.fb.com/blynkapp)
+* [Twitter](http://twitter.com/blynk_app)
+
 # Blynk server
-Is open-source [Netty](https://github.com/netty/netty) based Java server responsible for message forwarding between mobile application and any hardware (e.g. Arduino, Raspberry Pi for now).
-Please read more detailed description [here](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
+Blynk Server is an Open-Source Netty based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards (i.e. Arduino, Raspberry Pi. etc).
 
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
 
@@ -8,9 +17,8 @@ Please read more detailed description [here](https://www.kickstarter.com/project
 Java 8 required. (OpenJDK, Oracle)
 
 # GETTING STARTED
-Right now server uses 2 ports. 1 port is used for hardware and second one for the mobile applications. This is done due to the lack of security mechanism and low resources on microcontroller boards (e.g. Arduino UNO).
+Right now Blynk server uses 2 ports. 1 port is used for hardware and second one is used for the mobile apps. This is done due to the lack of security mechanism and low resources on microcontroller boards (e.g. Arduino UNO).
 By default, mobile application uses 8443 port and is based on SSL/TLS sockets. Default hardware port is 8442 and is based on plain TCP/IP sockets.
-Take latest build [here](https://github.com/blynkkk/blynk-server/tree/master/build).
 
 ## Quick local server setup
 
@@ -23,7 +31,7 @@ Take latest build [here](https://github.com/blynkkk/blynk-server/tree/master/bui
         java -jar server-{PUT_LATEST_VERSION_HERE}.jar -hardPort 8442 -appPort 8443
 
 ## Advanced local server setup
-For those of you, who wants more flexibility, you could extend server with more options by creating server.properties file in same folder as server.jar. Example could be found [here](https://github.com/blynkkk/blynk-server/blob/master/server/tcp-server/src/main/resources/server.properties).
+If you need more flexibility, you can extend server with more options by creating server.properties file in same folder as server.jar. Example could be found [here](https://github.com/blynkkk/blynk-server/blob/master/server/tcp-server/src/main/resources/server.properties).
 server.properties options:
 
 + Application port
@@ -38,11 +46,11 @@ server.properties options:
 
         data.folder=/tmp/blynk
 
-+ Folder for all application logs. Will be created if not exists
++ Folder for all application logs. Will be created if it doesn't exist.
 
         logs.folder=./logs
 
-+ Maximum allowed number of user dashboards. Could be changed without server restart. (Reloadable below).
++ Maximum allowed number of user dashboards. This value can be changed without restaring the server. ("Reloadable" below).
 
         user.dashboard.max.limit=10
 
@@ -50,11 +58,11 @@ server.properties options:
 
         user.message.quota.limit=100
 
-+ In case user exceeds quota limit - response error returned only once in specified period. In millis. Reloadable
++ In case user exceeds quota limit - response error returned only once in specified period (in Millis). Reloadable
 
         user.message.quota.limit.exceeded.warning.period=60000
 
-+ Maximum allowed user profile size. In kb's. Reloadable
++ Maximum allowed user profile size. In Kb's. Reloadable
 
         user.profile.max.size=128
 
@@ -67,13 +75,9 @@ server.properties options:
         profile.save.worker.period=60000
 
 ### Behind wifi router
-In case you need to run Blynk server behind wifi-router and want it to be accessible from internet you have to add port-forwarding rule
-on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
+If you want to run Blynk server behind WiFi-router and want it to be accessible from the Internet, you have to add port-forwarding rule on your router. This is required in order to forward all of the requests that come to the router within the local network to Blynk server.
 
-### Performance
-Currently server easly handles 40k req/sec hardware messages on VM with 2-cores of Intel(R) Xeon(R) CPU E5-2660 @ 2.20GHz. With high load - memory consumption could be up to 1 GB of RAM.
-
-## Client (Smartphone App Emulator)
+## App Client (emulates Smartphone App)
 
 + To emulate the Smartphone App client:
 
@@ -91,7 +95,7 @@ Currently server easly handles 40k req/sec hardware messages on VM with 2-cores 
         saveProfile {"dashBoards":[{"id":1, "name":"My Dashboard", "boardType":"UNO"}]}
 
 
-+ Get the token for hardware (e.g Arduino)
++ Get the Auth Token for hardware (e.g Arduino)
 
         getToken 1
 
@@ -105,9 +109,9 @@ Currently server easly handles 40k req/sec hardware messages on VM with 2-cores 
 
 Where `33bcbe756b994a6768494d55d1543c74` is your Auth Token.
 
-## Client (Hardware Emulator)
+## Hardware Client (emulates Hardware)
 
-+ Start another client (this one will simulate hardware (e.g Arduino)) and use received token to login
++ Start new client and use received Auth Token to login
 
     	java -jar client-${PUT_LATEST_VERSION_HERE}.jar -mode hardware -host localhost -port 8442
     	login 33bcbe756b994a6768494d55d1543c74
@@ -120,15 +124,15 @@ All client’s commands are human-friendly, so you don't have to remember the co
 
 ## Hardware Commands
 
-Before sending to hardware any read/write commands, application must first send “init” command.
-Init command is 'hardware' command that sets all pin modes. Example of init command:
+Before sending any read/write commands to hardware, application must first send “init” command.
+"Init" command is a 'hardware' command which sets all the Pin Modes(pm). Here is an example of "init" command:
 
     	hardware pm 1 in 13 out 9 out 8 in
 
 // TODO: take description about pin modes from Blynk Arduino library readme
 // TODO Describe separation with Zeroes in pinmode command
 
-In the example above, you set pin 1 and pin 8 to 'input’ PIN_MODE. This means this pins will read values from hardware (graph, display, etc).
+In this example you set pin 1 and pin 8 to 'input’ PIN_MODE. This means this pins will read values from hardware (graph, display, etc).
 Pins 13 and 9 have 'output’ PIN_MODE. This means that these pins will we writable (button, slider).
 
 List of hardware commands:
@@ -169,7 +173,7 @@ List of hardware commands:
     	hardware vr 9
     	You should receive response: vw 9 <values>
 
-Registered users are stored locally in TMP dir of your system in file "user.db". So after the restart you don't have to register again.
+Registered users are stored locally in TMP dir of your system in "user.db" file. So, after the restart you won't need to re-register.
 
 
 ## Licensing
