@@ -1,5 +1,5 @@
 # Blynk server
-Is open-source Netty based Java server responsible for message forwarding between mobile application and any hardware (e.g. Arduino, Raspberry Pi for now).
+Is open-source [Netty](https://github.com/netty/netty) based Java server responsible for message forwarding between mobile application and any hardware (e.g. Arduino, Raspberry Pi for now).
 Please read more detailed description [here](https://www.kickstarter.com/projects/167134865/blynk-build-an-app-for-your-arduino-project-in-5-m/description).
 
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
@@ -10,6 +10,7 @@ Java 8 required. (OpenJDK, Oracle)
 # GETTING STARTED
 Right now server uses 2 ports. 1 port is used for hardware and second one for the mobile applications. This is done due to the lack of security mechanism and low resources on microcontroller boards (e.g. Arduino UNO).
 By default, mobile application uses 8443 port and is based on SSL/TLS sockets. Default hardware port is 8442 and is based on plain TCP/IP sockets.
+Take latest build [here](https://github.com/blynkkk/blynk-server/tree/master/build).
 
 ## Quick local server setup
 
