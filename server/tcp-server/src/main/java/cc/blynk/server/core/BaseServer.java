@@ -8,6 +8,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +42,7 @@ public abstract class BaseServer implements Runnable {
         try {
             b.group(bossGroup, workerGroup)
                     .channel(ChannelServer.class)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childHandler(getChannelInitializer());
 
             ChannelFuture channelFuture = b.bind(port).sync();

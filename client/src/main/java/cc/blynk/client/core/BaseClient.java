@@ -7,6 +7,7 @@ import cc.blynk.common.model.messages.Message;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -68,6 +69,7 @@ public abstract class BaseClient {
             Bootstrap b = new Bootstrap();
             b.group(nioEventLoopGroup)
                     .channel(NioSocketChannel.class)
+                    .option(ChannelOption.SO_KEEPALIVE, true)
                     .handler(getChannelInitializer());
 
             // Start the connection attempt.

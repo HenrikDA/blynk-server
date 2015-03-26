@@ -8,6 +8,7 @@ import cc.blynk.server.handlers.workflow.ClientChannelStateHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
 * The Blynk Project.
@@ -31,6 +32,8 @@ final class HardwareChannelInitializer extends ChannelInitializer<SocketChannel>
         ChannelPipeline pipeline = ch.pipeline();
 
         //non-sharable handlers
+        //todo apply from hardware.
+        pipeline.addLast(new ReadTimeoutHandler(15));
         pipeline.addLast(new ClientChannelStateHandler(sessionsHolder));
         pipeline.addLast(new ReplayingMessageDecoder(stats));
         pipeline.addLast(new DeviceMessageEncoder());

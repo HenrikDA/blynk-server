@@ -9,6 +9,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 
 /**
  * Application processing pipeline initializer.
@@ -34,6 +35,9 @@ final class AppChannelInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
+
+        //todo apply from
+        pipeline.addLast(new ReadTimeoutHandler(600));
 
         if (sslCtx != null) {
             pipeline.addLast(sslCtx.newHandler(ch.alloc()));

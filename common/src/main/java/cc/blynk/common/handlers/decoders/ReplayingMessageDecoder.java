@@ -1,20 +1,16 @@
 package cc.blynk.common.handlers.decoders;
 
 import cc.blynk.common.enums.Command;
-import cc.blynk.common.exceptions.UnsupportedCommandException;
 import cc.blynk.common.handlers.DefaultExceptionHandler;
 import cc.blynk.common.model.messages.MessageBase;
 import cc.blynk.common.stats.GlobalStats;
 import cc.blynk.common.utils.Config;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.ReplayingDecoder;
-import io.netty.handler.ssl.NotSslRecordException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.net.ssl.SSLException;
 import java.util.List;
 
 import static cc.blynk.common.model.messages.MessageFactory.produce;
@@ -64,19 +60,6 @@ public class ReplayingMessageDecoder extends ReplayingDecoder<Void> implements D
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        //todo test for that case
-        if (cause instanceof DecoderException && cause.getCause() instanceof UnsupportedCommandException) {
-            log.error("Input command is invalid. Closing socket.", cause.getMessage());
-            ctx.close();
-        } else if (cause instanceof SSLException) {
-            if (cause instanceof NotSslRecordException) {
-                log.error("Not secure connection attempt detected. {}.", cause.getMessage());
-            } else {
-                log.error("SSL exception. {}.", cause.getMessage());
-            }
-            ctx.close();
-        } else {
-            handleGeneralException(ctx, cause);
-        }
+        handleGeneralException(ctx, cause);
     }
 }
