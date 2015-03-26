@@ -9,7 +9,7 @@ If you need more information, please follow these links:
 * [Twitter](http://twitter.com/blynk_app)
 
 # Blynk server
-Blynk Server is an Open-Source Netty based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards (i.e. Arduino, Raspberry Pi. etc).
+Blynk Server is an Open-Source [Netty](https://github.com/netty/netty) based Java server, responsible for forwarding messages between Blynk mobile application and various microcontroller boards (i.e. Arduino, Raspberry Pi. etc).
 Take latest build [here](https://github.com/blynkkk/blynk-server/releases).
 
 [ ![Build Status](https://travis-ci.org/blynkkk/blynk-server.svg?branch=master)](https://travis-ci.org/blynkkk/blynk-server)
@@ -22,6 +22,11 @@ Right now Blynk server uses 2 ports. 1 port is used for hardware and second one 
 By default, mobile application uses 8443 port and is based on SSL/TLS sockets. Default hardware port is 8442 and is based on plain TCP/IP sockets.
 
 ## Quick local server setup
+
++ Make sure you are using Java 8
+
+        java -version
+        Output: java version "1.8.0_40"
 
 + Run the server on default 'hardware port 8442' and default 'application port 8443' (SSL port)
 
